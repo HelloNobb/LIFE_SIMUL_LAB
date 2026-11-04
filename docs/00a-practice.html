@@ -1,0 +1,842 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>실전 — 주민 8명 마을 만들기 · LIFE SIMUL LAB</title>
+<meta name="description" content="2D 마을에 주민 8명을 살게 만드는 과정을 순서대로 따라 한다. 단계마다 &quot;넣을 숫자&quot;, &quot;계산 예시&quot;, &quot;잘 됐는지 확인하는 법&quot;, &quot;이상하면 바꿀 숫자&quot;를 적었다. 숫자는 실제 게임 값을 근거로 한 시작값이다.">
+<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/pygments.css">
+</head>
+<body>
+<a class="skip" href="#main">본문으로 건너뛰기</a>
+<header class="topbar">
+  <button type="button" class="icon-btn" id="nav-toggle" aria-label="목차 열기" aria-expanded="false" aria-controls="sidebar">☰</button>
+  <a class="brand" href="index.html">LIFE SIMUL LAB</a>
+  <div class="search">
+    <input type="search" id="search-input" placeholder="검색  (단축키 /)" aria-label="사이트 검색" autocomplete="off">
+    <div id="search-results" class="search-results" role="listbox" hidden></div>
+  </div>
+  <button type="button" class="icon-btn" id="theme-toggle" aria-label="다크 모드 전환">◐</button>
+</header>
+<div class="layout">
+  <nav class="sidebar" id="sidebar" aria-label="전체 목차"><ul><li><a href="index.html">홈</a></li><li><a href="00a-practice.html" class="active" aria-current="page">★ 실전: 주민 8명 마을 만들기</a></li><li><a href="00b-numbers.html">★ 수치 레퍼런스</a></li><li><a href="01-intro.html">1. 들어가며</a></li><li><a href="02-brain.html">2. NPC의 뇌</a></li><li><a href="03-routine.html">3. 욕구와 일상</a></li><li><a href="04-personality.html">4. 성격</a></li><li><a href="05-memory.html">5. 기억</a></li><li><a href="06-relationship.html">6. 관계</a></li><li><a href="07-dialogue.html">7. 대화</a></li><li><a href="08-events.html">8. 사건 생성</a></li><li><a href="09-world.html">9. 세계와 역사</a></li><li><a href="10-belonging.html">10. 소속감 설계</a></li><li><a href="11-failures.html">11. 실패 사례</a></li><li><a href="12-ai-reality.html">12. AI 현실 점검</a></li><li><a href="13-patterns.html">13. 패턴 카드</a></li><li><a href="14-checklist.html">14. 체크리스트</a></li><li><a href="15-references.html">15. 참고문헌</a></li><li><a href="16-appendix-code.html">부록 A. 공통 뼈대 코드</a></li><li><a href="17-appendix-glossary.html">부록 B. 용어집</a></li><li class="nav-sep"><a href="tags.html">태그 모아보기</a></li></ul></nav>
+  <main id="main" class="content">
+    <article>
+      <header class="page-head">
+        <p class="eyebrow">여기부터 시작</p>
+        <h1>실전 — 주민 8명 마을 만들기</h1>
+        <p class="summary">2D 마을에 주민 8명을 살게 만드는 과정을 순서대로 따라 한다. 단계마다 &quot;넣을 숫자&quot;, &quot;계산 예시&quot;, &quot;잘 됐는지 확인하는 법&quot;, &quot;이상하면 바꿀 숫자&quot;를 적었다. 숫자는 실제 게임 값을 근거로 한 시작값이다.</p>
+        <div class="page-goals"><span class="lbl">기여하는 목표</span><span class="tag goal goal-alive" data-tag="alive" title="NPC가 실제로 사는 사람처럼 느껴지는 것">실존감</span><span class="tag goal goal-relation" data-tag="relation" title="관계가 쌓이고 변하는 것">관계</span><span class="tag goal goal-plaus" data-tag="plaus" title="사건이 '그럴 만했다'고 납득되는 것">개연성</span><span class="tag goal goal-belong" data-tag="belong" title="내가 이 공동체의 일원이라는 느낌">소속감</span></div>
+      </header>
+      <div class="filter-bar" role="group" aria-label="태그 필터"><span class="filter-label">태그 필터</span><span class="chips"><button type="button" class="chip goal goal-belong" data-filter="belong" aria-pressed="false" title="내가 이 공동체의 일원이라는 느낌">소속감</button><button type="button" class="chip goal goal-plaus" data-filter="plaus" aria-pressed="false" title="사건이 '그럴 만했다'고 납득되는 것">개연성</button><button type="button" class="chip goal goal-relation" data-filter="relation" aria-pressed="false" title="관계가 쌓이고 변하는 것">관계</button><button type="button" class="chip goal goal-alive" data-filter="alive" aria-pressed="false" title="NPC가 실제로 사는 사람처럼 느껴지는 것">실존감</button></span><span class="chips"><button type="button" class="chip trust trust-official" data-filter="official" aria-pressed="false" title="개발자 발표·공식 문서·GDC·논문">공식</button><button type="button" class="chip trust trust-analysis" data-filter="analysis" aria-pressed="false" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</button><button type="button" class="chip trust trust-guess" data-filter="guess" aria-pressed="false" title="플레이 관찰·커뮤니티 추측·2차 보도">추정</button><button type="button" class="chip trust trust-unknown" data-filter="unknown" aria-pressed="false" title="찾아봤지만 믿을 만한 출처가 없음">확인 못 함</button></span><button type="button" class="chip clear" data-filter-clear>해제</button><span class="filter-hint" aria-live="polite"></span></div>
+      <details class="toc-mobile"><summary>이 페이지 목차</summary><ul><li><a href="#이-페이지-쓰는-법">이 페이지 쓰는 법</a></li><li><a href="#1단계-성격별-시간표">1단계 — 성격별 시간표</a></li><li><a href="#2단계-욕구-3개">2단계 — 욕구 3개</a></li><li><a href="#3단계-행동-점수-계산">3단계 — 행동 점수 계산</a></li><li><a href="#4단계-성격을-숫자로">4단계 — 성격을 숫자로</a></li><li><a href="#5단계-친밀도">5단계 — 친밀도</a></li><li><a href="#6단계-기억-7칸과-오랜만이야">6단계 — 기억 7칸과 "오랜만이야"</a></li><li><a href="#7단계-대사-고르기">7단계 — 대사 고르기</a></li><li><a href="#8단계-주민끼리-만남">8단계 — 주민끼리 만남</a></li><li><a href="#9단계-기분과-사건">9단계 — 기분과 사건</a></li><li><a href="#10단계-게임을-끈-동안">10단계 — 게임을 끈 동안</a></li><li><a href="#11단계-마을-평가와-새-주민">11단계 — 마을 평가와 새 주민</a></li><li><a href="#12단계-선택-llm-붙이기">12단계 (선택) — LLM 붙이기</a></li><li><a href="#숫자가-이상할-때-증상별로-바꿀-곳">숫자가 이상할 때: 증상별로 바꿀 곳</a></li><li><a href="#출처">출처</a></li></ul></details>
+      <section class="sec"><h2 id="이-페이지-쓰는-법">이 페이지 쓰는 법<a class="headerlink" href="#이-페이지-쓰는-법" title="이 소제목 링크">#</a></h2>
+<ul>
+<li>위에서부터 <strong>한 단계씩</strong> 만들고, 단계 끝의 "확인" 항목이 되면 다음으로 넘어가세요.</li>
+<li>숫자는 두 종류입니다.<ul>
+<li><strong>실제 게임 값</strong>: 동물의 숲·스타듀·림월드에서 확인한 값. 태그와 출처를 붙였습니다.</li>
+<li><strong>이 가이드의 시작값</strong>: 실제 값을 이 예제 규모에 맞게 옮긴 값. 처음 만들 때 그대로 넣고, 플레이해 보며 고치세요. <span class="tag trust trust-guess" data-tag="guess" title="플레이 관찰·커뮤니티 추측·2차 보도">추정</span></li>
+</ul>
+</li>
+<li>예제 설정: 2D 탑다운 마을, 주민 8명, <strong>게임 1시간 = 현실 1분</strong>(게임 하루 = 현실 24분).</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>단계</th>
+<th>만드는 것</th>
+<th>끝나면 생기는 느낌</th>
+<th>예상 작업량</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>성격별 시간표</td>
+<td>주민마다 생활 리듬이 다름</td>
+<td>반나절</td>
+</tr>
+<tr>
+<td>2</td>
+<td>욕구 3개</td>
+<td>같은 시간에도 상황 따라 다르게 행동</td>
+<td>반나절</td>
+</tr>
+<tr>
+<td>3</td>
+<td>행동 점수 계산</td>
+<td>"배고파서 식당에 갔구나"가 보임</td>
+<td>하루</td>
+</tr>
+<tr>
+<td>4</td>
+<td>성격 숫자</td>
+<td>까칠한 주민은 진짜 까칠함</td>
+<td>반나절</td>
+</tr>
+<tr>
+<td>5</td>
+<td>친밀도</td>
+<td>친해지는 속도를 설계할 수 있음</td>
+<td>반나절</td>
+</tr>
+<tr>
+<td>6</td>
+<td>기억 7칸 + 오랜만 인사</td>
+<td>나를 알아봄</td>
+<td>하루</td>
+</tr>
+<tr>
+<td>7</td>
+<td>대사 고르기</td>
+<td>상황에 맞는 말</td>
+<td>하루</td>
+</tr>
+<tr>
+<td>8</td>
+<td>주민끼리 만남</td>
+<td>내가 없어도 마을이 변함</td>
+<td>하루</td>
+</tr>
+<tr>
+<td>9</td>
+<td>기분과 사건</td>
+<td>사건에 이유가 있음</td>
+<td>하루</td>
+</tr>
+<tr>
+<td>10</td>
+<td>게임을 끈 동안</td>
+<td>돌아오면 흔적이 있음</td>
+<td>반나절</td>
+</tr>
+<tr>
+<td>11</td>
+<td>마을 평가 → 새 주민</td>
+<td>내가 가꾸면 마을이 커짐</td>
+<td>반나절</td>
+</tr>
+<tr>
+<td>12</td>
+<td>(선택) LLM 붙이기</td>
+<td>말이 다양해짐</td>
+<td>하루~</td>
+</tr>
+</tbody>
+</table>
+<p>작업량은 Unity 2D에서 1인 개발 기준 이 가이드의 어림입니다. <span class="tag trust trust-guess" data-tag="guess" title="플레이 관찰·커뮤니티 추측·2차 보도">추정</span></p>
+</section><section class="sec"><h2 id="1단계-성격별-시간표">1단계 — 성격별 시간표<a class="headerlink" href="#1단계-성격별-시간표" title="이 소제목 링크">#</a></h2>
+<p><strong>할 일</strong>: 성격 3종에 하루 시간표를 하나씩 줍니다. 주민 8명은 이 세 장을 나눠 씁니다.</p>
+<p><strong>넣을 숫자</strong>: 동물의 숲 GC의 실제 시간표 세 장을 그대로 씁니다. <span class="tag trust trust-analysis" data-tag="analysis" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</span> (<code>src/game/m_npc_schedule.c</code>, <a href="https://github.com/ACreTeam/ac-decomp">ac-decomp</a>)</p>
+<table>
+<thead>
+<tr>
+<th>성격 (동숲 원본)</th>
+<th>잠</th>
+<th>집 안</th>
+<th>바깥</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>부지런형 (normal)</td>
+<td>21:00~05:00</td>
+<td>05~06, 12~13, 18:30~21</td>
+<td>06:00~12:00, 13:00~18:30</td>
+</tr>
+<tr>
+<td>느긋형 (lazy)</td>
+<td>22:00~08:00</td>
+<td>08~09, 12~14, 19:30~22</td>
+<td>09:00~12:00, 14:00~19:30</td>
+</tr>
+<tr>
+<td>올빼미형 (cranky)</td>
+<td>05:00~10:00</td>
+<td>04~05, 10~11, 15~16, 22~23</td>
+<td>11:00~15:00, 16:00~22:00, 23:00~04:00</td>
+</tr>
+</tbody>
+</table>
+<p><strong>8명 배치 예</strong>: 부지런형 3명, 느긋형 3명, 올빼미형 2명.</p>
+<p><strong>확인</strong>: 게임 시각을 새벽 2시로 돌렸을 때 <strong>올빼미형 2명만</strong> 밖에 있으면 성공. 오전 7시에는 부지런형 3명만 밖에 있어야 합니다.</p>
+<p><strong>코드</strong>: <a href="02-brain.html#구현-스케치">2장 상태 기계의 <code>Schedule.Current</code></a>를 그대로 씁니다. 표 한 줄 = <code>(상태, 끝나는 시각)</code>.</p>
+</section><section class="sec"><h2 id="2단계-욕구-3개">2단계 — 욕구 3개<a class="headerlink" href="#2단계-욕구-3개" title="이 소제목 링크">#</a></h2>
+<p><strong>할 일</strong>: 주민마다 욕구 3개를 0~100으로 둡니다(100 = 가득 참). 깨어 있는 동안 시간당 줄어듭니다.</p>
+<p><strong>넣을 숫자</strong> (이 가이드의 시작값) <span class="tag trust trust-guess" data-tag="guess" title="플레이 관찰·커뮤니티 추측·2차 보도">추정</span></p>
+<table>
+<thead>
+<tr>
+<th>욕구</th>
+<th>시간당 감소</th>
+<th>채우는 행동</th>
+<th>채우는 양</th>
+<th>이렇게 되도록 맞춘 값</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>배고픔</td>
+<td>−6</td>
+<td>식당에서 먹기</td>
+<td>+60</td>
+<td>먹고 약 7시간 뒤 다시 배고픔 → 하루 2~3끼</td>
+</tr>
+<tr>
+<td>에너지</td>
+<td>−4 (잘 때 +12)</td>
+<td>자기 / 낮잠</td>
+<td>잠 8시간 ≈ +96, 낮잠 +40</td>
+<td>하룻밤 자면 거의 가득</td>
+</tr>
+<tr>
+<td>사교</td>
+<td>−5</td>
+<td>광장에서 수다</td>
+<td>+30</td>
+<td>반나절 혼자 있으면 외로워짐</td>
+</tr>
+</tbody>
+</table>
+<p><strong>끼어들기 기준</strong>: 아무 욕구든 <strong>15 아래</strong>로 떨어지면 시간표를 무시하고 그 욕구부터 채웁니다(밖에 있어야 할 시간이어도 집에 가서 잠).</p>
+<p><strong>확인</strong>: 게임 하루를 빨리 돌렸을 때 주민 한 명이 <strong>2~3번</strong> 식당에 가면 정상. 5번 이상이면 배고픔 감소가 너무 빠른 것입니다.</p>
+</section><section class="sec"><h2 id="3단계-행동-점수-계산">3단계 — 행동 점수 계산<a class="headerlink" href="#3단계-행동-점수-계산" title="이 소제목 링크">#</a></h2>
+<p><strong>할 일</strong>: 바깥에 있는 시간 동안 할 행동을 점수로 고릅니다.</p>
+<p><strong>공식</strong> (이 가이드의 시작값) <span class="tag trust trust-guess" data-tag="guess" title="플레이 관찰·커뮤니티 추측·2차 보도">추정</span></p>
+<div class="hl"><pre><span></span><code>급함   = (100 − 욕구값) / 100
+점수   = 급함² × (채우는 양 / 100) ÷ (1 + 0.05 × 거리칸수)
+하던 행동이면 점수 × 1.1   (관성 10%: 결정이 깜빡이지 않게)
+</code></pre></div>
+
+<ul>
+<li>급함을 <strong>제곱</strong>하는 이유: 조금 배고플 때는 거의 신경 안 쓰다가, 많이 배고파지면 급격히 우선순위가 오르게 하려고.</li>
+<li>거리 나누기는 심즈의 "거리 감쇠"를 단순화한 것입니다. <span class="tag trust trust-official" data-tag="official" title="개발자 발표·공식 문서·GDC·논문">공식</span> (<a href="https://qrg.northwestern.edu/papers/Files/Programming_Objects_in_The_Sims.pdf">Forbus &amp; Wright 2001</a>)</li>
+</ul>
+<p><strong>계산 예시</strong>: 낮 12시, 느긋형 토미. 배고픔 34, 에너지 70, 사교 45. 지금은 광장에서 수다 중.</p>
+<table>
+<thead>
+<tr>
+<th>행동</th>
+<th>급함</th>
+<th>급함²</th>
+<th>채우는 양</th>
+<th>거리</th>
+<th>거리 나누기</th>
+<th>점수</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>식당 (배고픔 +60)</td>
+<td>0.66</td>
+<td>0.436</td>
+<td>0.6</td>
+<td>12칸</td>
+<td>÷1.6</td>
+<td><strong>0.163</strong></td>
+</tr>
+<tr>
+<td>낮잠 (에너지 +40)</td>
+<td>0.30</td>
+<td>0.090</td>
+<td>0.4</td>
+<td>5칸</td>
+<td>÷1.25</td>
+<td>0.029</td>
+</tr>
+<tr>
+<td>수다 (사교 +30)</td>
+<td>0.55</td>
+<td>0.303</td>
+<td>0.3</td>
+<td>8칸</td>
+<td>÷1.4</td>
+<td>0.065 → 관성 ×1.1 = 0.071</td>
+</tr>
+</tbody>
+</table>
+<p>→ <strong>식당</strong>을 고릅니다. 화면에는 "토미가 식당으로 간다"가 보이고, 디버그 창에는 이 표가 보여야 합니다.</p>
+<p><strong>같은 상황에서 배고픔만 바꿔 보면</strong>: 지금 수다 중이라 수다 점수는 관성을 받아 0.071입니다. 식당 점수가 0.071과 같아지는 지점은 급함 0.436, 즉 <strong>배고픔 56</strong>입니다. 배고픔이 56보다 높으면 수다를 계속하고, 낮아지면 식당에 갑니다. (수다 중이 아니었다면 관성이 없어 기준은 배고픔 58.) 이렇게 "몇에서 행동이 바뀌는지" 계산해 두면 숫자를 고칠 때 덜 헤맵니다.</p>
+<p><strong>판단 주기</strong>: 매 프레임이 아니라 <strong>1~2초에 한 번</strong>. <a href="16-appendix-code.html#판단-예산-시간-나누기">부록 A의 판단 예산</a></p>
+<p><strong>코드</strong> (위 표를 그대로 재현합니다. 엔진 무관 C#):</p>
+<div class="hl"><pre><span></span><code><span class="k">public</span><span class="w"> </span><span class="k">record</span><span class="w"> </span><span class="nf">Option</span><span class="p">(</span><span class="kt">string</span><span class="w"> </span><span class="n">Name</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">Need</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">Amount</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">Distance</span><span class="p">);</span>
+
+<span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">Brain</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">Inertia</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.1f</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="nf">Score</span><span class="p">(</span><span class="n">Option</span><span class="w"> </span><span class="n">o</span><span class="p">,</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="n">Collections</span><span class="p">.</span><span class="n">Generic</span><span class="p">.</span><span class="n">Dictionary</span><span class="o">&lt;</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">needs</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">current</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="kt">float</span><span class="w"> </span><span class="n">urgency</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="mf">100f</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">needs</span><span class="p">[</span><span class="n">o</span><span class="p">.</span><span class="n">Need</span><span class="p">])</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">100f</span><span class="p">;</span>
+<span class="w">        </span><span class="kt">float</span><span class="w"> </span><span class="n">score</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">urgency</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">urgency</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="n">o</span><span class="p">.</span><span class="n">Amount</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">100f</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="p">(</span><span class="mf">1f</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mf">0.05f</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">o</span><span class="p">.</span><span class="n">Distance</span><span class="p">);</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">o</span><span class="p">.</span><span class="n">Name</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">current</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">score</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Inertia</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">score</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// 확인용: 12시 토미</span>
+<span class="c1">// var needs = new Dictionary&lt;string, float&gt; { ["hunger"] = 34, ["energy"] = 70, ["social"] = 45 };</span>
+<span class="c1">// Score(new("식당", "hunger", 60, 12), needs, "수다") → 0.163</span>
+<span class="c1">// Score(new("낮잠", "energy", 40, 5),  needs, "수다") → 0.029</span>
+<span class="c1">// Score(new("수다", "social", 30, 8),  needs, "수다") → 0.071</span>
+</code></pre></div>
+
+<p><strong>확인</strong>: 위 세 값이 똑같이 나오면 공식이 맞게 들어간 것입니다.</p>
+</section><section class="sec"><h2 id="4단계-성격을-숫자로">4단계 — 성격을 숫자로<a class="headerlink" href="#4단계-성격을-숫자로" title="이 소제목 링크">#</a></h2>
+<p><strong>할 일</strong>: 1~3단계의 숫자 중 몇 개를 성격마다 다르게 합니다. 성격 하나가 <strong>최소 세 군데</strong>를 바꾸게 하세요(<a href="04-personality.html">4장</a>).</p>
+<table>
+<thead>
+<tr>
+<th>숫자</th>
+<th>부지런형</th>
+<th>느긋형</th>
+<th>올빼미형</th>
+<th>근거</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>시간표</td>
+<td>1단계 표</td>
+<td>1단계 표</td>
+<td>1단계 표</td>
+<td>동숲 GC 실제 값 <span class="tag trust trust-analysis" data-tag="analysis" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</span></td>
+</tr>
+<tr>
+<td>연속 대화 짜증 시작 / 거부</td>
+<td>12번째 / 15번째</td>
+<td>12번째 / 15번째</td>
+<td>9번째 / 12번째</td>
+<td>동숲 GC 실제 값 <span class="tag trust trust-analysis" data-tag="analysis" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</span> (<code>m_npc.c</code> <code>l_npc_temper</code>)</td>
+</tr>
+<tr>
+<td>산책 목적지 배열</td>
+<td>{광장, 광장, 남의 집, 혼자}</td>
+<td>{광장, 혼자}</td>
+<td>{광장×3, 혼자×7}</td>
+<td>올빼미형은 동숲 cranky 실제 값 <span class="tag trust trust-analysis" data-tag="analysis" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</span> (<code>m_npc_walk.c</code>), 나머지는 이 가이드의 시작값 <span class="tag trust trust-guess" data-tag="guess" title="플레이 관찰·커뮤니티 추측·2차 보도">추정</span></td>
+</tr>
+<tr>
+<td>낮잠 채우는 양 배율</td>
+<td>×0.8</td>
+<td>×1.5</td>
+<td>×1.0</td>
+<td>이 가이드의 시작값 <span class="tag trust trust-guess" data-tag="guess" title="플레이 관찰·커뮤니티 추측·2차 보도">추정</span></td>
+</tr>
+<tr>
+<td>수다 채우는 양 배율</td>
+<td>×1.3</td>
+<td>×1.0</td>
+<td>×0.6</td>
+<td>이 가이드의 시작값 <span class="tag trust trust-guess" data-tag="guess" title="플레이 관찰·커뮤니티 추측·2차 보도">추정</span></td>
+</tr>
+</tbody>
+</table>
+<p><strong>계산 예시</strong>: 3단계와 같은 상황(낮 12시, 수다 중)에서 올빼미형이라면 수다 점수는 0.071 × 0.6 = <strong>0.043</strong>. 수다를 덜 좋아하니 배고픔이 <strong>66</strong>만 돼도 식당으로 갑니다(느긋형은 56). 느긋형의 낮잠 점수는 0.029 × 1.5 = 0.043으로 올라, 에너지가 조금만 더 떨어져도 낮잠을 잡니다.</p>
+<p>(올빼미형 계산: 식당 점수가 0.043과 같아지려면 급함² = 0.043 × 1.6 ÷ 0.6 = 0.115 → 급함 0.339 → 배고픔 66.)</p>
+<p><strong>확인</strong>: 같은 날 세 성격을 지켜봤을 때 "올빼미형은 혼자 있고, 느긋형은 자주 자고, 부지런형은 광장에 있다"가 보이면 성공.</p>
+</section><section class="sec"><h2 id="5단계-친밀도">5단계 — 친밀도<a class="headerlink" href="#5단계-친밀도" title="이 소제목 링크">#</a></h2>
+<p><strong>할 일</strong>: 주민마다 플레이어에 대한 친밀도 0~100을 둡니다.</p>
+<p><strong>실제 게임 값</strong>: 스타듀는 1하트 = 250점, 10하트 = 2,500점이고, 하루 한 번 대화 +20, 최애 선물 +80, 좋아함 +45, 보통 +20, 싫어함 −20, 선물은 주 2개까지, 말을 안 걸면 하루 −2(일반 주민)입니다. <span class="tag trust trust-analysis" data-tag="analysis" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</span> (<a href="https://stardewvalleywiki.com/Friendship">Friendship</a>, <a href="https://stardewvalleywiki.com/Gifts">Gifts</a>)</p>
+<p><strong>넣을 숫자</strong>: 스타듀 값을 ÷25 해서 0~100으로 옮기고 반올림했습니다(이 가이드의 시작값). <span class="tag trust trust-guess" data-tag="guess" title="플레이 관찰·커뮤니티 추측·2차 보도">추정</span></p>
+<table>
+<thead>
+<tr>
+<th>행동</th>
+<th>스타듀 (÷25)</th>
+<th>이 예제</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>하루 첫 대화</td>
+<td>+20 (0.8)</td>
+<td><strong>+1</strong></td>
+</tr>
+<tr>
+<td>최애 선물</td>
+<td>+80 (3.2)</td>
+<td><strong>+3</strong></td>
+</tr>
+<tr>
+<td>좋아하는 선물</td>
+<td>+45 (1.8)</td>
+<td><strong>+2</strong></td>
+</tr>
+<tr>
+<td>보통 선물</td>
+<td>+20 (0.8)</td>
+<td><strong>+1</strong></td>
+</tr>
+<tr>
+<td>싫어하는 선물</td>
+<td>−20 (−0.8)</td>
+<td><strong>−1</strong></td>
+</tr>
+<tr>
+<td>생일 선물</td>
+<td>×8</td>
+<td><strong>×4</strong> (너무 크면 생일만 노리게 됨)</td>
+</tr>
+<tr>
+<td>말 안 건 날</td>
+<td>−2 (−0.08)</td>
+<td><strong>−0.1</strong>, 80 이상이면 줄지 않음</td>
+</tr>
+<tr>
+<td>이벤트 열리는 지점</td>
+<td>2·4·6·8하트</td>
+<td><strong>20 · 40 · 60 · 80</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>계산 예시: 친해지는 데 얼마나 걸리나</strong></p>
+<ul>
+<li>매일 말 걸고 최애 선물을 주 2번 주는 플레이어: 한 주에 7×1 + 2×3 = <strong>13점</strong> → 80점까지 약 <strong>6주</strong>(게임 42일 = 현실 약 17시간).</li>
+<li>비교: 스타듀에서 같은 방식(매일 대화, 최애 선물 주 2번, 주 2개 보너스 +10)이면 한 주에 7×20 + 2×80 + 10 = 310점 → 2,500점까지 약 <strong>8주</strong>. <span class="tag trust trust-analysis" data-tag="analysis" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</span></li>
+<li>대화만 하는 플레이어: 한 주 7점 → 80점까지 약 11주. 선물 시스템이 속도를 두 배 가까이 바꾼다는 걸 알 수 있습니다.</li>
+</ul>
+<p><strong>확인</strong>: 20점(첫 이벤트)에 도착하는 데 매일 대화 + 선물 2번 기준 약 <strong>11~12일</strong>(13점/주 → 20점이면 약 1.5주)이 걸리면 설계대로 된 것입니다. 첫 이벤트가 너무 늦다고 느껴지면 첫 문턱을 10으로 낮추세요.</p>
+</section><section class="sec"><h2 id="6단계-기억-7칸과-오랜만이야">6단계 — 기억 7칸과 "오랜만이야"<a class="headerlink" href="#6단계-기억-7칸과-오랜만이야" title="이 소제목 링크">#</a></h2>
+<p><strong>할 일</strong>: 주민마다 플레이어 기억 칸을 둡니다. 혼자 하는 게임이어도 "다른 주민에 대한 기억"으로 같은 구조를 씁니다.</p>
+<p><strong>넣을 숫자</strong>: 동숲 GC 실제 값을 그대로 씁니다. <span class="tag trust trust-analysis" data-tag="analysis" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</span> (<code>include/m_npc.h</code>, <code>src/actor/ac_quest_talk_greeting.c</code>, <a href="https://github.com/ACreTeam/ac-decomp">ac-decomp</a>)</p>
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>값</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>기억 칸 수</td>
+<td>7</td>
+</tr>
+<tr>
+<td>한 칸에 넣을 것</td>
+<td>상대 ID, 마지막 대화 시각, 친밀도, 받은 선물·편지 1개, 최근 사건 3개</td>
+</tr>
+<tr>
+<td>칸이 꽉 차면 지우는 순서</td>
+<td>마을 밖 사람 → 선물·편지 없는 쪽 → 친밀도 낮은 쪽 → 마지막 대화가 오래된 쪽</td>
+</tr>
+<tr>
+<td>인사 분기</td>
+<td>처음 / 오늘 또 / 1일 이상 / 14일 이상 / 60일 이상</td>
+</tr>
+</tbody>
+</table>
+<p>동숲은 <strong>현실 날짜</strong>로 1·14·60일을 셉니다. 이 예제는 게임 시간이 60배 빠르므로 현실 시간 기준으로 쓰면 그대로, 게임 날짜 기준으로 쓰려면 <strong>1·7·28일</strong>로 줄이세요(게임 28일 = 현실 약 11시간). <span class="tag trust trust-guess" data-tag="guess" title="플레이 관찰·커뮤니티 추측·2차 보도">추정</span></p>
+<p><strong>출력 예시</strong></p>
+<table>
+<thead>
+<tr>
+<th>상황</th>
+<th>대사</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>처음</td>
+<td>"어? 처음 보는 얼굴이네. 나는 토미야~"</td>
+</tr>
+<tr>
+<td>오늘 또</td>
+<td>"또 왔어? 할 말 남았어?"</td>
+</tr>
+<tr>
+<td>1일 이상</td>
+<td>"좋은 아침! 어제 준 사과 맛있었어." ← 최근 사건에서 가져옴</td>
+</tr>
+<tr>
+<td>14일 이상</td>
+<td>"2주 만이네! 그동안 뭐 했어?" ← 경과 주 수를 계산해 넣음</td>
+</tr>
+<tr>
+<td>60일 이상</td>
+<td>"세상에, 3달이나 지났잖아! 잊어버린 줄 알았어."</td>
+</tr>
+</tbody>
+</table>
+<p><strong>확인</strong>: 세이브의 마지막 대화 시각을 15일 전으로 고쳐 보고 "2주 만이네"가 나오면 성공. <a href="05-memory.html#구현-스케치">5장의 <code>MemorySlots</code> 코드</a>를 그대로 씁니다.</p>
+</section><section class="sec"><h2 id="7단계-대사-고르기">7단계 — 대사 고르기<a class="headerlink" href="#7단계-대사-고르기" title="이 소제목 링크">#</a></h2>
+<p><strong>할 일</strong>: 대사마다 조건을 붙이고, <strong>조건이 가장 많이 맞는 대사</strong>를 고릅니다(Valve 방식). <span class="tag trust trust-official" data-tag="official" title="개발자 발표·공식 문서·GDC·논문">공식</span> (<a href="https://gdcvault.com/play/1015317/AI-driven-Dynamic-Dialog-through">Ruskin GDC 2012</a>)</p>
+<p><strong>계산 예시</strong>: 아침, 비, 토미의 친밀도 45, 2일 전에 사과를 받음.</p>
+<table>
+<thead>
+<tr>
+<th>대사 규칙</th>
+<th>조건</th>
+<th>맞음?</th>
+<th>조건 수</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>R1 기본 인사 "안녕{tail}"</td>
+<td>없음</td>
+<td>✔</td>
+<td>0</td>
+</tr>
+<tr>
+<td>R2 비 인사 "비가 오네{tail}"</td>
+<td>날씨=비</td>
+<td>✔</td>
+<td>1</td>
+</tr>
+<tr>
+<td>R3 친한 사이 비 인사 "{player}, 우산 챙겼어?"</td>
+<td>날씨=비, 친밀도≥40</td>
+<td>✔</td>
+<td>2</td>
+</tr>
+<tr>
+<td>R4 선물 감사 "{item} 고마웠어{tail}"</td>
+<td>최근 선물≤3일, 친밀도≥20</td>
+<td>✔</td>
+<td>2</td>
+</tr>
+<tr>
+<td>R5 생일 축하</td>
+<td>오늘=생일</td>
+<td>✘</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p>→ R3과 R4가 2개로 동률 → 둘 중 무작위. R4가 나오면 "사과 고마웠어~"가 되고, R4는 <strong>24게임시간 동안 쉼</strong>(쿨다운) → 다음 대화에서는 R3.</p>
+<p><strong>넣을 숫자</strong> (이 가이드의 시작값) <span class="tag trust trust-guess" data-tag="guess" title="플레이 관찰·커뮤니티 추측·2차 보도">추정</span></p>
+<ul>
+<li>규칙 쿨다운 기본 24게임시간, 인사류는 1게임시간.</li>
+<li>주민 한 명당 처음에 규칙 <strong>30개</strong>: 인사 10(시간대 3 × 날씨 3 + 기본 1), 관계 단계 4(20·40·60·80), 기억 기반 6(선물·편지·오랜만), 다른 주민 이야기 6, 계절 4.</li>
+<li>성격 3종 × 30 = 90줄이면 시작하기 충분합니다. 동숲처럼 같은 성격끼리 대사 틀을 공유하고 <code>{tail}</code>(말버릇)만 다르게 하면 됩니다. <span class="tag trust trust-analysis" data-tag="analysis" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</span> (동숲 제어 코드 <code>PUT_STRING_TAIL</code>, <a href="07-dialogue.html">7장</a>)</li>
+</ul>
+<p><strong>확인</strong>: 같은 주민에게 하루 5번 말 걸었을 때 같은 문장이 <strong>2번 이상</strong> 나오면 규칙이 부족하거나 쿨다운이 짧은 것입니다.</p>
+</section><section class="sec"><h2 id="8단계-주민끼리-만남">8단계 — 주민끼리 만남<a class="headerlink" href="#8단계-주민끼리-만남" title="이 소제목 링크">#</a></h2>
+<p><strong>할 일</strong>: 바깥에 있는 주민 둘이 3칸 안에서 만나면 인사하고, 확률표로 반응을 하나 고릅니다.</p>
+<p><strong>넣을 숫자</strong>: 동숲 GC 실제 확률표. <span class="tag trust trust-analysis" data-tag="analysis" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</span> (<code>ac_npc_act_greeting.c_inc</code>)</p>
+<table>
+<thead>
+<tr>
+<th>반응</th>
+<th>확률</th>
+<th>관계 변화</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>말다툼 (화남·슬픔·평소 중 하나)</td>
+<td>20%</td>
+<td>−8 / −4 / 0</td>
+</tr>
+<tr>
+<td>말버릇 따라 하기</td>
+<td>10%</td>
+<td>서로 +8</td>
+</tr>
+<tr>
+<td>말버릇 그만하라고 하기</td>
+<td>10%</td>
+<td>−8</td>
+</tr>
+<tr>
+<td>옷 따라 입기</td>
+<td>10%</td>
+<td>서로 +8</td>
+</tr>
+<tr>
+<td>무늬 우산 바꾸기</td>
+<td>10%</td>
+<td>0</td>
+</tr>
+<tr>
+<td>무늬 옷 바꾸기</td>
+<td>10%</td>
+<td>+8</td>
+</tr>
+<tr>
+<td>새 옷 사기</td>
+<td>5%</td>
+<td>−4</td>
+</tr>
+<tr>
+<td>기본 옷·우산으로</td>
+<td>5%</td>
+<td>−4</td>
+</tr>
+<tr>
+<td>아무 일 없음</td>
+<td>20%</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+<p>관계값은 0~255, 처음 128. 플레이어와 더 친한 쪽이 "주도하는 쪽(A)"이 됩니다.</p>
+<p><strong>계산 예시: 말버릇은 얼마나 자주 바뀌나</strong></p>
+<ul>
+<li>주민 한 명이 하루에 다른 주민과 <strong>4번</strong> 인사한다고 하면(8명, 바깥 시간 약 10시간 기준 어림) <span class="tag trust trust-guess" data-tag="guess" title="플레이 관찰·커뮤니티 추측·2차 보도">추정</span>,</li>
+<li>한 번 인사에서 "내가 따라 하는 쪽"이 될 확률 ≈ 10% × ½ = <strong>5%</strong>,</li>
+<li>하루에 한 번이라도 말버릇이 바뀔 확률 = 1 − 0.95⁴ ≈ <strong>18.5%</strong> → 주민 한 명당 <strong>약 5~6일에 한 번</strong>.</li>
+<li>마을 전체(8명)로 보면 하루에 평균 약 1.5명의 말버릇이 바뀝니다(8 × 0.185 ≈ 1.5). 너무 잦다고 느끼면 10% → <strong>5%</strong>로 낮추세요(1인당 약 10일에 한 번).</li>
+</ul>
+<p><strong>확인</strong>: 플레이어가 지어 준 말버릇이 게임 1주일 안에 <strong>다른 주민 1~2명</strong>에게 퍼져 있으면 의도대로입니다.</p>
+<div class="admonition warning">
+<p class="admonition-title">관계값은 반드시 어딘가에 쓰세요</p>
+<p>동숲 GC 소스에서는 이 관계값을 읽어 행동을 바꾸는 코드를 찾지 못했습니다(<a href="06-relationship.html">6장</a>). 이 예제에서는 관계값을 <strong>산책 목적지</strong>에 쓰세요. 관계 160 이상인 주민의 집을 "남의 집" 후보에 두 번 넣고, 96 이하인 주민의 집은 빼면 친한 주민끼리 자주 만나는 게 눈에 보입니다. <span class="tag trust trust-guess" data-tag="guess" title="플레이 관찰·커뮤니티 추측·2차 보도">추정</span></p>
+</div>
+</section><section class="sec"><h2 id="9단계-기분과-사건">9단계 — 기분과 사건<a class="headerlink" href="#9단계-기분과-사건" title="이 소제목 링크">#</a></h2>
+<p><strong>할 일</strong>: 일이 생기면 "생각"을 남기고, 생각의 합으로 기분을 만듭니다. 기분이 너무 낮으면 작은 사건(혼자 울기, 말다툼 걸기, 집에 틀어박히기)이 일어납니다.</p>
+<p><strong>넣을 숫자</strong>: 림월드 실제 값 <span class="tag trust trust-analysis" data-tag="analysis" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</span> (<a href="https://rimworldwiki.com/wiki/Mood">RimWorld 위키: Mood</a>, <a href="https://rimworldwiki.com/wiki/Mental_break">Mental break</a>)</p>
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>림월드 값</th>
+<th>이 예제</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>기분 범위</td>
+<td>0~100%</td>
+<td>0~100</td>
+</tr>
+<tr>
+<td>기본 기분</td>
+<td>32 (난이도에 따라 다름)</td>
+<td><strong>50</strong> (생활 시뮬이라 높게)</td>
+</tr>
+<tr>
+<td>목표치로 움직이는 속도</td>
+<td>오를 때 시간당 +12, 내릴 때 −8</td>
+<td>그대로</td>
+</tr>
+<tr>
+<td>사건 위험 기준</td>
+<td>35 / 20 / 5</td>
+<td><strong>35 / 20</strong> (5는 생략)</td>
+</tr>
+</tbody>
+</table>
+<p>생각 예시 (이 가이드의 시작값) <span class="tag trust trust-guess" data-tag="guess" title="플레이 관찰·커뮤니티 추측·2차 보도">추정</span>: 친구와 말다툼 −8 (1일), 비 맞음 −5 (반나절), 배고픔(30 미만) −3 (계속), 선물 받음 +6 (1일), 광장 축제 +10 (1일).</p>
+<p><strong>계산 예시</strong></p>
+<ul>
+<li>토미의 생각: 말다툼 −8, 비 맞음 −5, 배고픔 −3 → 목표치 = 50 − 16 = <strong>34</strong>.</li>
+<li>지금 기분 50에서 시간당 −8씩 내려감 → 1시간 뒤 42, <strong>2시간 뒤 34</strong> → 35 아래 → 사건 위험 시작.</li>
+<li>사건이 일어나면 이유를 <strong>하나</strong> 고릅니다. 깎은 양에 비례한 확률: 말다툼 8/16 = <strong>50%</strong>, 비 5/16 = <strong>31%</strong>, 배고픔 3/16 = <strong>19%</strong>.</li>
+<li>화면: "토미가 집에 틀어박혔다. 이유: 미나와 말다툼." 플레이어는 토미의 생각 목록에서 그 말다툼을 확인할 수 있습니다.</li>
+</ul>
+<p>이 "이유 하나 고르기"는 림월드의 방식입니다. Tynan Sylvester는 이것을 "무작위로 생각 하나를 고르는 코드 두 줄이 이유를 만든다"고 했습니다. <span class="tag trust trust-official" data-tag="official" title="개발자 발표·공식 문서·GDC·논문">공식</span> (<a href="https://www.rockpapershotgun.com/how-rimworld-generates-great-stories">RPS 인터뷰</a>)</p>
+<p><strong>확인</strong>: 게임 1주일에 위험 사건이 <strong>1~2번</strong>이면 생활 시뮬로 적당합니다. 매일 일어나면 생각 값을 절반으로 줄이세요.</p>
+</section><section class="sec"><h2 id="10단계-게임을-끈-동안">10단계 — 게임을 끈 동안<a class="headerlink" href="#10단계-게임을-끈-동안" title="이 소제목 링크">#</a></h2>
+<p><strong>할 일</strong>: 마지막 접속 시각만 저장하고, 다시 켤 때 경과 시간으로 한 번에 계산해 <strong>흔적</strong>으로 보여 줍니다.</p>
+<p><strong>넣을 숫자</strong>: 동숲 GC 바퀴벌레 실제 값 <span class="tag trust trust-analysis" data-tag="analysis" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</span> (<code>src/game/m_cockroach.c</code>)</p>
+<ul>
+<li>6일까지는 아무 일 없음.</li>
+<li>그 이상이면: 이미 있으면 (비운 날 수)만큼, 없으면 (비운 날 수 − 6)만큼 늘어남. 최대 10.</li>
+</ul>
+<p><strong>계산 예시</strong>: 9일 만에 접속, 바퀴벌레 0 → 9 − 6 = <strong>3마리</strong>. 다음에 다시 9일을 비우면 이미 있으므로 3 + 9 = 12 → 상한 <strong>10마리</strong>.</p>
+<p><strong>이 예제에 넣을 흔적</strong> (이 가이드의 시작값) <span class="tag trust trust-guess" data-tag="guess" title="플레이 관찰·커뮤니티 추측·2차 보도">추정</span></p>
+<table>
+<thead>
+<tr>
+<th>비운 기간 (현실)</th>
+<th>흔적</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1일 이상</td>
+<td>우편함에 주민 편지 1통 (친밀도 가장 높은 주민)</td>
+</tr>
+<tr>
+<td>3일 이상</td>
+<td>잡초 (하루 2개씩, 최대 20)</td>
+</tr>
+<tr>
+<td>7일 이상</td>
+<td>주민끼리 생긴 일 소식 3줄 (8단계 기록에서 고름)</td>
+</tr>
+<tr>
+<td>14일 이상</td>
+<td>친한 주민의 "2주 만이네" 인사 (6단계)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>확인</strong>: 컴퓨터 날짜를 바꾸지 말고 세이브의 마지막 접속 시각만 고쳐서 테스트하세요(시계 조작 방지 코드와 충돌하지 않게).</p>
+</section><section class="sec"><h2 id="11단계-마을-평가와-새-주민">11단계 — 마을 평가와 새 주민<a class="headerlink" href="#11단계-마을-평가와-새-주민" title="이 소제목 링크">#</a></h2>
+<p><strong>할 일</strong>: 마을을 구역으로 나누고 점수를 매긴 뒤, 그 점수가 새 주민이 올 확률을 정하게 합니다.</p>
+<p><strong>실제 게임 값</strong>: 동숲 GC는 구역마다 나무 12~14그루면 "완벽", 9~11·15~17그루면 "좋음", 잡초 3개 이상이면 0점이고, 마을 점수 = 완벽 수 + 좋음 수 ÷ 2입니다. 등급 0~6에 따라 새 주민 확률이 40·50·60·70·80·90·100%입니다. <span class="tag trust trust-analysis" data-tag="analysis" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</span> (<code>m_field_assessment.c</code>, <code>m_npc.c</code>)</p>
+<p><strong>넣을 숫자</strong>: 이 예제 마을은 <strong>8구역</strong>이고 동숲보다 작으므로 등급 문턱만 줄입니다(이 가이드의 시작값). <span class="tag trust trust-guess" data-tag="guess" title="플레이 관찰·커뮤니티 추측·2차 보도">추정</span></p>
+<table>
+<thead>
+<tr>
+<th>등급</th>
+<th>0</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+<th>5</th>
+<th>6</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>마을 점수</td>
+<td>0</td>
+<td>1</td>
+<td>2</td>
+<td>3</td>
+<td>4~5</td>
+<td>6</td>
+<td>7 이상</td>
+</tr>
+<tr>
+<td>새 주민 확률 (하루 1회 판정)</td>
+<td>40%</td>
+<td>50%</td>
+<td>60%</td>
+<td>70%</td>
+<td>80%</td>
+<td>90%</td>
+<td>100%</td>
+</tr>
+</tbody>
+</table>
+<p><strong>계산 예시</strong>: 완벽 3구역, 좋음 4구역, 나쁨 1구역 → 3 + 4÷2 = <strong>5점</strong> → 등급 4 → 다음 판정에서 <strong>80%</strong> 확률로 새 주민.</p>
+<p>조건(동숲과 같게): 주민이 정원(이 예제는 10명)보다 적고, 마지막 입주 후 하루 이상, 그리고 <strong>플레이어가 지금 주민 모두와 한 번 이상 대화했을 것</strong>. 새 주민의 성격은 <strong>지금 가장 적은 성격</strong>으로 고릅니다. <span class="tag trust trust-analysis" data-tag="analysis" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</span></p>
+<p><strong>확인</strong>: 나무를 심어 점수를 올린 다음 날 "마을이 예뻐서 이사 왔어요" 같은 대사와 함께 새 주민이 오면 성공. 원인을 말해 주는 대사가 없으면 플레이어는 연결을 모릅니다(<a href="10-belonging.html">10장</a>).</p>
+</section><section class="sec"><h2 id="12단계-선택-llm-붙이기">12단계 (선택) — LLM 붙이기<a class="headerlink" href="#12단계-선택-llm-붙이기" title="이 소제목 링크">#</a></h2>
+<p><strong>할 일</strong>: 1~11단계는 그대로 두고, <strong>7단계에서 고른 대사 규칙의 사실 묶음</strong>을 LLM에게 줘서 문장만 바꿔 쓰게 합니다(<a href="07-dialogue.html#섞어-쓰기">7장 섞어 쓰기</a>).</p>
+<p><strong>호출 수 어림</strong> (이 가이드의 시작값) <span class="tag trust trust-guess" data-tag="guess" title="플레이 관찰·커뮤니티 추측·2차 보도">추정</span></p>
+<table>
+<thead>
+<tr>
+<th>호출</th>
+<th>하루 횟수</th>
+<th>입력</th>
+<th>출력</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>플레이어와 대화</td>
+<td>약 15번</td>
+<td>약 400토큰 (성격 + 사실 묶음 5줄)</td>
+<td>약 40토큰</td>
+</tr>
+<tr>
+<td>밤 일기 (주민별 하루 요약)</td>
+<td>8번</td>
+<td>약 600토큰 (그날 사건 10개)</td>
+<td>약 80토큰</td>
+</tr>
+<tr>
+<td>합계</td>
+<td>23번</td>
+<td>약 10,800토큰</td>
+<td>약 1,240토큰</td>
+</tr>
+</tbody>
+</table>
+<p>→ 게임 하루(현실 24분)에 입력 약 1만 1천 토큰, 출력 약 1천 2백 토큰. 쓰려는 모델의 <strong>토큰당 가격</strong>을 곱하면 플레이 1시간 비용이 나옵니다(× 2.5). 가격은 자주 바뀌어서 여기 적지 않았습니다.</p>
+<p><strong>지켜야 할 것</strong></p>
+<ul>
+<li>응답 제한 시간 <strong>1.5초</strong>, 넘으면 7단계의 원래 대사.</li>
+<li>출력에 사실 묶음에 없는 이름·숫자·약속이 있으면 버림.</li>
+<li>친밀도 변화 같은 숫자는 LLM 출력이 아니라 <strong>규칙의 값</strong>을 씀.</li>
+</ul>
+</section><section class="sec"><h2 id="숫자가-이상할-때-증상별로-바꿀-곳">숫자가 이상할 때: 증상별로 바꿀 곳<a class="headerlink" href="#숫자가-이상할-때-증상별로-바꿀-곳" title="이 소제목 링크">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>증상</th>
+<th>먼저 바꿀 숫자</th>
+<th>바꾸는 방향</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>주민이 식당만 왔다 갔다 함</td>
+<td>배고픔 감소 −6 / 식당 채우는 양 60</td>
+<td>−4로 / 45로</td>
+</tr>
+<tr>
+<td>행동이 1~2초마다 바뀜</td>
+<td>관성 ×1.1 / 판단 주기 1~2초</td>
+<td>×1.25로 / 3초로</td>
+</tr>
+<tr>
+<td>성격 차이가 안 보임</td>
+<td>4단계 배율</td>
+<td>차이를 2배로 (0.6 → 0.3, 1.5 → 2.0)</td>
+</tr>
+<tr>
+<td>친해지는 게 너무 느림</td>
+<td>하루 첫 대화 +1</td>
+<td>+2로 (주 20점, 80까지 4주)</td>
+</tr>
+<tr>
+<td>친해지는 게 너무 빠름</td>
+<td>선물 주 2개 제한</td>
+<td>주 1개로</td>
+</tr>
+<tr>
+<td>같은 대사가 반복됨</td>
+<td>쿨다운 24게임시간 / 규칙 수 30</td>
+<td>72로 / 성격별 규칙 추가</td>
+</tr>
+<tr>
+<td>말버릇이 너무 자주 바뀜</td>
+<td>따라 하기 10%</td>
+<td>5%로</td>
+</tr>
+<tr>
+<td>사건이 너무 잦음</td>
+<td>생각 값 / 기분 기본 50</td>
+<td>절반으로 / 60으로</td>
+</tr>
+<tr>
+<td>사건이 하나도 안 일어남</td>
+<td>사건 기준 35</td>
+<td>40으로</td>
+</tr>
+<tr>
+<td>마을이 안 바뀌는 느낌</td>
+<td>소식 알림</td>
+<td>10단계 "7일 이상" 소식을 3일로</td>
+</tr>
+<tr>
+<td>새 주민이 너무 빨리 옴</td>
+<td>11단계 확률</td>
+<td>전체 −20%p</td>
+</tr>
+</tbody>
+</table>
+</section><section class="sec"><h2 id="출처">출처<a class="headerlink" href="#출처" title="이 소제목 링크">#</a></h2>
+<ul>
+<li>ACreTeam, ac-decomp (<code>src/game/m_npc_schedule.c</code>, <code>src/game/m_npc_walk.c</code>, <code>src/game/m_npc.c</code>, <code>src/game/m_cockroach.c</code>, <code>src/game/m_field_assessment.c</code>, <code>src/actor/ac_quest_talk_greeting.c</code>, <code>src/actor/npc/ac_npc_act_greeting.c_inc</code>) — <a href="https://github.com/ACreTeam/ac-decomp">https://github.com/ACreTeam/ac-decomp</a></li>
+<li>Stardew Valley Wiki, Friendship / Gifts — <a href="https://stardewvalleywiki.com/Friendship">https://stardewvalleywiki.com/Friendship</a>, <a href="https://stardewvalleywiki.com/Gifts">https://stardewvalleywiki.com/Gifts</a></li>
+<li>RimWorld Wiki, Mood / Mental break — <a href="https://rimworldwiki.com/wiki/Mood">https://rimworldwiki.com/wiki/Mood</a>, <a href="https://rimworldwiki.com/wiki/Mental_break">https://rimworldwiki.com/wiki/Mental_break</a></li>
+<li>Rock Paper Shotgun, Tynan Sylvester 인터뷰 — <a href="https://www.rockpapershotgun.com/how-rimworld-generates-great-stories">https://www.rockpapershotgun.com/how-rimworld-generates-great-stories</a></li>
+<li>Forbus &amp; Wright, "Some notes on programming objects in The Sims" (2001) — <a href="https://qrg.northwestern.edu/papers/Files/Programming_Objects_in_The_Sims.pdf">https://qrg.northwestern.edu/papers/Files/Programming_Objects_in_The_Sims.pdf</a></li>
+<li>Elan Ruskin, GDC 2012 — <a href="https://gdcvault.com/play/1015317/AI-driven-Dynamic-Dialog-through">https://gdcvault.com/play/1015317/AI-driven-Dynamic-Dialog-through</a></li>
+<li>이 페이지의 "시작값"은 위 실제 값을 예제 규모에 맞춰 옮긴 이 가이드의 판단입니다.</li>
+</ul></section>
+      <nav class="pager" aria-label="이전·다음"><a class="prev" href="index.html">← 홈</a><a class="next" href="00b-numbers.html">★ 수치 레퍼런스 →</a></nav>
+    </article>
+  </main>
+  <aside class="toc" aria-label="이 페이지 목차"><p class="toc-title">이 페이지</p><ul><li><a href="#이-페이지-쓰는-법">이 페이지 쓰는 법</a></li><li><a href="#1단계-성격별-시간표">1단계 — 성격별 시간표</a></li><li><a href="#2단계-욕구-3개">2단계 — 욕구 3개</a></li><li><a href="#3단계-행동-점수-계산">3단계 — 행동 점수 계산</a></li><li><a href="#4단계-성격을-숫자로">4단계 — 성격을 숫자로</a></li><li><a href="#5단계-친밀도">5단계 — 친밀도</a></li><li><a href="#6단계-기억-7칸과-오랜만이야">6단계 — 기억 7칸과 "오랜만이야"</a></li><li><a href="#7단계-대사-고르기">7단계 — 대사 고르기</a></li><li><a href="#8단계-주민끼리-만남">8단계 — 주민끼리 만남</a></li><li><a href="#9단계-기분과-사건">9단계 — 기분과 사건</a></li><li><a href="#10단계-게임을-끈-동안">10단계 — 게임을 끈 동안</a></li><li><a href="#11단계-마을-평가와-새-주민">11단계 — 마을 평가와 새 주민</a></li><li><a href="#12단계-선택-llm-붙이기">12단계 (선택) — LLM 붙이기</a></li><li><a href="#숫자가-이상할-때-증상별로-바꿀-곳">숫자가 이상할 때: 증상별로 바꿀 곳</a></li><li><a href="#출처">출처</a></li></ul></aside>
+</div>
+<footer class="site-foot">신뢰도: <span class="tag trust trust-official">공식</span> <span class="tag trust trust-analysis">분석</span> <span class="tag trust trust-guess">추정</span> <span class="tag trust trust-unknown">확인 못 함</span> · 소스: <a href="https://github.com/HelloNobb/LIFE_SIMUL_LAB">GitHub</a></footer>
+<script src="assets/search-index.js"></script>
+<script src="assets/app.js"></script>
+<script type="module">
+import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.esm.min.mjs';
+window.__mermaid = mermaid;
+window.dispatchEvent(new Event('mermaid-ready'));
+</script>
+</body>
+</html>

@@ -21,7 +21,7 @@
   <button type="button" class="icon-btn" id="theme-toggle" aria-label="다크 모드 전환">◐</button>
 </header>
 <div class="layout">
-  <nav class="sidebar" id="sidebar" aria-label="전체 목차"><ul><li><a href="index.html" class="active" aria-current="page">홈</a></li><li><a href="01-intro.html">1. 들어가며</a></li><li><a href="02-brain.html">2. NPC의 뇌</a></li><li><a href="03-routine.html">3. 욕구와 일상</a></li><li><a href="04-personality.html">4. 성격</a></li><li><a href="05-memory.html">5. 기억</a></li><li><a href="06-relationship.html">6. 관계</a></li><li><a href="07-dialogue.html">7. 대화</a></li><li><a href="08-events.html">8. 사건 생성</a></li><li><a href="09-world.html">9. 세계와 역사</a></li><li><a href="10-belonging.html">10. 소속감 설계</a></li><li><a href="11-failures.html">11. 실패 사례</a></li><li><a href="12-ai-reality.html">12. AI 현실 점검</a></li><li><a href="13-patterns.html">13. 패턴 카드</a></li><li><a href="14-checklist.html">14. 체크리스트</a></li><li><a href="15-references.html">15. 참고문헌</a></li><li><a href="16-appendix-code.html">부록 A. 공통 뼈대 코드</a></li><li><a href="17-appendix-glossary.html">부록 B. 용어집</a></li><li class="nav-sep"><a href="tags.html">태그 모아보기</a></li></ul></nav>
+  <nav class="sidebar" id="sidebar" aria-label="전체 목차"><ul><li><a href="index.html" class="active" aria-current="page">홈</a></li><li><a href="00a-practice.html">★ 실전: 주민 8명 마을 만들기</a></li><li><a href="00b-numbers.html">★ 수치 레퍼런스</a></li><li><a href="01-intro.html">1. 들어가며</a></li><li><a href="02-brain.html">2. NPC의 뇌</a></li><li><a href="03-routine.html">3. 욕구와 일상</a></li><li><a href="04-personality.html">4. 성격</a></li><li><a href="05-memory.html">5. 기억</a></li><li><a href="06-relationship.html">6. 관계</a></li><li><a href="07-dialogue.html">7. 대화</a></li><li><a href="08-events.html">8. 사건 생성</a></li><li><a href="09-world.html">9. 세계와 역사</a></li><li><a href="10-belonging.html">10. 소속감 설계</a></li><li><a href="11-failures.html">11. 실패 사례</a></li><li><a href="12-ai-reality.html">12. AI 현실 점검</a></li><li><a href="13-patterns.html">13. 패턴 카드</a></li><li><a href="14-checklist.html">14. 체크리스트</a></li><li><a href="15-references.html">15. 참고문헌</a></li><li><a href="16-appendix-code.html">부록 A. 공통 뼈대 코드</a></li><li><a href="17-appendix-glossary.html">부록 B. 용어집</a></li><li class="nav-sep"><a href="tags.html">태그 모아보기</a></li></ul></nav>
   <main id="main" class="content">
     <article>
       <header class="page-head">
@@ -32,7 +32,15 @@
       </header>
       <div class="filter-bar" role="group" aria-label="태그 필터"><span class="filter-label">태그 필터</span><span class="chips"><button type="button" class="chip goal goal-belong" data-filter="belong" aria-pressed="false" title="내가 이 공동체의 일원이라는 느낌">소속감</button><button type="button" class="chip goal goal-plaus" data-filter="plaus" aria-pressed="false" title="사건이 '그럴 만했다'고 납득되는 것">개연성</button><button type="button" class="chip goal goal-relation" data-filter="relation" aria-pressed="false" title="관계가 쌓이고 변하는 것">관계</button><button type="button" class="chip goal goal-alive" data-filter="alive" aria-pressed="false" title="NPC가 실제로 사는 사람처럼 느껴지는 것">실존감</button></span><span class="chips"><button type="button" class="chip trust trust-official" data-filter="official" aria-pressed="false" title="개발자 발표·공식 문서·GDC·논문">공식</button><button type="button" class="chip trust trust-analysis" data-filter="analysis" aria-pressed="false" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</button><button type="button" class="chip trust trust-guess" data-filter="guess" aria-pressed="false" title="플레이 관찰·커뮤니티 추측·2차 보도">추정</button><button type="button" class="chip trust trust-unknown" data-filter="unknown" aria-pressed="false" title="찾아봤지만 믿을 만한 출처가 없음">확인 못 함</button></span><button type="button" class="chip clear" data-filter-clear>해제</button><span class="filter-hint" aria-live="polite"></span></div>
       <details class="toc-mobile"><summary>이 페이지 목차</summary><ul><li><a href="#이-가이드가-다루는-것">이 가이드가 다루는 것</a></li><li><a href="#신뢰도-표시">신뢰도 표시</a></li><li><a href="#세-갈래-구조">세 갈래 구조</a></li><li><a href="#읽는-순서">읽는 순서</a></li><li><a href="#이-가이드의-근거">이 가이드의 근거</a></li><li><a href="#출처">출처</a></li></ul></details>
-      <section class="sec"><h2 id="이-가이드가-다루는-것">이 가이드가 다루는 것<a class="headerlink" href="#이-가이드가-다루는-것" title="이 소제목 링크">#</a></h2>
+      <div class="admonition tip">
+<p class="admonition-title">처음이라면 여기부터</p>
+<ul>
+<li><strong><a href="00a-practice.html">실전 — 주민 8명 마을 만들기</a></strong>: 12단계를 순서대로 따라 하면 살아 있는 마을이 됩니다. 단계마다 넣을 숫자, 계산 예시, 확인 방법, 이상할 때 바꿀 숫자가 있습니다.</li>
+<li><strong><a href="00b-numbers.html">수치 레퍼런스</a></strong>: 동숲·스타듀·림월드의 실제 수치와 "처음 넣어 볼 값"을 한 장에 모았습니다.</li>
+<li>1장부터는 각 기법을 깊이 읽는 참고 자료입니다. 실전 페이지에서 막힐 때 펼쳐 보세요.</li>
+</ul>
+</div>
+<section class="sec"><h2 id="이-가이드가-다루는-것">이 가이드가 다루는 것<a class="headerlink" href="#이-가이드가-다루는-것" title="이 소제목 링크">#</a></h2>
 <p>이 가이드는 "살아있는 것처럼 느껴지는 NPC와 세계"를 만드는 방법을 다룹니다. 모든 내용을 네 가지 목표에 비추어 정리했습니다.</p>
 <table>
 <thead>
@@ -141,7 +149,7 @@
 <li>ACreTeam, ac-decomp — <a href="https://github.com/ACreTeam/ac-decomp">https://github.com/ACreTeam/ac-decomp</a></li>
 <li>이 가이드의 전체 참고문헌 — <a href="15-references.html">15장</a></li>
 </ul></section>
-      <nav class="pager" aria-label="이전·다음"><a class="next" href="01-intro.html">1. 들어가며 →</a></nav>
+      <nav class="pager" aria-label="이전·다음"><a class="next" href="00a-practice.html">★ 실전: 주민 8명 마을 만들기 →</a></nav>
     </article>
   </main>
   <aside class="toc" aria-label="이 페이지 목차"><p class="toc-title">이 페이지</p><ul><li><a href="#이-가이드가-다루는-것">이 가이드가 다루는 것</a></li><li><a href="#신뢰도-표시">신뢰도 표시</a></li><li><a href="#세-갈래-구조">세 갈래 구조</a></li><li><a href="#읽는-순서">읽는 순서</a></li><li><a href="#이-가이드의-근거">이 가이드의 근거</a></li><li><a href="#출처">출처</a></li></ul></aside>
