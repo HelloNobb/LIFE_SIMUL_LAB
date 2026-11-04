@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>살아있는 NPC와 세계 설계 가이드 · LIFE SIMUL LAB</title>
+<meta name="description" content="시뮬레이션 게임을 만들 때마다 펼쳐 보는 설계 가이드. 실제 게임의 소스·데이터·발표와 논문에서 &quot;살아있다는 느낌&quot;을 만드는 기법을 뽑아, AI 없이 / AI 사용 / 섞어 쓰기 세 갈래로 정리했습니다.">
+<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/pygments.css">
+</head>
+<body>
+<a class="skip" href="#main">본문으로 건너뛰기</a>
+<header class="topbar">
+  <button type="button" class="icon-btn" id="nav-toggle" aria-label="목차 열기" aria-expanded="false" aria-controls="sidebar">☰</button>
+  <a class="brand" href="index.html">LIFE SIMUL LAB</a>
+  <div class="search">
+    <input type="search" id="search-input" placeholder="검색  (단축키 /)" aria-label="사이트 검색" autocomplete="off">
+    <div id="search-results" class="search-results" role="listbox" hidden></div>
+  </div>
+  <button type="button" class="icon-btn" id="theme-toggle" aria-label="다크 모드 전환">◐</button>
+</header>
+<div class="layout">
+  <nav class="sidebar" id="sidebar" aria-label="전체 목차"><ul><li><a href="index.html" class="active" aria-current="page">홈</a></li><li><a href="01-intro.html">1. 들어가며</a></li><li><a href="02-brain.html">2. NPC의 뇌</a></li><li><a href="03-routine.html">3. 욕구와 일상</a></li><li><a href="04-personality.html">4. 성격</a></li><li><a href="05-memory.html">5. 기억</a></li><li><a href="06-relationship.html">6. 관계</a></li><li><a href="07-dialogue.html">7. 대화</a></li><li><a href="08-events.html">8. 사건 생성</a></li><li><a href="09-world.html">9. 세계와 역사</a></li><li><a href="10-belonging.html">10. 소속감 설계</a></li><li><a href="11-failures.html">11. 실패 사례</a></li><li><a href="12-ai-reality.html">12. AI 현실 점검</a></li><li><a href="13-patterns.html">13. 패턴 카드</a></li><li><a href="14-checklist.html">14. 체크리스트</a></li><li><a href="15-references.html">15. 참고문헌</a></li><li><a href="16-appendix-code.html">부록 A. 공통 뼈대 코드</a></li><li><a href="17-appendix-glossary.html">부록 B. 용어집</a></li><li class="nav-sep"><a href="tags.html">태그 모아보기</a></li></ul></nav>
+  <main id="main" class="content">
+    <article>
+      <header class="page-head">
+        <p class="eyebrow">LIFE SIMUL LAB</p>
+        <h1>살아있는 NPC와 세계 설계 가이드</h1>
+        <p class="summary">시뮬레이션 게임을 만들 때마다 펼쳐 보는 설계 가이드. 실제 게임의 소스·데이터·발표와 논문에서 &quot;살아있다는 느낌&quot;을 만드는 기법을 뽑아, AI 없이 / AI 사용 / 섞어 쓰기 세 갈래로 정리했습니다.</p>
+        <div class="page-goals"><span class="lbl">기여하는 목표</span><span class="tag goal goal-belong" data-tag="belong" title="내가 이 공동체의 일원이라는 느낌">소속감</span><span class="tag goal goal-plaus" data-tag="plaus" title="사건이 '그럴 만했다'고 납득되는 것">개연성</span><span class="tag goal goal-relation" data-tag="relation" title="관계가 쌓이고 변하는 것">관계</span><span class="tag goal goal-alive" data-tag="alive" title="NPC가 실제로 사는 사람처럼 느껴지는 것">실존감</span></div>
+      </header>
+      <div class="filter-bar" role="group" aria-label="태그 필터"><span class="filter-label">태그 필터</span><span class="chips"><button type="button" class="chip goal goal-belong" data-filter="belong" aria-pressed="false" title="내가 이 공동체의 일원이라는 느낌">소속감</button><button type="button" class="chip goal goal-plaus" data-filter="plaus" aria-pressed="false" title="사건이 '그럴 만했다'고 납득되는 것">개연성</button><button type="button" class="chip goal goal-relation" data-filter="relation" aria-pressed="false" title="관계가 쌓이고 변하는 것">관계</button><button type="button" class="chip goal goal-alive" data-filter="alive" aria-pressed="false" title="NPC가 실제로 사는 사람처럼 느껴지는 것">실존감</button></span><span class="chips"><button type="button" class="chip trust trust-official" data-filter="official" aria-pressed="false" title="개발자 발표·공식 문서·GDC·논문">공식</button><button type="button" class="chip trust trust-analysis" data-filter="analysis" aria-pressed="false" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</button><button type="button" class="chip trust trust-guess" data-filter="guess" aria-pressed="false" title="플레이 관찰·커뮤니티 추측·2차 보도">추정</button><button type="button" class="chip trust trust-unknown" data-filter="unknown" aria-pressed="false" title="찾아봤지만 믿을 만한 출처가 없음">확인 못 함</button></span><button type="button" class="chip clear" data-filter-clear>해제</button><span class="filter-hint" aria-live="polite"></span></div>
+      <details class="toc-mobile"><summary>이 페이지 목차</summary><ul><li><a href="#이-가이드가-다루는-것">이 가이드가 다루는 것</a></li><li><a href="#신뢰도-표시">신뢰도 표시</a></li><li><a href="#세-갈래-구조">세 갈래 구조</a></li><li><a href="#읽는-순서">읽는 순서</a></li><li><a href="#이-가이드의-근거">이 가이드의 근거</a></li><li><a href="#출처">출처</a></li></ul></details>
+      <section class="sec"><h2 id="이-가이드가-다루는-것">이 가이드가 다루는 것<a class="headerlink" href="#이-가이드가-다루는-것" title="이 소제목 링크">#</a></h2>
+<p>이 가이드는 "살아있는 것처럼 느껴지는 NPC와 세계"를 만드는 방법을 다룹니다. 모든 내용을 네 가지 목표에 비추어 정리했습니다.</p>
+<table>
+<thead>
+<tr>
+<th>목표</th>
+<th>뜻</th>
+<th>대표 장치</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="tag goal goal-belong" data-tag="belong" title="내가 이 공동체의 일원이라는 느낌">소속감</span></td>
+<td>내가 이 마을·집단의 일원이라고 느끼는 것</td>
+<td>주민의 부탁, 마을 평가, 공동 목표(마을회관), 내가 남긴 흔적이 퍼지는 것</td>
+</tr>
+<tr>
+<td><span class="tag goal goal-plaus" data-tag="plaus" title="사건이 '그럴 만했다'고 납득되는 것">개연성</span></td>
+<td>사건이 무작위가 아니라 "그럴 만했다"고 납득되는 것</td>
+<td>원인이 보이는 기분 시스템, 긴장 곡선, 원인→결과 기록</td>
+</tr>
+<tr>
+<td><span class="tag goal goal-relation" data-tag="relation" title="관계가 쌓이고 변하는 것">관계</span></td>
+<td>NPC끼리, NPC와 플레이어 사이에 관계가 쌓이고 변하는 것</td>
+<td>친밀도, 관계망, 관계 변화 이벤트</td>
+</tr>
+<tr>
+<td><span class="tag goal goal-alive" data-tag="alive" title="NPC가 실제로 사는 사람처럼 느껴지는 것">실존감</span></td>
+<td>NPC가 실제로 사는 사람처럼 느껴지는 것</td>
+<td>일상, 기억, 성격, 내가 없을 때도 돌아가는 삶</td>
+</tr>
+</tbody>
+</table>
+<p>각 장 맨 위에 그 장의 기법이 어떤 목표에 기여하는지 표시했고, 본문의 사례마다 다시 태그를 달았습니다.</p>
+</section><section class="sec"><h2 id="신뢰도-표시">신뢰도 표시<a class="headerlink" href="#신뢰도-표시" title="이 소제목 링크">#</a></h2>
+<p>모든 핵심 주장에는 근거의 종류를 표시하고 출처 링크를 달았습니다.</p>
+<table>
+<thead>
+<tr>
+<th>태그</th>
+<th>근거의 종류</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="tag trust trust-official" data-tag="official" title="개발자 발표·공식 문서·GDC·논문">공식</span></td>
+<td>개발자 발표, 공식 문서·공지, GDC 발표, 논문</td>
+</tr>
+<tr>
+<td><span class="tag trust trust-analysis" data-tag="analysis" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</span></td>
+<td>디컴파일 소스, 게임 데이터 파일, 데이터마이닝, 모드 문서처럼 <strong>게임이 실제로 그렇게 동작한다는 것을 확인할 수 있는</strong> 자료</td>
+</tr>
+<tr>
+<td><span class="tag trust trust-guess" data-tag="guess" title="플레이 관찰·커뮤니티 추측·2차 보도">추정</span></td>
+<td>플레이 관찰, 커뮤니티 추측, 2차 보도, 이 가이드 자신의 판단</td>
+</tr>
+<tr>
+<td><span class="tag trust trust-unknown" data-tag="unknown" title="찾아봤지만 믿을 만한 출처가 없음">확인 못 함</span></td>
+<td>찾아봤지만 믿을 만한 출처가 없음. 지어내지 않고 이렇게 남겨 두었습니다.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition tip">
+<p class="admonition-title">필터 쓰는 법</p>
+<p>페이지 위쪽 <strong>태그 필터</strong>에서 태그를 누르면 그 태그가 붙은 문장만 남습니다. 여러 개를 누르면 "그중 하나라도 붙은 것"이 남습니다. <a href="tags.html">태그 모아보기</a>에서는 사이트 전체를 한 번에 거를 수 있습니다. 예: <span class="tag trust trust-guess" data-tag="guess" title="플레이 관찰·커뮤니티 추측·2차 보도">추정</span>만 골라서 아직 근거가 약한 주장만 보기.</p>
+</div>
+</section><section class="sec"><h2 id="세-갈래-구조">세 갈래 구조<a class="headerlink" href="#세-갈래-구조" title="이 소제목 링크">#</a></h2>
+<p>2장부터 10장까지는 모든 주제를 세 갈래로 나누어 다룹니다.</p>
+<ul>
+<li><strong>AI 없이 (전통 기법)</strong>: 상태 기계, 행동 트리, Utility AI, GOAP, HTN, 스마트 오브젝트, 일정표, 대사 풀, 관계 수치, 스토리텔러, 절차적 역사 생성</li>
+<li><strong>AI 사용 (LLM·생성형)</strong>: Generative Agents식 기억·회고·계획, 대화 생성, 기억 요약</li>
+<li><strong>섞어 쓰기</strong>: 행동과 규칙은 전통 시스템이 맡고, LLM은 대사·회고·요약처럼 틀려도 게임이 망가지지 않는 부분만 맡는 구조</li>
+</ul>
+<p>기법을 고를 때 하나만 추천하지 않고, 상황별로 쓸 만한 후보를 표로 비교했습니다. 고르는 것은 읽는 사람의 몫입니다.</p>
+</section><section class="sec"><h2 id="읽는-순서">읽는 순서<a class="headerlink" href="#읽는-순서" title="이 소제목 링크">#</a></h2>
+<div class="mermaid-wrap" markdown="0"><pre class="mermaid" data-src="0">flowchart LR
+  A[&quot;1. 들어가며&lt;br/&gt;살아있다는 느낌의 정체&quot;] --&gt; B[&quot;2. NPC의 뇌&lt;br/&gt;행동 선택&quot;]
+  B --&gt; C[&quot;3. 욕구와 일상&quot;]
+  B --&gt; D[&quot;4. 성격&quot;]
+  C --&gt; E[&quot;5. 기억&quot;]
+  D --&gt; E
+  E --&gt; F[&quot;6. 관계&quot;]
+  F --&gt; G[&quot;7. 대화&quot;]
+  E --&gt; H[&quot;8. 사건 생성&quot;]
+  H --&gt; I[&quot;9. 세계와 역사&quot;]
+  F --&gt; J[&quot;10. 소속감 설계&quot;]
+  I --&gt; J
+  J --&gt; K[&quot;11~12. 실패 사례·AI 현실 점검&quot;]
+  K --&gt; L[&quot;13~14. 패턴 카드·체크리스트&quot;]</pre></div>
+
+<p>처음이라면 <a href="01-intro.html">1장</a>을 먼저 읽으세요. 게임을 기획하는 중이라면 <a href="14-checklist.html">14장 체크리스트</a>부터 보고 필요한 장으로 돌아가도 됩니다. 필요한 기법을 빨리 찾으려면 <a href="13-patterns.html">13장 패턴 카드</a>가 편합니다.</p>
+</section><section class="sec"><h2 id="이-가이드의-근거">이 가이드의 근거<a class="headerlink" href="#이-가이드의-근거" title="이 소제목 링크">#</a></h2>
+<p>가장 깊게 판 자료는 다음과 같습니다.</p>
+<ul>
+<li><strong>동물의 숲 GameCube 북미판 디컴파일 소스</strong> (<a href="https://github.com/ACreTeam/ac-decomp">ACreTeam/ac-decomp</a>): 원본 실행 파일과 바이트 단위로 똑같이 다시 빌드되도록 복원한 C 코드라서 <span class="tag trust trust-analysis" data-tag="analysis" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</span> 중에서도 가장 확실한 근거입니다. 이 사이트의 동숲 수치는 대부분 이 소스의 파일과 행 번호까지 확인한 것입니다.</li>
+<li><strong>동숲 최적화 분석 시리즈</strong> (<a href="https://nobbs-it-study.tistory.com/entry/%EA%B2%8C%EC%9E%84%EB%B6%84%EC%84%9D-%EB%86%80%EB%8F%99%EC%88%B2%EC%9D%B4-32MB-%EC%95%88%EC%97%90-%EB%93%A4%EC%96%B4%EA%B0%94%EB%8B%A4%EA%B3%A0">0편</a> · <a href="https://nobbs-it-study.tistory.com/entry/%EA%B2%8C%EC%9E%84%EB%B6%84%EC%84%9D-%EB%86%80%EB%8F%99%EC%88%B2%EC%9D%98-%EB%A7%88%EC%9D%84%EC%9D%80-36-Byte%EB%8B%A4-%EC%B5%9C%EC%A0%81%ED%99%94-%EB%B6%84%EC%84%9D-1%ED%8E%B8">1편</a> · <a href="https://nobbs-it-study.tistory.com/entry/%EA%B2%8C%EC%9E%84-%EB%B6%84%EC%84%9D-%EB%8F%99%EC%88%B2-%EC%A3%BC%EB%AF%BC%EC%9D%84-%EC%96%B4%EB%96%BB%EA%B2%8C-%EC%82%B4%EC%95%84%EC%9E%88%EA%B2%8C-%EB%A7%8C%EB%93%A4%EC%97%88%EB%82%98-%EC%B5%9C%EC%A0%81%ED%99%94-%EB%B6%84%EC%84%9D-2%ED%8E%B8">2편</a>): 위 디컴파일 소스를 근거로 쓴 글. 2편의 주장 13개를 소스와 다시 대조해 모두 일치함을 확인했습니다.</li>
+<li><strong>Generative Agents 논문과 공식 코드</strong> (<a href="https://arxiv.org/abs/2304.03442">논문</a> · <a href="https://github.com/joonspk-research/generative_agents">코드</a>): 논문에 적힌 값과 공개 코드의 값이 다른 부분까지 확인했습니다(<a href="05-memory.html">5장</a>).</li>
+<li><strong>스타듀 밸리 위키의 모딩 문서</strong>: 게임 데이터 파일의 형식을 설명한 문서라 <span class="tag trust trust-analysis" data-tag="analysis" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</span>으로 표시했습니다.</li>
+<li><strong>GDC 발표, 개발자 글, 논문</strong>: Tynan Sylvester, Jeff Orkin, Dave Mark, Elan Ruskin, Richard Evans, Michael Mateas 등.</li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">버전과 시리즈를 섞지 않았습니다</p>
+<p>동물의 숲은 GameCube판(2001~2002), 놀러오세요(2005), 튀어나와요(2012), 모여봐요(2020)의 규칙이 서로 다릅니다. GameCube판 소스로 확인한 규칙을 다른 작품에 그대로 옮겨 쓰지 않았고, 작품 이름을 항상 같이 적었습니다.</p>
+</div>
+</section><section class="sec"><h2 id="출처">출처<a class="headerlink" href="#출처" title="이 소제목 링크">#</a></h2>
+<ul>
+<li>ACreTeam, ac-decomp — <a href="https://github.com/ACreTeam/ac-decomp">https://github.com/ACreTeam/ac-decomp</a></li>
+<li>이 가이드의 전체 참고문헌 — <a href="15-references.html">15장</a></li>
+</ul></section>
+      <nav class="pager" aria-label="이전·다음"><a class="next" href="01-intro.html">1. 들어가며 →</a></nav>
+    </article>
+  </main>
+  <aside class="toc" aria-label="이 페이지 목차"><p class="toc-title">이 페이지</p><ul><li><a href="#이-가이드가-다루는-것">이 가이드가 다루는 것</a></li><li><a href="#신뢰도-표시">신뢰도 표시</a></li><li><a href="#세-갈래-구조">세 갈래 구조</a></li><li><a href="#읽는-순서">읽는 순서</a></li><li><a href="#이-가이드의-근거">이 가이드의 근거</a></li><li><a href="#출처">출처</a></li></ul></aside>
+</div>
+<footer class="site-foot">신뢰도: <span class="tag trust trust-official">공식</span> <span class="tag trust trust-analysis">분석</span> <span class="tag trust trust-guess">추정</span> <span class="tag trust trust-unknown">확인 못 함</span> · 소스: <a href="https://github.com/HelloNobb/LIFE_SIMUL_LAB">GitHub</a></footer>
+<script src="assets/search-index.js"></script>
+<script src="assets/app.js"></script>
+<script type="module">
+import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.esm.min.mjs';
+window.__mermaid = mermaid;
+window.dispatchEvent(new Event('mermaid-ready'));
+</script>
+</body>
+</html>

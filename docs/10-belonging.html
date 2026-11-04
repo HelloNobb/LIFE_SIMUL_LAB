@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>소속감 설계 — 플레이어를 공동체의 일원으로 · LIFE SIMUL LAB</title>
+<meta name="description" content="소속감은 &quot;내가 이 공동체에 영향을 주고, 공동체가 그걸 알아본다&quot;는 순환에서 나온다. 공동 목표, 부탁과 보답, 내 흔적이 퍼지는 장치, 함께 맞는 정기 행사가 대표적인 재료다.">
+<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/pygments.css">
+</head>
+<body>
+<a class="skip" href="#main">본문으로 건너뛰기</a>
+<header class="topbar">
+  <button type="button" class="icon-btn" id="nav-toggle" aria-label="목차 열기" aria-expanded="false" aria-controls="sidebar">☰</button>
+  <a class="brand" href="index.html">LIFE SIMUL LAB</a>
+  <div class="search">
+    <input type="search" id="search-input" placeholder="검색  (단축키 /)" aria-label="사이트 검색" autocomplete="off">
+    <div id="search-results" class="search-results" role="listbox" hidden></div>
+  </div>
+  <button type="button" class="icon-btn" id="theme-toggle" aria-label="다크 모드 전환">◐</button>
+</header>
+<div class="layout">
+  <nav class="sidebar" id="sidebar" aria-label="전체 목차"><ul><li><a href="index.html">홈</a></li><li><a href="01-intro.html">1. 들어가며</a></li><li><a href="02-brain.html">2. NPC의 뇌</a></li><li><a href="03-routine.html">3. 욕구와 일상</a></li><li><a href="04-personality.html">4. 성격</a></li><li><a href="05-memory.html">5. 기억</a></li><li><a href="06-relationship.html">6. 관계</a></li><li><a href="07-dialogue.html">7. 대화</a></li><li><a href="08-events.html">8. 사건 생성</a></li><li><a href="09-world.html">9. 세계와 역사</a></li><li><a href="10-belonging.html" class="active" aria-current="page">10. 소속감 설계</a></li><li><a href="11-failures.html">11. 실패 사례</a></li><li><a href="12-ai-reality.html">12. AI 현실 점검</a></li><li><a href="13-patterns.html">13. 패턴 카드</a></li><li><a href="14-checklist.html">14. 체크리스트</a></li><li><a href="15-references.html">15. 참고문헌</a></li><li><a href="16-appendix-code.html">부록 A. 공통 뼈대 코드</a></li><li><a href="17-appendix-glossary.html">부록 B. 용어집</a></li><li class="nav-sep"><a href="tags.html">태그 모아보기</a></li></ul></nav>
+  <main id="main" class="content">
+    <article>
+      <header class="page-head">
+        <p class="eyebrow">10장</p>
+        <h1>소속감 설계 — 플레이어를 공동체의 일원으로</h1>
+        <p class="summary">소속감은 &quot;내가 이 공동체에 영향을 주고, 공동체가 그걸 알아본다&quot;는 순환에서 나온다. 공동 목표, 부탁과 보답, 내 흔적이 퍼지는 장치, 함께 맞는 정기 행사가 대표적인 재료다.</p>
+        <div class="page-goals"><span class="lbl">기여하는 목표</span><span class="tag goal goal-belong" data-tag="belong" title="내가 이 공동체의 일원이라는 느낌">소속감</span><span class="tag goal goal-relation" data-tag="relation" title="관계가 쌓이고 변하는 것">관계</span></div>
+      </header>
+      <div class="filter-bar" role="group" aria-label="태그 필터"><span class="filter-label">태그 필터</span><span class="chips"><button type="button" class="chip goal goal-belong" data-filter="belong" aria-pressed="false" title="내가 이 공동체의 일원이라는 느낌">소속감</button><button type="button" class="chip goal goal-plaus" data-filter="plaus" aria-pressed="false" title="사건이 '그럴 만했다'고 납득되는 것">개연성</button><button type="button" class="chip goal goal-relation" data-filter="relation" aria-pressed="false" title="관계가 쌓이고 변하는 것">관계</button><button type="button" class="chip goal goal-alive" data-filter="alive" aria-pressed="false" title="NPC가 실제로 사는 사람처럼 느껴지는 것">실존감</button></span><span class="chips"><button type="button" class="chip trust trust-official" data-filter="official" aria-pressed="false" title="개발자 발표·공식 문서·GDC·논문">공식</button><button type="button" class="chip trust trust-analysis" data-filter="analysis" aria-pressed="false" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</button><button type="button" class="chip trust trust-guess" data-filter="guess" aria-pressed="false" title="플레이 관찰·커뮤니티 추측·2차 보도">추정</button><button type="button" class="chip trust trust-unknown" data-filter="unknown" aria-pressed="false" title="찾아봤지만 믿을 만한 출처가 없음">확인 못 함</button></span><button type="button" class="chip clear" data-filter-clear>해제</button><span class="filter-hint" aria-live="polite"></span></div>
+      <details class="toc-mobile"><summary>이 페이지 목차</summary><ul><li><a href="#한눈에-보기">한눈에 보기</a></li><li><a href="#실제-게임-사례">실제 게임 사례</a><ul><li><a href="#동물의-숲-마을을-가꾸면-공동체가-커진다">동물의 숲 — 마을을 가꾸면 공동체가 커진다</a></li><li><a href="#스타듀-밸리-마을회관과-공동체의-선택-소속감-개연성">스타듀 밸리 — 마을회관과 공동체의 선택 {소속감} {개연성}</a></li><li><a href="#공통-장치-정기-행사">공통 장치: 정기 행사</a></li><li><a href="#wildermyth-영웅이-전설로-남는다-공식">Wildermyth — 영웅이 전설로 남는다 [공식]</a></li></ul></li><li><a href="#소속감-장치-목록">소속감 장치 목록</a></li><li><a href="#세-갈래로-보기">세 갈래로 보기</a><ul><li><a href="#ai-없이">AI 없이</a></li><li><a href="#ai-사용">AI 사용</a></li><li><a href="#섞어-쓰기">섞어 쓰기</a></li></ul></li><li><a href="#구현-스케치">구현 스케치</a></li><li><a href="#점검-질문">점검 질문</a></li><li><a href="#출처">출처</a></li></ul></details>
+      <section class="sec"><h2 id="한눈에-보기">한눈에 보기<a class="headerlink" href="#한눈에-보기" title="이 소제목 링크">#</a></h2>
+<p>소속감을 만드는 순환은 네 단계입니다.</p>
+<div class="mermaid-wrap" markdown="0"><pre class="mermaid" data-src="0">flowchart LR
+  A[&quot;1. 기여할 기회&lt;br/&gt;부탁·공동 목표&quot;] --&gt; B[&quot;2. 내 행동이 공동체를 바꿈&lt;br/&gt;마을이 예뻐짐·건물 복구&quot;]
+  B --&gt; C[&quot;3. 공동체가 알아봄&lt;br/&gt;감사 대사·행사·평가&quot;]
+  C --&gt; D[&quot;4. 내 흔적이 남음&lt;br/&gt;내가 지어준 말버릇·기념물&quot;]
+  D --&gt; A</pre></div>
+
+<ul>
+<li>1~2만 있으면 <strong>일</strong>처럼 느껴집니다. 3이 있어야 "고맙다는 말을 들었다", 4가 있어야 "이 마을에 내 자리가 있다"가 됩니다.</li>
+<li>소속감은 <a href="06-relationship.html">6장</a>의 개인 관계와 다릅니다. 한 사람과 친해지는 것이 아니라 <strong>집단 전체가 나를 일원으로 대하는 것</strong>입니다.</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">비유: 동네 단골집</p>
+<p>단골집에서 소속감을 느끼는 순간은 사장님이 "늘 먹던 거?"라고 물을 때(알아봄), 내가 추천한 메뉴가 메뉴판에 올라갈 때(흔적), 가게 이사를 도와줬을 때(기여)입니다. 할인 쿠폰(보상)만으로는 생기지 않습니다.</p>
+</div>
+</section><section class="sec"><h2 id="실제-게임-사례">실제 게임 사례<a class="headerlink" href="#실제-게임-사례" title="이 소제목 링크">#</a></h2>
+<h3 id="동물의-숲-마을을-가꾸면-공동체가-커진다" 소속감="소속감">동물의 숲 — 마을을 가꾸면 공동체가 커진다<a class="headerlink" href="#동물의-숲-마을을-가꾸면-공동체가-커진다" title="이 소제목 링크">#</a></h3>
+<p><strong>GameCube판</strong> <span class="tag trust trust-analysis" data-tag="analysis" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</span> (<a href="https://github.com/ACreTeam/ac-decomp">ac-decomp</a> <code>src/game/m_field_assessment.c</code>, <code>src/game/m_npc.c</code>)</p>
+<ul>
+<li>마을 평가는 에이커마다 나무 수를 봅니다(<code>l_block_rank_tree_num = {8, 11, 14, 17, 255}</code>, <code>l_block_rank_table = {0, 1, 2, 1, 0}</code>). 8그루 이하는 0점, 9~11그루는 "좋음", <strong>12~14그루는 "완벽"</strong>, 15~17그루는 다시 "좋음", 18그루 이상은 0점입니다. 너무 적어도 너무 많아도 안 됩니다. 한 에이커에 잡초가 3개 이상이면 그 에이커는 0점입니다.</li>
+<li>마을 점수 = 완벽 에이커 수 + 좋음 에이커 수 ÷ 2. 단, 마을 전체에 쓰레기가 5개 이상이면 점수가 0이 됩니다(<code>mFAs_GetFieldGoodBlockNum_common</code>).</li>
+<li>점수가 0/2/4/7/12/16을 넘을 때마다 등급이 0~6으로 오릅니다. 15일 연속 최고 등급이면 금도끼를 받습니다(<code>mFAs_PERFECT_DAY_STREAK_MAX 15</code>).</li>
+<li>이 등급이 <strong>새 주민이 이사 올 확률</strong>(40/50/60/70/80/90/100%)과 이어집니다(<code>mNpc_CheckGrowFieldRank</code>). 마을을 가꾸면 공동체가 커지는 고리입니다.</li>
+<li>새 주민이 오려면 <strong>이 마을 플레이어가 지금 주민 모두와 한 번씩은 대화했어야</strong> 합니다(<code>mNpc_CheckGrow</code>). 관계가 쌓일 속도보다 빨리 마을이 바뀌지 않게 막는 장치입니다.</li>
+<li>주민은 플레이어에게 말버릇을 지어 달라고 부탁하고, 그 말버릇이 다른 주민에게 옮겨 갑니다(<a href="06-relationship.html">6장</a>). 말버릇은 10글자 이하입니다. <span class="tag trust trust-analysis" data-tag="analysis" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</span> (<a href="https://nookipedia.com/wiki/Catchphrase">Nookipedia: Catchphrase</a>)</li>
+</ul>
+<p><strong>시리즈별</strong> <span class="tag trust trust-analysis" data-tag="analysis" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</span> (<a href="https://nookipedia.com/wiki/Island_evaluation">Nookipedia: Environment rating</a>)</p>
+<ul>
+<li>마을 평가를 알려 주는 존재가 작품마다 다릅니다. GC판은 소원 우물, 놀러오세요·타운으로 놀러가요는 마을 사무소의 펠리·펠리코, 튀어나와요·모여봐요는 여울.</li>
+<li>튀어나와요는 평가가 세 범주로 나뉘고, <strong>공공사업</strong>이 있어야 좋은 평가를 받습니다. 에이커별 나무 수 조건은 없어졌습니다.</li>
+<li>말버릇을 바꾸는 방법도 바뀌었습니다. 놀러오세요는 주민이 부탁할 때만, 타운으로 놀러가요 이후로는 마을 사무소에서도 가능하고, 모여봐요는 두 주민의 대화를 플레이어가 <strong>목격</strong>해서 한 주민이 다른 주민의 말버릇을 따라 하게 되는 경우도 있습니다.</li>
+</ul>
+<h3 id="스타듀-밸리-마을회관과-공동체의-선택-소속감-개연성">스타듀 밸리 — 마을회관과 공동체의 선택 <span class="tag goal goal-belong" data-tag="belong" title="내가 이 공동체의 일원이라는 느낌">소속감</span> <span class="tag goal goal-plaus" data-tag="plaus" title="사건이 '그럴 만했다'고 납득되는 것">개연성</span><a class="headerlink" href="#스타듀-밸리-마을회관과-공동체의-선택-소속감-개연성" title="이 소제목 링크">#</a></h3>
+<p><span class="tag trust trust-analysis" data-tag="analysis" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</span> (<a href="https://stardewvalleywiki.com/Community_Center">위키: Community Center</a>)</p>
+<ul>
+<li>마을회관의 두루마리가 요구하는 <strong>꾸러미(bundle)</strong>를 채우면 마을회관이 복구됩니다. 플레이어의 농사·채집·낚시가 마을 전체를 위한 기여가 됩니다.</li>
+<li>모두 채운 뒤 맑은 날에는 <strong>재개관 행사</strong>가 열려 마을 사람들이 모이고, 대형 마트(조자마트)에 맞서 마을 가게를 지키자는 장면이 나옵니다. 그 뒤 조자마트가 문을 닫고 마을 가게의 영업일이 바뀝니다. <strong>내 기여가 마을의 경제와 일상을 바꿉니다.</strong></li>
+<li>반대로 조자마트 회원권을 사면 마을회관이 조자 창고로 바뀝니다. 공동체 편에 설지 고르는 선택입니다.</li>
+<li>대사에도 이 결과가 들어갑니다(<code>$d cc</code>, <code>$d joja</code>처럼 마을회관·조자마트 상태로 갈리는 대사). <span class="tag trust trust-analysis" data-tag="analysis" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</span> (<a href="https://stardewvalleywiki.com/Modding:Dialogue">Modding:Dialogue</a>)</li>
+</ul>
+<h3 id="공통-장치-정기-행사" 소속감="소속감">공통 장치: 정기 행사<a class="headerlink" href="#공통-장치-정기-행사" title="이 소제목 링크">#</a></h3>
+<ul>
+<li>동숲 GC는 꽃놀이, 불꽃놀이, 달맞이, 줄다리기, 공 던지기, 새해 참배 같은 행사마다 전용 주민 액터가 있고, 핼러윈에는 일정표를 무시하고 주민을 모두 밖으로 내보냅니다. <span class="tag trust trust-analysis" data-tag="analysis" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</span> (<a href="https://github.com/ACreTeam/ac-decomp">ac-decomp</a>)</li>
+<li>스타듀의 축제는 날짜에 맞춰 마을 사람 모두가 한곳에 모입니다. 일정 데이터에 축제 키가 따로 있습니다. <span class="tag trust trust-analysis" data-tag="analysis" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</span> (<a href="https://stardewvalleywiki.com/Modding:Schedule_data">Modding:Schedule data</a>)</li>
+</ul>
+<p><strong>배울 점</strong>: 정기 행사는 <strong>공동체가 함께 시간을 보낸다</strong>는 감각을 만들고, 플레이어도 그 일원으로 참석합니다.</p>
+<h3 id="wildermyth-영웅이-전설로-남는다-공식">Wildermyth — 영웅이 전설로 남는다 <span class="tag trust trust-official" data-tag="official" title="개발자 발표·공식 문서·GDC·논문">공식</span><a class="headerlink" href="#wildermyth-영웅이-전설로-남는다-공식" title="이 소제목 링크">#</a></h3>
+<p>Wildermyth는 손으로 쓴 이야기와 절차 생성 이야기를 번갈아 쌓아 플레이어가 절차 생성 캐릭터에 감정을 쌓게 하는 방법을 GDC 2022에서 발표했습니다. (<a href="https://gdcvault.com/play/1027614/Independent-Games-Summit-Session-Getting">GDC Vault</a>) 캠페인을 거친 영웅이 이후 캠페인에 다시 등장할 수 있다는 점이 "내 영웅이 이 세계의 역사가 된다"는 소속감을 줍니다. <span class="tag trust trust-guess" data-tag="guess" title="플레이 관찰·커뮤니티 추측·2차 보도">추정</span></p>
+</section><section class="sec"><h2 id="소속감-장치-목록">소속감 장치 목록<a class="headerlink" href="#소속감-장치-목록" title="이 소제목 링크">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>장치</th>
+<th>내용</th>
+<th>예</th>
+<th>근거</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>공동 목표</td>
+<td>마을 전체를 위한 장기 과제</td>
+<td>스타듀 마을회관 꾸러미, 튀어나와요 공공사업</td>
+<td><span class="tag trust trust-analysis" data-tag="analysis" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</span></td>
+</tr>
+<tr>
+<td>부탁과 보답</td>
+<td>주민의 작은 부탁, 해결하면 감사</td>
+<td>동숲 주민 부탁, 스타듀 게시판</td>
+<td><span class="tag trust trust-analysis" data-tag="analysis" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</span></td>
+</tr>
+<tr>
+<td>평가와 인정</td>
+<td>공동체가 내 기여를 평가해 알려 줌</td>
+<td>동숲 마을 평가와 금도끼</td>
+<td><span class="tag trust trust-analysis" data-tag="analysis" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</span></td>
+</tr>
+<tr>
+<td>공동체의 성장</td>
+<td>내 기여가 공동체 규모·서비스를 바꿈</td>
+<td>동숲 이사 확률, 스타듀 가게 영업일</td>
+<td><span class="tag trust trust-analysis" data-tag="analysis" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</span></td>
+</tr>
+<tr>
+<td>흔적의 전파</td>
+<td>내가 준 것이 공동체에 퍼짐</td>
+<td>동숲 말버릇·옷 유행</td>
+<td><span class="tag trust trust-analysis" data-tag="analysis" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</span></td>
+</tr>
+<tr>
+<td>정기 행사</td>
+<td>다 같이 모이는 날</td>
+<td>동숲·스타듀 축제</td>
+<td><span class="tag trust trust-analysis" data-tag="analysis" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</span></td>
+</tr>
+<tr>
+<td>편 고르기</td>
+<td>공동체를 위한 선택과 그 결과</td>
+<td>스타듀 마을회관 vs 조자</td>
+<td><span class="tag trust trust-analysis" data-tag="analysis" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</span></td>
+</tr>
+<tr>
+<td>집단 기억</td>
+<td>공동체가 나의 과거를 이야기함</td>
+<td>동숲 "다른 플레이어 편지" 대사</td>
+<td><span class="tag trust trust-analysis" data-tag="analysis" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</span></td>
+</tr>
+</tbody>
+</table>
+</section><section class="sec"><h2 id="세-갈래로-보기">세 갈래로 보기<a class="headerlink" href="#세-갈래로-보기" title="이 소제목 링크">#</a></h2>
+<h3 id="ai-없이">AI 없이<a class="headerlink" href="#ai-없이" title="이 소제목 링크">#</a></h3>
+<p>위 표의 장치는 모두 AI 없이 만들 수 있고, 실제 사례도 모두 AI를 쓰지 않습니다. 설계의 핵심은 <strong>기여 → 변화 → 인정 → 흔적</strong> 순환의 각 단계를 하나 이상씩 두는 것입니다.</p>
+<h3 id="ai-사용">AI 사용<a class="headerlink" href="#ai-사용" title="이 소제목 링크">#</a></h3>
+<ul>
+<li><strong>공동체 소식지</strong>: 그주의 사건 기록(플레이어가 한 일 포함)을 LLM이 마을 신문 기사로 씁니다. "○○ 씨가 기증한 화석으로 박물관 전시실이 채워졌다" 같은 문장이 <strong>인정</strong> 단계를 강화합니다.</li>
+<li><strong>주민들의 뒷이야기</strong>: 플레이어가 한 일을 주민끼리 이야기하는 대사를 LLM이 만듭니다.</li>
+</ul>
+<h3 id="섞어-쓰기">섞어 쓰기<a class="headerlink" href="#섞어-쓰기" title="이 소제목 링크">#</a></h3>
+<ul>
+<li>사건 기록과 수치(누가 무엇을 기여했나)는 규칙으로 집계하고, LLM은 그 집계 결과를 <strong>칭찬과 소문의 말투</strong>로만 바꿉니다. 사실 확인이 끝난 정보만 문장이 되므로, "하지 않은 일로 칭찬받는" 어색함을 막을 수 있습니다.</li>
+</ul>
+</section><section class="sec"><h2 id="구현-스케치">구현 스케치<a class="headerlink" href="#구현-스케치" title="이 소제목 링크">#</a></h2>
+<div class="hl"><pre><span></span><code><span class="c1">// 마을 평가 → 공동체 성장 고리 (동숲 GC 구조를 일반화, 엔진 무관 C#)</span>
+<span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">TownRating</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="c1">// 구역 점수: 0(나쁨) / 1(좋음) / 2(완벽). 동숲 GC: 나무 9~11·15~17 좋음, 12~14 완벽, 잡초 3개 이상이면 0</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">AreaScore</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">trees</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">weeds</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">weeds</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">trees</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mi">8</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">trees</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">18</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">trees</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">12</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">trees</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mi">14</span><span class="p">)</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// 마을 점수 = 완벽 + 좋음/2, 쓰레기가 많으면 0</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">TownScore</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Collections</span><span class="p">.</span><span class="n">Generic</span><span class="p">.</span><span class="n">IEnumerable</span><span class="o">&lt;</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">trees</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">weeds</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="n">areas</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">townLitter</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">perfect</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">good</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">        </span><span class="k">foreach</span><span class="w"> </span><span class="p">(</span><span class="kt">var</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">areas</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">AreaScore</span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">trees</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">weeds</span><span class="p">);</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">s</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="n">perfect</span><span class="o">++</span><span class="p">;</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">s</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="n">good</span><span class="o">++</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">townLitter</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">5</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">perfect</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">good</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// 점수 → 등급 0~6 (동숲: 0/2/4/7/12/16을 넘을 때마다 한 단계)</span>
+<span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="k">readonly</span><span class="w"> </span><span class="kt">int</span><span class="p">[]</span><span class="w"> </span><span class="n">Thresholds</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">7</span><span class="p">,</span><span class="w"> </span><span class="mi">12</span><span class="p">,</span><span class="w"> </span><span class="mi">16</span><span class="w"> </span><span class="p">};</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">Rank</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">score</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">Thresholds</span><span class="p">.</span><span class="n">Length</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">score</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">Thresholds</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">i</span><span class="p">;</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="mi">6</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// 등급 → 새 주민 확률 (동숲: 40~100%)</span>
+<span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="k">readonly</span><span class="w"> </span><span class="kt">int</span><span class="p">[]</span><span class="w"> </span><span class="n">MoveInChance</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="mi">40</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="mi">60</span><span class="p">,</span><span class="w"> </span><span class="mi">70</span><span class="p">,</span><span class="w"> </span><span class="mi">80</span><span class="p">,</span><span class="w"> </span><span class="mi">90</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="p">};</span>
+
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="nf">TryMoveIn</span><span class="p">(</span><span class="n">Town</span><span class="w"> </span><span class="n">town</span><span class="p">,</span><span class="w"> </span><span class="n">PlayerData</span><span class="w"> </span><span class="n">player</span><span class="p">,</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="n">DateTime</span><span class="w"> </span><span class="n">now</span><span class="p">,</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="n">Random</span><span class="w"> </span><span class="n">rng</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">town</span><span class="p">.</span><span class="n">Residents</span><span class="p">.</span><span class="n">Count</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">town</span><span class="p">.</span><span class="n">Capacity</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">false</span><span class="p">;</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">((</span><span class="n">now</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">town</span><span class="p">.</span><span class="n">LastMoveIn</span><span class="p">).</span><span class="n">TotalHours</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">24</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">false</span><span class="p">;</span><span class="w">            </span><span class="c1">// 하루 한 명</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">town</span><span class="p">.</span><span class="n">Residents</span><span class="p">.</span><span class="n">TrueForAll</span><span class="p">(</span><span class="n">r</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">HasMet</span><span class="p">(</span><span class="n">player</span><span class="p">.</span><span class="n">Id</span><span class="p">)))</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">false</span><span class="p">;</span><span class="w"> </span><span class="c1">// 다 만나 본 뒤에만</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">rng</span><span class="p">.</span><span class="n">Next</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">MoveInChance</span><span class="p">[</span><span class="n">Rank</span><span class="p">(</span><span class="n">TownScore</span><span class="p">(</span><span class="n">town</span><span class="p">.</span><span class="n">Areas</span><span class="p">(),</span><span class="w"> </span><span class="n">town</span><span class="p">.</span><span class="n">Litter</span><span class="p">))])</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">false</span><span class="p">;</span>
+<span class="w">        </span><span class="n">town</span><span class="p">.</span><span class="n">AddResident</span><span class="p">(</span><span class="n">Recruit</span><span class="p">.</span><span class="n">LeastRepresentedPersonality</span><span class="p">(</span><span class="n">town</span><span class="p">));</span><span class="w">          </span><span class="c1">// 성격 다양성 보정(4장)</span>
+<span class="w">        </span><span class="n">town</span><span class="p">.</span><span class="n">LastMoveIn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">now</span><span class="p">;</span>
+<span class="w">        </span><span class="n">town</span><span class="p">.</span><span class="n">News</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="s">$"새 주민이 이사 왔습니다. 마을이 아름다워서 왔대요!"</span><span class="p">);</span><span class="w">  </span><span class="c1">// 인정: 원인을 말해 준다</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">true</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+</section><section class="sec"><h2 id="점검-질문">점검 질문<a class="headerlink" href="#점검-질문" title="이 소제목 링크">#</a></h2>
+<ol>
+<li>플레이어가 <strong>공동체 전체</strong>를 위해 할 수 있는 일이 있는가? (개인 퀘스트만 있지 않은가)</li>
+<li>그 일의 결과가 <strong>공동체의 모습</strong>을 바꾸는가? (보상 아이템만 주지 않는가)</li>
+<li>공동체가 그 일을 <strong>알아보는가</strong>? 누가, 언제, 어떻게 말해 주는가?</li>
+<li>플레이어가 남긴 <strong>흔적</strong>이 시간이 지나도 남거나 퍼지는가?</li>
+<li>플레이어가 <strong>참석하는 정기 행사</strong>가 있는가?</li>
+<li>공동체를 위한 선택과 자기 이익을 위한 선택이 갈리는 순간이 있는가? (스타듀 마을회관 vs 조자)</li>
+</ol>
+</section><section class="sec"><h2 id="출처">출처<a class="headerlink" href="#출처" title="이 소제목 링크">#</a></h2>
+<ul>
+<li>ACreTeam, ac-decomp (<code>src/game/m_field_assessment.c</code>, <code>src/game/m_npc.c</code>) — <a href="https://github.com/ACreTeam/ac-decomp">https://github.com/ACreTeam/ac-decomp</a></li>
+<li>Nookipedia, Environment rating / Catchphrase — <a href="https://nookipedia.com/wiki/Island_evaluation">https://nookipedia.com/wiki/Island_evaluation</a>, <a href="https://nookipedia.com/wiki/Catchphrase">https://nookipedia.com/wiki/Catchphrase</a></li>
+<li>Stardew Valley Wiki, Community Center / Modding:Dialogue / Modding:Schedule data — <a href="https://stardewvalleywiki.com/Community_Center">https://stardewvalleywiki.com/Community_Center</a></li>
+<li>Nate Austin, Wildermyth GDC 2022 — <a href="https://gdcvault.com/play/1027614/Independent-Games-Summit-Session-Getting">https://gdcvault.com/play/1027614/Independent-Games-Summit-Session-Getting</a></li>
+</ul></section>
+      <nav class="pager" aria-label="이전·다음"><a class="prev" href="09-world.html">← 9. 세계와 역사</a><a class="next" href="11-failures.html">11. 실패 사례 →</a></nav>
+    </article>
+  </main>
+  <aside class="toc" aria-label="이 페이지 목차"><p class="toc-title">이 페이지</p><ul><li><a href="#한눈에-보기">한눈에 보기</a></li><li><a href="#실제-게임-사례">실제 게임 사례</a><ul><li><a href="#동물의-숲-마을을-가꾸면-공동체가-커진다">동물의 숲 — 마을을 가꾸면 공동체가 커진다</a></li><li><a href="#스타듀-밸리-마을회관과-공동체의-선택-소속감-개연성">스타듀 밸리 — 마을회관과 공동체의 선택 {소속감} {개연성}</a></li><li><a href="#공통-장치-정기-행사">공통 장치: 정기 행사</a></li><li><a href="#wildermyth-영웅이-전설로-남는다-공식">Wildermyth — 영웅이 전설로 남는다 [공식]</a></li></ul></li><li><a href="#소속감-장치-목록">소속감 장치 목록</a></li><li><a href="#세-갈래로-보기">세 갈래로 보기</a><ul><li><a href="#ai-없이">AI 없이</a></li><li><a href="#ai-사용">AI 사용</a></li><li><a href="#섞어-쓰기">섞어 쓰기</a></li></ul></li><li><a href="#구현-스케치">구현 스케치</a></li><li><a href="#점검-질문">점검 질문</a></li><li><a href="#출처">출처</a></li></ul></aside>
+</div>
+<footer class="site-foot">신뢰도: <span class="tag trust trust-official">공식</span> <span class="tag trust trust-analysis">분석</span> <span class="tag trust trust-guess">추정</span> <span class="tag trust trust-unknown">확인 못 함</span> · 소스: <a href="https://github.com/HelloNobb/LIFE_SIMUL_LAB">GitHub</a></footer>
+<script src="assets/search-index.js"></script>
+<script src="assets/app.js"></script>
+<script type="module">
+import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.esm.min.mjs';
+window.__mermaid = mermaid;
+window.dispatchEvent(new Event('mermaid-ready'));
+</script>
+</body>
+</html>

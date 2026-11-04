@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>부록 B — 용어집 · LIFE SIMUL LAB</title>
+<meta name="description" content="이 가이드에 나오는 전문 용어를 영어 원어와 한 줄 뜻풀이로 모았다. 가나다순.">
+<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/pygments.css">
+</head>
+<body>
+<a class="skip" href="#main">본문으로 건너뛰기</a>
+<header class="topbar">
+  <button type="button" class="icon-btn" id="nav-toggle" aria-label="목차 열기" aria-expanded="false" aria-controls="sidebar">☰</button>
+  <a class="brand" href="index.html">LIFE SIMUL LAB</a>
+  <div class="search">
+    <input type="search" id="search-input" placeholder="검색  (단축키 /)" aria-label="사이트 검색" autocomplete="off">
+    <div id="search-results" class="search-results" role="listbox" hidden></div>
+  </div>
+  <button type="button" class="icon-btn" id="theme-toggle" aria-label="다크 모드 전환">◐</button>
+</header>
+<div class="layout">
+  <nav class="sidebar" id="sidebar" aria-label="전체 목차"><ul><li><a href="index.html">홈</a></li><li><a href="01-intro.html">1. 들어가며</a></li><li><a href="02-brain.html">2. NPC의 뇌</a></li><li><a href="03-routine.html">3. 욕구와 일상</a></li><li><a href="04-personality.html">4. 성격</a></li><li><a href="05-memory.html">5. 기억</a></li><li><a href="06-relationship.html">6. 관계</a></li><li><a href="07-dialogue.html">7. 대화</a></li><li><a href="08-events.html">8. 사건 생성</a></li><li><a href="09-world.html">9. 세계와 역사</a></li><li><a href="10-belonging.html">10. 소속감 설계</a></li><li><a href="11-failures.html">11. 실패 사례</a></li><li><a href="12-ai-reality.html">12. AI 현실 점검</a></li><li><a href="13-patterns.html">13. 패턴 카드</a></li><li><a href="14-checklist.html">14. 체크리스트</a></li><li><a href="15-references.html">15. 참고문헌</a></li><li><a href="16-appendix-code.html">부록 A. 공통 뼈대 코드</a></li><li><a href="17-appendix-glossary.html" class="active" aria-current="page">부록 B. 용어집</a></li><li class="nav-sep"><a href="tags.html">태그 모아보기</a></li></ul></nav>
+  <main id="main" class="content">
+    <article>
+      <header class="page-head">
+        <p class="eyebrow">부록</p>
+        <h1>부록 B — 용어집</h1>
+        <p class="summary">이 가이드에 나오는 전문 용어를 영어 원어와 한 줄 뜻풀이로 모았다. 가나다순.</p>
+        <div class="page-goals"><span class="lbl">기여하는 목표</span><span class="tag goal goal-alive" data-tag="alive" title="NPC가 실제로 사는 사람처럼 느껴지는 것">실존감</span></div>
+      </header>
+      <div class="filter-bar" role="group" aria-label="태그 필터"><span class="filter-label">태그 필터</span><span class="chips"><button type="button" class="chip goal goal-belong" data-filter="belong" aria-pressed="false" title="내가 이 공동체의 일원이라는 느낌">소속감</button><button type="button" class="chip goal goal-plaus" data-filter="plaus" aria-pressed="false" title="사건이 '그럴 만했다'고 납득되는 것">개연성</button><button type="button" class="chip goal goal-relation" data-filter="relation" aria-pressed="false" title="관계가 쌓이고 변하는 것">관계</button><button type="button" class="chip goal goal-alive" data-filter="alive" aria-pressed="false" title="NPC가 실제로 사는 사람처럼 느껴지는 것">실존감</button></span><span class="chips"><button type="button" class="chip trust trust-official" data-filter="official" aria-pressed="false" title="개발자 발표·공식 문서·GDC·논문">공식</button><button type="button" class="chip trust trust-analysis" data-filter="analysis" aria-pressed="false" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</button><button type="button" class="chip trust trust-guess" data-filter="guess" aria-pressed="false" title="플레이 관찰·커뮤니티 추측·2차 보도">추정</button><button type="button" class="chip trust trust-unknown" data-filter="unknown" aria-pressed="false" title="찾아봤지만 믿을 만한 출처가 없음">확인 못 함</button></span><button type="button" class="chip clear" data-filter-clear>해제</button><span class="filter-hint" aria-live="polite"></span></div>
+      <details class="toc-mobile"><summary>이 페이지 목차</summary><ul><li><a href="#ㄱㅁ">ㄱ~ㅁ</a></li><li><a href="#ㅂㅇ">ㅂ~ㅇ</a></li><li><a href="#ㅈㅎ-영문">ㅈ~ㅎ, 영문</a></li><li><a href="#출처">출처</a></li></ul></details>
+      <section class="sec"><h2 id="ㄱㅁ">ㄱ~ㅁ<a class="headerlink" href="#ㄱㅁ" title="이 소제목 링크">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>용어</th>
+<th>영어</th>
+<th>뜻</th>
+<th>처음 나오는 곳</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>가중치 무작위</td>
+<td>weighted random</td>
+<td>후보마다 뽑힐 확률을 다르게 해서 고르는 것</td>
+<td><a href="02-brain.html">2장</a></td>
+</tr>
+<tr>
+<td>감쇠</td>
+<td>attenuation / decay</td>
+<td>거리나 시간에 따라 값이 줄어드는 것</td>
+<td><a href="02-brain.html">2장</a>, <a href="05-memory.html">5장</a></td>
+</tr>
+<tr>
+<td>검색 점수</td>
+<td>retrieval score</td>
+<td>많은 기억 중 지금 쓸 것을 고르는 점수</td>
+<td><a href="05-memory.html">5장</a></td>
+</tr>
+<tr>
+<td>공개 관계</td>
+<td>relationship (public)</td>
+<td>친구·연인·적처럼 모두가 아는 관계 상태</td>
+<td><a href="06-relationship.html">6장</a></td>
+</tr>
+<tr>
+<td>관성</td>
+<td>inertia</td>
+<td>하던 행동에 보너스를 줘 결정이 자꾸 바뀌지 않게 하는 것</td>
+<td><a href="02-brain.html">2장</a></td>
+</tr>
+<tr>
+<td>광고</td>
+<td>advertisement</td>
+<td>오브젝트가 "나는 어떤 욕구를 얼마나 채운다"고 알리는 값</td>
+<td><a href="02-brain.html">2장</a></td>
+</tr>
+<tr>
+<td>긴장 곡선</td>
+<td>tension curve</td>
+<td>사건의 크기와 간격을 시간에 따라 올리고 내리는 계획</td>
+<td><a href="08-events.html">8장</a></td>
+</tr>
+<tr>
+<td>기억 스트림</td>
+<td>memory stream</td>
+<td>겪은 모든 일을 문장으로 쌓아 둔 목록</td>
+<td><a href="05-memory.html">5장</a></td>
+</tr>
+<tr>
+<td>기한부 생각</td>
+<td>thought / moodlet</td>
+<td>효과와 남은 시간을 가진 기분 요소</td>
+<td><a href="05-memory.html">5장</a></td>
+</tr>
+<tr>
+<td>대사 바크</td>
+<td>bark</td>
+<td>상황에 반응해 짧게 외치는 대사</td>
+<td><a href="07-dialogue.html">7장</a></td>
+</tr>
+<tr>
+<td>드라마 관리자</td>
+<td>drama manager</td>
+<td>이야기 곡선에 맞춰 다음 장면을 고르는 시스템</td>
+<td><a href="08-events.html">8장</a></td>
+</tr>
+<tr>
+<td>머리카락 복잡성</td>
+<td>hair complexity</td>
+<td>다른 시스템에 영향을 주지 않는 장식용 세부</td>
+<td><a href="01-intro.html">1장</a></td>
+</tr>
+<tr>
+<td>반응 곡선</td>
+<td>response curve</td>
+<td>입력값을 0~1 점수로 바꾸는 그래프</td>
+<td><a href="02-brain.html">2장</a></td>
+</tr>
+</tbody>
+</table>
+</section><section class="sec"><h2 id="ㅂㅇ">ㅂ~ㅇ<a class="headerlink" href="#ㅂㅇ" title="이 소제목 링크">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>용어</th>
+<th>영어</th>
+<th>뜻</th>
+<th>처음 나오는 곳</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>비트</td>
+<td>beat</td>
+<td>특정 화제를 중심으로 한 짧은 장면 단위</td>
+<td><a href="08-events.html">8장</a></td>
+</tr>
+<tr>
+<td>사회적 관습</td>
+<td>social practice</td>
+<td>저녁 식사처럼 그 자리에서 할 수 있는 행동을 제안하는 상황</td>
+<td><a href="06-relationship.html">6장</a></td>
+</tr>
+<tr>
+<td>사회적 교환</td>
+<td>social exchange</td>
+<td>고백·화해처럼 관계를 바꾸는 상호작용 단위</td>
+<td><a href="06-relationship.html">6장</a></td>
+</tr>
+<tr>
+<td>상태 기계</td>
+<td>FSM, finite state machine</td>
+<td>정해진 상태 중 하나에 있다가 조건에 따라 옮겨 가는 구조</td>
+<td><a href="02-brain.html">2장</a></td>
+</tr>
+<tr>
+<td>선별</td>
+<td>curation</td>
+<td>시뮬레이션 결과 중 흥미로운 것만 골라 보여주는 것</td>
+<td><a href="01-intro.html">1장</a></td>
+</tr>
+<tr>
+<td>성격 측면</td>
+<td>personality facet</td>
+<td>성격의 한 축을 0~100 같은 수치로 나타낸 것</td>
+<td><a href="04-personality.html">4장</a></td>
+</tr>
+<tr>
+<td>스마트 오브젝트</td>
+<td>smart object</td>
+<td>행동 방법과 효과를 NPC가 아니라 오브젝트가 들고 있는 설계</td>
+<td><a href="02-brain.html">2장</a></td>
+</tr>
+<tr>
+<td>스토리텔러</td>
+<td>AI storyteller</td>
+<td>언제 어떤 사건을 보낼지 정하는 시스템</td>
+<td><a href="08-events.html">8장</a></td>
+</tr>
+<tr>
+<td>아포페니아</td>
+<td>apophenia</td>
+<td>무작위한 것에서 의미 있는 패턴을 보는 경향</td>
+<td><a href="01-intro.html">1장</a></td>
+</tr>
+<tr>
+<td>에이커</td>
+<td>acre</td>
+<td>동숲에서 마을을 바둑판처럼 나눈 큰 조각(16×16칸)</td>
+<td><a href="09-world.html">9장</a></td>
+</tr>
+<tr>
+<td>욕구</td>
+<td>need / motive</td>
+<td>시간이 지나면 줄어드는 배고픔·피로 같은 수치</td>
+<td><a href="03-routine.html">3장</a></td>
+</tr>
+<tr>
+<td>원형</td>
+<td>archetype</td>
+<td>누구나 아는 인물·상황의 틀</td>
+<td><a href="01-intro.html">1장</a></td>
+</tr>
+<tr>
+<td>위협 점수</td>
+<td>threat points</td>
+<td>사건의 크기를 정하는 값</td>
+<td><a href="08-events.html">8장</a></td>
+</tr>
+<tr>
+<td>임베딩</td>
+<td>embedding</td>
+<td>문장의 의미를 숫자 벡터로 바꾼 것</td>
+<td><a href="05-memory.html">5장</a></td>
+</tr>
+<tr>
+<td>AI LOD</td>
+<td>AI level of detail</td>
+<td>플레이어와 먼 NPC일수록 계산을 단순하게 하는 것</td>
+<td><a href="09-world.html">9장</a></td>
+</tr>
+</tbody>
+</table>
+</section><section class="sec"><h2 id="ㅈㅎ-영문">ㅈ~ㅎ, 영문<a class="headerlink" href="#ㅈㅎ-영문" title="이 소제목 링크">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>용어</th>
+<th>영어</th>
+<th>뜻</th>
+<th>처음 나오는 곳</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>전제 조건</td>
+<td>precondition</td>
+<td>행동이나 이벤트가 일어나려면 참이어야 하는 조건</td>
+<td><a href="02-brain.html">2장</a></td>
+</tr>
+<tr>
+<td>정규화</td>
+<td>normalization</td>
+<td>서로 다른 범위의 값을 0~1처럼 같은 범위로 맞추는 것</td>
+<td><a href="05-memory.html">5장</a></td>
+</tr>
+<tr>
+<td>정신 붕괴</td>
+<td>mental break</td>
+<td>기분이 임계값 아래로 떨어져 통제를 잃는 사건</td>
+<td><a href="08-events.html">8장</a></td>
+</tr>
+<tr>
+<td>친밀도</td>
+<td>friendship</td>
+<td>NPC가 플레이어(또는 다른 NPC)에게 갖는 호감 수치</td>
+<td><a href="06-relationship.html">6장</a></td>
+</tr>
+<tr>
+<td>핵심 기억</td>
+<td>core memory</td>
+<td>성격을 영구히 바꾸는 기억(드워프 포트리스)</td>
+<td><a href="05-memory.html">5장</a></td>
+</tr>
+<tr>
+<td>행동 트리</td>
+<td>behavior tree</td>
+<td>조건과 행동을 나무 모양으로 엮어 위에서부터 시도하는 구조</td>
+<td><a href="02-brain.html">2장</a></td>
+</tr>
+<tr>
+<td>회고</td>
+<td>reflection</td>
+<td>기억들에서 상위 판단을 만들어 다시 기억에 넣는 것</td>
+<td><a href="05-memory.html">5장</a></td>
+</tr>
+<tr>
+<td>GOAP</td>
+<td>Goal-Oriented Action Planning</td>
+<td>목표를 주면 행동의 전제 조건·효과를 보고 순서를 찾는 계획 방식</td>
+<td><a href="02-brain.html">2장</a></td>
+</tr>
+<tr>
+<td>HTN</td>
+<td>Hierarchical Task Network</td>
+<td>큰 일을 작은 일로 쪼개는 규칙대로 계획하는 방식</td>
+<td><a href="02-brain.html">2장</a></td>
+</tr>
+<tr>
+<td>LLM</td>
+<td>large language model</td>
+<td>대량의 글로 학습해 문장을 만드는 언어 모델</td>
+<td><a href="02-brain.html">2장</a></td>
+</tr>
+<tr>
+<td>SLM</td>
+<td>small language model</td>
+<td>기기 안에서 돌릴 수 있을 만큼 작은 언어 모델</td>
+<td><a href="12-ai-reality.html">12장</a></td>
+</tr>
+<tr>
+<td>Utility AI</td>
+<td>utility-based AI</td>
+<td>모든 행동을 점수로 매겨 높은 것을 고르는 방식</td>
+<td><a href="02-brain.html">2장</a></td>
+</tr>
+</tbody>
+</table>
+</section><section class="sec"><h2 id="출처">출처<a class="headerlink" href="#출처" title="이 소제목 링크">#</a></h2>
+<ul>
+<li>각 용어의 정의와 근거는 "처음 나오는 곳"의 장에 있습니다. 전체 자료 목록은 <a href="15-references.html">15장</a>.</li>
+</ul></section>
+      <nav class="pager" aria-label="이전·다음"><a class="prev" href="16-appendix-code.html">← 부록 A. 공통 뼈대 코드</a></nav>
+    </article>
+  </main>
+  <aside class="toc" aria-label="이 페이지 목차"><p class="toc-title">이 페이지</p><ul><li><a href="#ㄱㅁ">ㄱ~ㅁ</a></li><li><a href="#ㅂㅇ">ㅂ~ㅇ</a></li><li><a href="#ㅈㅎ-영문">ㅈ~ㅎ, 영문</a></li><li><a href="#출처">출처</a></li></ul></aside>
+</div>
+<footer class="site-foot">신뢰도: <span class="tag trust trust-official">공식</span> <span class="tag trust trust-analysis">분석</span> <span class="tag trust trust-guess">추정</span> <span class="tag trust trust-unknown">확인 못 함</span> · 소스: <a href="https://github.com/HelloNobb/LIFE_SIMUL_LAB">GitHub</a></footer>
+<script src="assets/search-index.js"></script>
+<script src="assets/app.js"></script>
+<script type="module">
+import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.esm.min.mjs';
+window.__mermaid = mermaid;
+window.dispatchEvent(new Event('mermaid-ready'));
+</script>
+</body>
+</html>

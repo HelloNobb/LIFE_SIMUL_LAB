@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>실패 사례에서 배우기 · LIFE SIMUL LAB</title>
+<meta name="description" content="시뮬레이션이 너무 자유로우면 게임을 망가뜨리고, 너무 숨겨져 있으면 아무도 모른다. 오블리비언의 래디언트 AI, 심즈의 &quot;너무 똑똑한&quot; 자율 행동, 보이지 않는 시뮬레이션의 사례에서 공통 교훈을 뽑는다.">
+<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/pygments.css">
+</head>
+<body>
+<a class="skip" href="#main">본문으로 건너뛰기</a>
+<header class="topbar">
+  <button type="button" class="icon-btn" id="nav-toggle" aria-label="목차 열기" aria-expanded="false" aria-controls="sidebar">☰</button>
+  <a class="brand" href="index.html">LIFE SIMUL LAB</a>
+  <div class="search">
+    <input type="search" id="search-input" placeholder="검색  (단축키 /)" aria-label="사이트 검색" autocomplete="off">
+    <div id="search-results" class="search-results" role="listbox" hidden></div>
+  </div>
+  <button type="button" class="icon-btn" id="theme-toggle" aria-label="다크 모드 전환">◐</button>
+</header>
+<div class="layout">
+  <nav class="sidebar" id="sidebar" aria-label="전체 목차"><ul><li><a href="index.html">홈</a></li><li><a href="01-intro.html">1. 들어가며</a></li><li><a href="02-brain.html">2. NPC의 뇌</a></li><li><a href="03-routine.html">3. 욕구와 일상</a></li><li><a href="04-personality.html">4. 성격</a></li><li><a href="05-memory.html">5. 기억</a></li><li><a href="06-relationship.html">6. 관계</a></li><li><a href="07-dialogue.html">7. 대화</a></li><li><a href="08-events.html">8. 사건 생성</a></li><li><a href="09-world.html">9. 세계와 역사</a></li><li><a href="10-belonging.html">10. 소속감 설계</a></li><li><a href="11-failures.html" class="active" aria-current="page">11. 실패 사례</a></li><li><a href="12-ai-reality.html">12. AI 현실 점검</a></li><li><a href="13-patterns.html">13. 패턴 카드</a></li><li><a href="14-checklist.html">14. 체크리스트</a></li><li><a href="15-references.html">15. 참고문헌</a></li><li><a href="16-appendix-code.html">부록 A. 공통 뼈대 코드</a></li><li><a href="17-appendix-glossary.html">부록 B. 용어집</a></li><li class="nav-sep"><a href="tags.html">태그 모아보기</a></li></ul></nav>
+  <main id="main" class="content">
+    <article>
+      <header class="page-head">
+        <p class="eyebrow">11장</p>
+        <h1>실패 사례에서 배우기</h1>
+        <p class="summary">시뮬레이션이 너무 자유로우면 게임을 망가뜨리고, 너무 숨겨져 있으면 아무도 모른다. 오블리비언의 래디언트 AI, 심즈의 &quot;너무 똑똑한&quot; 자율 행동, 보이지 않는 시뮬레이션의 사례에서 공통 교훈을 뽑는다.</p>
+        <div class="page-goals"><span class="lbl">기여하는 목표</span><span class="tag goal goal-plaus" data-tag="plaus" title="사건이 '그럴 만했다'고 납득되는 것">개연성</span><span class="tag goal goal-alive" data-tag="alive" title="NPC가 실제로 사는 사람처럼 느껴지는 것">실존감</span></div>
+      </header>
+      <div class="filter-bar" role="group" aria-label="태그 필터"><span class="filter-label">태그 필터</span><span class="chips"><button type="button" class="chip goal goal-belong" data-filter="belong" aria-pressed="false" title="내가 이 공동체의 일원이라는 느낌">소속감</button><button type="button" class="chip goal goal-plaus" data-filter="plaus" aria-pressed="false" title="사건이 '그럴 만했다'고 납득되는 것">개연성</button><button type="button" class="chip goal goal-relation" data-filter="relation" aria-pressed="false" title="관계가 쌓이고 변하는 것">관계</button><button type="button" class="chip goal goal-alive" data-filter="alive" aria-pressed="false" title="NPC가 실제로 사는 사람처럼 느껴지는 것">실존감</button></span><span class="chips"><button type="button" class="chip trust trust-official" data-filter="official" aria-pressed="false" title="개발자 발표·공식 문서·GDC·논문">공식</button><button type="button" class="chip trust trust-analysis" data-filter="analysis" aria-pressed="false" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</button><button type="button" class="chip trust trust-guess" data-filter="guess" aria-pressed="false" title="플레이 관찰·커뮤니티 추측·2차 보도">추정</button><button type="button" class="chip trust trust-unknown" data-filter="unknown" aria-pressed="false" title="찾아봤지만 믿을 만한 출처가 없음">확인 못 함</button></span><button type="button" class="chip clear" data-filter-clear>해제</button><span class="filter-hint" aria-live="polite"></span></div>
+      <details class="toc-mobile"><summary>이 페이지 목차</summary><ul><li><a href="#한눈에-보기">한눈에 보기</a></li><li><a href="#오블리비언의-래디언트-ai-약속과-결과-개연성-실존감">오블리비언의 래디언트 AI — 약속과 결과 {개연성} {실존감}</a><ul><li><a href="#무엇을-약속했나-공식">무엇을 약속했나 [공식]</a></li><li><a href="#무슨-일이-있었나-공식">무슨 일이 있었나 [공식]</a></li><li><a href="#실제로-출시된-것-분석">실제로 출시된 것 [분석]</a></li><li><a href="#교훈">교훈</a></li></ul></li><li><a href="#심즈-자율-행동이-너무-잘했다">심즈 — 자율 행동이 너무 잘했다</a></li><li><a href="#보이지-않는-시뮬레이션">보이지 않는 시뮬레이션</a></li><li><a href="#절차-생성의-한계를-인정한-사례-공식">절차 생성의 한계를 인정한 사례 [공식]</a></li><li><a href="#llm-npc의-실패-양상">LLM NPC의 실패 양상</a></li><li><a href="#실패를-막는-체크리스트">실패를 막는 체크리스트</a></li><li><a href="#출처">출처</a></li></ul></details>
+      <section class="sec"><h2 id="한눈에-보기">한눈에 보기<a class="headerlink" href="#한눈에-보기" title="이 소제목 링크">#</a></h2>
+<p>실패는 크게 세 종류입니다.</p>
+<ol>
+<li><strong>너무 자유로움</strong>: NPC가 목표를 이루려고 게임이 원하지 않는 방법을 고른다. (오블리비언)</li>
+<li><strong>너무 잘함</strong>: 자율 행동이 플레이어보다 잘해서 플레이어가 할 일이 없다. (심즈 초기 버전)</li>
+<li><strong>보이지 않음</strong>: 시뮬레이션은 돌아가지만 플레이어가 모른다. (울티마 온라인·바이오쇼크의 생태계, 동숲 GC의 주민 관계값)</li>
+</ol>
+</section><section class="sec"><h2 id="오블리비언의-래디언트-ai-약속과-결과-개연성-실존감">오블리비언의 래디언트 AI — 약속과 결과 <span class="tag goal goal-plaus" data-tag="plaus" title="사건이 '그럴 만했다'고 납득되는 것">개연성</span> <span class="tag goal goal-alive" data-tag="alive" title="NPC가 실제로 사는 사람처럼 느껴지는 것">실존감</span><a class="headerlink" href="#오블리비언의-래디언트-ai-약속과-결과-개연성-실존감" title="이 소제목 링크">#</a></h2>
+<h3 id="무엇을-약속했나-공식">무엇을 약속했나 <span class="tag trust trust-official" data-tag="official" title="개발자 발표·공식 문서·GDC·논문">공식</span><a class="headerlink" href="#무엇을-약속했나-공식" title="이 소제목 링크">#</a></h3>
+<p>E3 2005 데모에서 토드 하워드는 래디언트 AI가 NPC에게 24시간 일정을 주고, 스크립트 없이 <strong>일반적인 목표만 주면 방법은 NPC가 스스로 찾는다</strong>고 소개했습니다. "필요하면 먹고, 음식을 어떻게 구할지는 그들에게 달렸다. 훔칠 수도, 살 수도, 기를 수도 있다." 당시 홍보 문구는 NPC가 개인 특성에 따라 어디서 먹을지, 누구와 말할지, 무엇을 말할지 정하고, 잠자고, 교회에 가고, 물건을 훔치기까지 한다고 설명했습니다. (<a href="https://blog.paavo.me/radiant-ai">Paavo의 자료 정리</a>에 재수록된 데모 발언과 홍보 문구)</p>
+<h3 id="무슨-일이-있었나-공식">무슨 일이 있었나 <span class="tag trust trust-official" data-tag="official" title="개발자 발표·공식 문서·GDC·논문">공식</span><a class="headerlink" href="#무슨-일이-있었나-공식" title="이 소제목 링크">#</a></h3>
+<p>개발자 에밀 파글리아룰로는 출시 전 포럼에서 "AI가 너무 영리하고 집요해서 퀘스트를 망쳐 놓는 일이 있어 일부 행동을 의식적으로 줄였다"고 썼고, 예를 들었습니다. 암흑 형제단 퀘스트에서 만나야 하는 약 거래상이 테스트 중에 플레이어가 도착하기 전에 죽어 있었는데, <strong>약에 중독된 NPC들이 약이 떨어지자 거래상을 죽이고 약을 구하고 있었다</strong>는 것입니다. 다른 개발자는 기능을 없앤 것은 아니고 "상황별로" NPC를 조정해 원하는 행동을 얻었다고 답했습니다. (<a href="https://blog.paavo.me/radiant-ai">Paavo</a>에 인용된 당시 개발자 포럼 발언, 재게시본 기준)</p>
+<h3 id="실제로-출시된-것-분석">실제로 출시된 것 <span class="tag trust trust-analysis" data-tag="analysis" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</span><a class="headerlink" href="#실제로-출시된-것-분석" title="이 소제목 링크">#</a></h3>
+<p>Paavo의 분석에 따르면 출시판 NPC에게는 심즈나 드워프 포트리스 같은 <strong>욕구가 없고</strong>, 일정·조건이 붙은 <strong>AI 패키지</strong>를 차례로 실행합니다. NPC는 공격성·자신감·활동성·책임감 수치를 가지고, 책임감이 낮으면 목표를 이루려고 범죄를 저지릅니다. 그는 래디언트 AI를 특정한 시스템이라기보다 오블리비언의 새 AI 기능 전체를 부르는 우산 같은 이름으로 봅니다. (<a href="https://blog.paavo.me/radiant-ai">Paavo</a>)</p>
+<h3 id="교훈">교훈<a class="headerlink" href="#교훈" title="이 소제목 링크">#</a></h3>
+<ul>
+<li><strong>목표 + 자유로운 수단 = 퀘스트 파괴</strong>: 핵심 NPC(퀘스트 대상)는 자율 행동의 피해자·가해자가 되지 않게 보호 목록을 두세요.</li>
+<li><strong>수단을 고르는 규칙에 "게임 규칙 보호" 조건을 넣으세요</strong>: GOAP라면 "퀘스트 NPC를 해치는 행동"의 비용을 무한대로 두는 식입니다(<a href="02-brain.html">2장</a>).</li>
+<li><strong>데모용 연출과 시스템을 구분하세요</strong>: 개발자 스스로 E3 데모의 서점 장면과 대사는 데모용으로 만든 것이라고 밝혔습니다. <span class="tag trust trust-official" data-tag="official" title="개발자 발표·공식 문서·GDC·논문">공식</span> (<a href="https://blog.paavo.me/radiant-ai">Paavo</a>)</li>
+<li><strong>잘 돌아가면 아무도 모른다</strong>: 베데스다 쪽에서는 래디언트 AI를 개선할수록 플레이어가 덜 알아챈다는 발언도 나왔습니다. [추정: 인터뷰 보도] (<a href="https://frvr.com/blog/news/elder-scrolls-designer-explains-that-radiant-ai-is-an-enormous-investment-for-bethesda-but-every-improvement-actually-makes-it-less-noticeable-to-players/">FRVR 보도</a>)</li>
+</ul>
+</section><section class="sec"><h2 id="심즈-자율-행동이-너무-잘했다" 실존감="실존감">심즈 — 자율 행동이 너무 잘했다<a class="headerlink" href="#심즈-자율-행동이-너무-잘했다" title="이 소제목 링크">#</a></h2>
+<p>윌 라이트는 초기 버전의 자율 행동이 너무 잘해서 "플레이어가 무엇을 하든 심을 자동으로 두는 것보다 못했다"고 말했습니다. <span class="tag trust trust-official" data-tag="official" title="개발자 발표·공식 문서·GDC·논문">공식</span> (<a href="https://www.pcgamer.com/games/the-sims/will-wright-says-the-original-sims-ai-was-actually-too-good-almost-anything-the-player-did-was-worse-than-the-sims-running-on-autopilot">PC Gamer</a>)</p>
+<p><strong>교훈</strong>: 시뮬레이션의 목표는 최적의 행동이 아니라 <strong>플레이어가 개입할 이유</strong>를 남기는 것입니다. 자율 행동은 "그럭저럭 살지만 플레이어가 도우면 확실히 나아지는" 수준이 좋습니다.</p>
+</section><section class="sec"><h2 id="보이지-않는-시뮬레이션" 개연성="개연성">보이지 않는 시뮬레이션<a class="headerlink" href="#보이지-않는-시뮬레이션" title="이 소제목 링크">#</a></h2>
+<ul>
+<li><strong>울티마 온라인과 바이오쇼크의 생태계</strong>: Tynan Sylvester는 두 게임의 생태계 시뮬레이션이 플레이어의 머릿속 모델로 옮겨지지 않아 "잡음으로 전락"했다고 평가합니다. <span class="tag trust trust-official" data-tag="official" title="개발자 발표·공식 문서·GDC·논문">공식</span> (<a href="https://www.gamedeveloper.com/design/the-simulation-dream">The Simulation Dream</a>)</li>
+<li><strong>동숲 GC의 주민 관계값</strong>: 주민마다 다른 주민에 대한 관계값이 있고 인사할 때마다 바뀌지만, 이 값을 읽어 행동을 바꾸는 코드는 소스에서 찾지 못했습니다. 플레이어가 실제로 보는 것은 관계값이 아니라 옮겨 다니는 말버릇과 옷입니다. <span class="tag trust trust-analysis" data-tag="analysis" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</span> (<a href="06-relationship.html">6장</a>)</li>
+<li><strong>너무 많은 정보</strong>: Tynan은 림월드가 정착민 수를 12명 정도로 제한해 플레이어가 각 인물을 기억할 수 있게 했고, 드워프는 200명까지 늘어 개인에게 애착을 갖기 어렵다고 비교합니다. 그는 "모든 세부를 채우면 아포페니아가 일어날 여지가 없고, 사람들은 인지적 수고를 싫어한다"고 말합니다. <span class="tag trust trust-official" data-tag="official" title="개발자 발표·공식 문서·GDC·논문">공식</span> (<a href="https://www.rockpapershotgun.com/how-rimworld-generates-great-stories">RPS 인터뷰</a>)</li>
+</ul>
+<p><strong>교훈</strong>: 시스템을 추가하기 전에 "이 결과를 플레이어가 어디서, 어떻게 보게 되는가"를 먼저 정하세요. 답이 없으면 만들지 않는 편이 낫습니다.</p>
+</section><section class="sec"><h2 id="절차-생성의-한계를-인정한-사례-공식">절차 생성의 한계를 인정한 사례 <span class="tag trust trust-official" data-tag="official" title="개발자 발표·공식 문서·GDC·논문">공식</span><a class="headerlink" href="#절차-생성의-한계를-인정한-사례-공식" title="이 소제목 링크">#</a></h2>
+<ul>
+<li><strong>Wildermyth</strong>: 개발자들은 무작위 챕터 구조와 절차적 악당을 시도했지만 기획 단계를 넘지 못했다고 밝혔습니다. (<a href="https://turnbasedlovers.com/10-turns-interview/with-wildermyth-developer">인터뷰</a>) 대신 손으로 쓴 이야기와 절차 생성 이야기를 번갈아 쌓는 방식을 택했고, 공식 위키는 분기가 많은 이벤트가 시스템상 다루기 어려워 대부분의 이야기가 선택 하나를 중심으로 돈다고 적었습니다. (<a href="https://www.wildermyth.com/wiki/Event_Types">Wildermyth Wiki</a>)</li>
+</ul>
+<p><strong>교훈</strong>: 모든 것을 절차적으로 만들 필요는 없습니다. <strong>뼈대는 손으로, 살은 절차로</strong>가 현실적인 경우가 많습니다.</p>
+</section><section class="sec"><h2 id="llm-npc의-실패-양상" 실존감="실존감">LLM NPC의 실패 양상<a class="headerlink" href="#llm-npc의-실패-양상" title="이 소제목 링크">#</a></h2>
+<ul>
+<li><strong>Generative Agents의 한계(논문)</strong> <span class="tag trust trust-official" data-tag="official" title="개발자 발표·공식 문서·GDC·논문">공식</span> (<a href="https://arxiv.org/abs/2304.03442">Park 외 2023</a>)<ul>
+<li>관련 기억을 못 찾거나 일부만 찾음(선거 이야기를 들었는데도 모른다고 답함).</li>
+<li>기억에 없는 내용을 덧붙임(완전히 지어내지는 않지만 과장). 다른 에이전트를 아느냐는 답 453개 중 6개(1.3%)가 지어낸 답.</li>
+<li>지나치게 격식 있고 협조적인 말투(언어 모델의 지시 학습 영향).</li>
+<li>25명이 이틀을 지내는 데 토큰 비용으로 수천 달러, 실행에 여러 날.</li>
+</ul>
+</li>
+<li><strong>인조이 Smart Zoi의 체감 차이</strong>: 크래프톤은 기능이 아직 개발 중이며 더 확장할 계획이라고 밝혔고 <span class="tag trust trust-official" data-tag="official" title="개발자 발표·공식 문서·GDC·논문">공식</span> (<a href="https://playinzoi.com/en/news/8419">크래프톤 공지</a>), 일부 플레이어는 "생각 말풍선 외에 행동 차이를 못 느꼈다"고 썼습니다. <span class="tag trust trust-guess" data-tag="guess" title="플레이 관찰·커뮤니티 추측·2차 보도">추정</span> (<a href="https://steamcommunity.com/app/2456740/discussions/0/836123794066162014/">Steam 토론</a>)</li>
+</ul>
+<p><strong>교훈</strong>: LLM이 만든 "속마음"이 행동으로 이어지지 않으면 <a href="01-intro.html">1장</a>의 원칙과 반대로 <strong>말과 행동이 어긋나는 것</strong>이 보입니다. LLM 출력은 행동 시스템의 결정과 같은 원본에서 나오게 하세요(<a href="02-brain.html">2장 섞어 쓰기</a>).</p>
+</section><section class="sec"><h2 id="실패를-막는-체크리스트">실패를 막는 체크리스트<a class="headerlink" href="#실패를-막는-체크리스트" title="이 소제목 링크">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>위험</th>
+<th>막는 방법</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>자율 행동이 퀘스트·핵심 NPC를 망침</td>
+<td>보호 목록, 퀘스트 중 자율 행동 범위 제한, 계획 비용에 금지 조건</td>
+</tr>
+<tr>
+<td>자율 행동이 너무 잘함</td>
+<td>의도적 비효율, 플레이어만 할 수 있는 개입 남기기</td>
+</tr>
+<tr>
+<td>시뮬레이션이 안 보임</td>
+<td>각 시스템마다 "보이는 결과" 최소 1개 정하기</td>
+</tr>
+<tr>
+<td>정보가 너무 많음</td>
+<td>인원 제한, 요약 UI, 중요한 것만 알림</td>
+</tr>
+<tr>
+<td>원인이 안 보임</td>
+<td>이유 하나 골라 보여주기(<a href="08-events.html">8장</a>)</td>
+</tr>
+<tr>
+<td>LLM이 사실과 다른 말을 함</td>
+<td>사실 묶음 밖의 고유명사·숫자·약속 거르기, 대체 대사</td>
+</tr>
+<tr>
+<td>LLM 속마음과 행동이 어긋남</td>
+<td>결정은 규칙이, 표현만 LLM이</td>
+</tr>
+</tbody>
+</table>
+</section><section class="sec"><h2 id="출처">출처<a class="headerlink" href="#출처" title="이 소제목 링크">#</a></h2>
+<ul>
+<li>Paavo, "What was Radiant AI, anyway?" (2025) — <a href="https://blog.paavo.me/radiant-ai">https://blog.paavo.me/radiant-ai</a></li>
+<li>FRVR, 래디언트 AI 관련 발언 보도 — <a href="https://frvr.com/blog/news/elder-scrolls-designer-explains-that-radiant-ai-is-an-enormous-investment-for-bethesda-but-every-improvement-actually-makes-it-less-noticeable-to-players/">https://frvr.com/blog/news/elder-scrolls-designer-explains-that-radiant-ai-is-an-enormous-investment-for-bethesda-but-every-improvement-actually-makes-it-less-noticeable-to-players/</a></li>
+<li>PC Gamer, 윌 라이트 심즈 자율 행동 발언 — <a href="https://www.pcgamer.com/games/the-sims/will-wright-says-the-original-sims-ai-was-actually-too-good-almost-anything-the-player-did-was-worse-than-the-sims-running-on-autopilot">https://www.pcgamer.com/games/the-sims/will-wright-says-the-original-sims-ai-was-actually-too-good-almost-anything-the-player-did-was-worse-than-the-sims-running-on-autopilot</a></li>
+<li>Tynan Sylvester, "The Simulation Dream" — <a href="https://www.gamedeveloper.com/design/the-simulation-dream">https://www.gamedeveloper.com/design/the-simulation-dream</a></li>
+<li>Rock Paper Shotgun, "How RimWorld Generates Great Stories" — <a href="https://www.rockpapershotgun.com/how-rimworld-generates-great-stories">https://www.rockpapershotgun.com/how-rimworld-generates-great-stories</a></li>
+<li>Turn Based Lovers, Wildermyth 개발자 인터뷰 — <a href="https://turnbasedlovers.com/10-turns-interview/with-wildermyth-developer">https://turnbasedlovers.com/10-turns-interview/with-wildermyth-developer</a></li>
+<li>Wildermyth Wiki, Event Types — <a href="https://www.wildermyth.com/wiki/Event_Types">https://www.wildermyth.com/wiki/Event_Types</a></li>
+<li>Park 외 2023 — <a href="https://arxiv.org/abs/2304.03442">https://arxiv.org/abs/2304.03442</a></li>
+<li>크래프톤, Smart Zoi 공지 — <a href="https://playinzoi.com/en/news/8419">https://playinzoi.com/en/news/8419</a></li>
+<li>Steam 토론 — <a href="https://steamcommunity.com/app/2456740/discussions/0/836123794066162014/">https://steamcommunity.com/app/2456740/discussions/0/836123794066162014/</a></li>
+<li>ACreTeam, ac-decomp — <a href="https://github.com/ACreTeam/ac-decomp">https://github.com/ACreTeam/ac-decomp</a></li>
+</ul></section>
+      <nav class="pager" aria-label="이전·다음"><a class="prev" href="10-belonging.html">← 10. 소속감 설계</a><a class="next" href="12-ai-reality.html">12. AI 현실 점검 →</a></nav>
+    </article>
+  </main>
+  <aside class="toc" aria-label="이 페이지 목차"><p class="toc-title">이 페이지</p><ul><li><a href="#한눈에-보기">한눈에 보기</a></li><li><a href="#오블리비언의-래디언트-ai-약속과-결과-개연성-실존감">오블리비언의 래디언트 AI — 약속과 결과 {개연성} {실존감}</a><ul><li><a href="#무엇을-약속했나-공식">무엇을 약속했나 [공식]</a></li><li><a href="#무슨-일이-있었나-공식">무슨 일이 있었나 [공식]</a></li><li><a href="#실제로-출시된-것-분석">실제로 출시된 것 [분석]</a></li><li><a href="#교훈">교훈</a></li></ul></li><li><a href="#심즈-자율-행동이-너무-잘했다">심즈 — 자율 행동이 너무 잘했다</a></li><li><a href="#보이지-않는-시뮬레이션">보이지 않는 시뮬레이션</a></li><li><a href="#절차-생성의-한계를-인정한-사례-공식">절차 생성의 한계를 인정한 사례 [공식]</a></li><li><a href="#llm-npc의-실패-양상">LLM NPC의 실패 양상</a></li><li><a href="#실패를-막는-체크리스트">실패를 막는 체크리스트</a></li><li><a href="#출처">출처</a></li></ul></aside>
+</div>
+<footer class="site-foot">신뢰도: <span class="tag trust trust-official">공식</span> <span class="tag trust trust-analysis">분석</span> <span class="tag trust trust-guess">추정</span> <span class="tag trust trust-unknown">확인 못 함</span> · 소스: <a href="https://github.com/HelloNobb/LIFE_SIMUL_LAB">GitHub</a></footer>
+<script src="assets/search-index.js"></script>
+<script src="assets/app.js"></script>
+<script type="module">
+import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.esm.min.mjs';
+window.__mermaid = mermaid;
+window.dispatchEvent(new Event('mermaid-ready'));
+</script>
+</body>
+</html>

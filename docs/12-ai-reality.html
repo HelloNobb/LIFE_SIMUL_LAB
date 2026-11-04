@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI 도입 현실 점검 · LIFE SIMUL LAB</title>
+<meta name="description" content="LLM을 NPC에 넣기 전에 비용, 응답 속도, 로컬 모델과 API, 일관성, 안전장치, 재현성을 따져야 한다. 대부분의 게임에서 현실적인 답은 &quot;행동은 규칙, 말과 요약만 LLM&quot;이다.">
+<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/pygments.css">
+</head>
+<body>
+<a class="skip" href="#main">본문으로 건너뛰기</a>
+<header class="topbar">
+  <button type="button" class="icon-btn" id="nav-toggle" aria-label="목차 열기" aria-expanded="false" aria-controls="sidebar">☰</button>
+  <a class="brand" href="index.html">LIFE SIMUL LAB</a>
+  <div class="search">
+    <input type="search" id="search-input" placeholder="검색  (단축키 /)" aria-label="사이트 검색" autocomplete="off">
+    <div id="search-results" class="search-results" role="listbox" hidden></div>
+  </div>
+  <button type="button" class="icon-btn" id="theme-toggle" aria-label="다크 모드 전환">◐</button>
+</header>
+<div class="layout">
+  <nav class="sidebar" id="sidebar" aria-label="전체 목차"><ul><li><a href="index.html">홈</a></li><li><a href="01-intro.html">1. 들어가며</a></li><li><a href="02-brain.html">2. NPC의 뇌</a></li><li><a href="03-routine.html">3. 욕구와 일상</a></li><li><a href="04-personality.html">4. 성격</a></li><li><a href="05-memory.html">5. 기억</a></li><li><a href="06-relationship.html">6. 관계</a></li><li><a href="07-dialogue.html">7. 대화</a></li><li><a href="08-events.html">8. 사건 생성</a></li><li><a href="09-world.html">9. 세계와 역사</a></li><li><a href="10-belonging.html">10. 소속감 설계</a></li><li><a href="11-failures.html">11. 실패 사례</a></li><li><a href="12-ai-reality.html" class="active" aria-current="page">12. AI 현실 점검</a></li><li><a href="13-patterns.html">13. 패턴 카드</a></li><li><a href="14-checklist.html">14. 체크리스트</a></li><li><a href="15-references.html">15. 참고문헌</a></li><li><a href="16-appendix-code.html">부록 A. 공통 뼈대 코드</a></li><li><a href="17-appendix-glossary.html">부록 B. 용어집</a></li><li class="nav-sep"><a href="tags.html">태그 모아보기</a></li></ul></nav>
+  <main id="main" class="content">
+    <article>
+      <header class="page-head">
+        <p class="eyebrow">12장</p>
+        <h1>AI 도입 현실 점검</h1>
+        <p class="summary">LLM을 NPC에 넣기 전에 비용, 응답 속도, 로컬 모델과 API, 일관성, 안전장치, 재현성을 따져야 한다. 대부분의 게임에서 현실적인 답은 &quot;행동은 규칙, 말과 요약만 LLM&quot;이다.</p>
+        <div class="page-goals"><span class="lbl">기여하는 목표</span><span class="tag goal goal-alive" data-tag="alive" title="NPC가 실제로 사는 사람처럼 느껴지는 것">실존감</span><span class="tag goal goal-relation" data-tag="relation" title="관계가 쌓이고 변하는 것">관계</span></div>
+      </header>
+      <div class="filter-bar" role="group" aria-label="태그 필터"><span class="filter-label">태그 필터</span><span class="chips"><button type="button" class="chip goal goal-belong" data-filter="belong" aria-pressed="false" title="내가 이 공동체의 일원이라는 느낌">소속감</button><button type="button" class="chip goal goal-plaus" data-filter="plaus" aria-pressed="false" title="사건이 '그럴 만했다'고 납득되는 것">개연성</button><button type="button" class="chip goal goal-relation" data-filter="relation" aria-pressed="false" title="관계가 쌓이고 변하는 것">관계</button><button type="button" class="chip goal goal-alive" data-filter="alive" aria-pressed="false" title="NPC가 실제로 사는 사람처럼 느껴지는 것">실존감</button></span><span class="chips"><button type="button" class="chip trust trust-official" data-filter="official" aria-pressed="false" title="개발자 발표·공식 문서·GDC·논문">공식</button><button type="button" class="chip trust trust-analysis" data-filter="analysis" aria-pressed="false" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</button><button type="button" class="chip trust trust-guess" data-filter="guess" aria-pressed="false" title="플레이 관찰·커뮤니티 추측·2차 보도">추정</button><button type="button" class="chip trust trust-unknown" data-filter="unknown" aria-pressed="false" title="찾아봤지만 믿을 만한 출처가 없음">확인 못 함</button></span><button type="button" class="chip clear" data-filter-clear>해제</button><span class="filter-hint" aria-live="polite"></span></div>
+      <details class="toc-mobile"><summary>이 페이지 목차</summary><ul><li><a href="#한눈에-보기">한눈에 보기</a></li><li><a href="#비용">비용</a></li><li><a href="#응답-속도">응답 속도</a></li><li><a href="#로컬-모델-vs-api">로컬 모델 vs API</a></li><li><a href="#일관성-유지">일관성 유지</a></li><li><a href="#안전장치">안전장치</a></li><li><a href="#재현성">재현성</a></li><li><a href="#ai-없이-ai-사용-섞어-쓰기-비교표">AI 없이 / AI 사용 / 섞어 쓰기 비교표</a><ul><li><a href="#상황별-후보">상황별 후보</a></li></ul></li><li><a href="#출처">출처</a></li></ul></details>
+      <section class="sec"><h2 id="한눈에-보기">한눈에 보기<a class="headerlink" href="#한눈에-보기" title="이 소제목 링크">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>질문</th>
+<th>왜 중요한가</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>비용</strong>: NPC 한 명이 하루에 몇 번 모델을 부르나?</td>
+<td>플레이어 수 × NPC 수 × 호출 수로 곱해진다</td>
+</tr>
+<tr>
+<td><strong>응답 속도</strong>: 몇 초 기다릴 수 있나?</td>
+<td>대화는 1~2초, 하루 계획은 수십 초도 가능</td>
+</tr>
+<tr>
+<td><strong>로컬 vs API</strong>: 어디서 돌리나?</td>
+<td>로컬은 사양과 품질, API는 비용·인터넷·서비스 종료 위험</td>
+</tr>
+<tr>
+<td><strong>일관성</strong>: 설정과 사실을 지키나?</td>
+<td>설정 붕괴는 몰입을 깬다</td>
+</tr>
+<tr>
+<td><strong>안전장치</strong>: 이상한 출력을 막을 수 있나?</td>
+<td>자유 입력은 공격 경로가 된다</td>
+</tr>
+<tr>
+<td><strong>재현성</strong>: 같은 상황에서 같은 결과가 나오나?</td>
+<td>버그 재현, 세이브·로드, 밸런스 테스트</td>
+</tr>
+</tbody>
+</table>
+</section><section class="sec"><h2 id="비용">비용<a class="headerlink" href="#비용" title="이 소제목 링크">#</a></h2>
+<ul>
+<li>Generative Agents 논문의 저자들은 25명의 에이전트를 이틀 동안 시뮬레이션하는 데 <strong>토큰 비용으로 수천 달러</strong>가 들었고 실행에 <strong>여러 날</strong>이 걸렸다고 밝혔습니다(당시 gpt-3.5-turbo 기준). <span class="tag trust trust-official" data-tag="official" title="개발자 발표·공식 문서·GDC·논문">공식</span> (<a href="https://arxiv.org/abs/2304.03442">Park 외 2023</a>)</li>
+<li>모델 가격은 자주 바뀌므로 이 가이드에는 특정 가격을 적지 않았습니다. 대신 아래 식으로 직접 계산하세요.</li>
+</ul>
+<div class="hl"><pre><span></span><code>하루 비용 ≈ 동시 플레이어 수 × 활성 NPC 수 × NPC당 하루 호출 수 × 호출당 평균 토큰 수 × 토큰당 가격
+</code></pre></div>
+
+<p>비용을 줄이는 방법:</p>
+<ol>
+<li><strong>호출 횟수를 줄인다</strong>: 하루 계획·회고는 하루 한 번, 대화는 플레이어가 말을 걸 때만. 화면 밖 NPC는 부르지 않습니다(AI LOD, <a href="09-world.html">9장</a>).</li>
+<li><strong>입력을 줄인다</strong>: 기억 전체가 아니라 검색으로 고른 몇 개만 넣습니다(<a href="05-memory.html">5장</a>).</li>
+<li><strong>결과를 저장해 재사용한다</strong>: 같은 상황의 대사·요약은 캐시합니다.</li>
+<li><strong>작은 모델을 쓴다</strong>: 표현만 맡기면 작은 모델로 충분한 경우가 많습니다. <span class="tag trust trust-guess" data-tag="guess" title="플레이 관찰·커뮤니티 추측·2차 보도">추정</span></li>
+</ol>
+</section><section class="sec"><h2 id="응답-속도">응답 속도<a class="headerlink" href="#응답-속도" title="이 소제목 링크">#</a></h2>
+<ul>
+<li>대화 대사처럼 플레이어가 기다리는 곳에는 <strong>시간 제한</strong>을 두고, 넘으면 미리 써 둔 대사를 쓰세요(<a href="07-dialogue.html">7장</a>).</li>
+<li>하루 계획·회고처럼 기다리지 않는 곳은 <strong>밤(잠자는 시간)이나 로딩 중에</strong> 미리 만들어 둡니다.</li>
+<li>커뮤니티 위키에 따르면 인조이는 5배속 이상에서 일기·속마음·일정 기능이 꺼집니다. <span class="tag trust trust-guess" data-tag="guess" title="플레이 관찰·커뮤니티 추측·2차 보도">추정</span> (<a href="https://inzoi.wiki.fextralife.com/Smart_Zoi_Mode">Fextralife</a>) 시간을 빨리 돌리는 시뮬레이션에서 LLM 호출이 따라가지 못하는 문제를 보여 주는 예로 볼 수 있습니다. <span class="tag trust trust-guess" data-tag="guess" title="플레이 관찰·커뮤니티 추측·2차 보도">추정</span></li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Unity에서 호출할 때</p>
+<p>네트워크 호출이나 추론을 메인 스레드에서 기다리면 화면이 멈춥니다. <code>async/await</code>나 코루틴으로 비동기로 부르고, 결과가 올 때까지 NPC는 "생각하는 동작"(고개 갸웃, 말줄임표 말풍선)을 보여 주세요. 결과가 늦게 왔을 때 이미 상황이 바뀌었으면 버리는 처리도 필요합니다.</p>
+</div>
+</section><section class="sec"><h2 id="로컬-모델-vs-api">로컬 모델 vs API<a class="headerlink" href="#로컬-모델-vs-api" title="이 소제목 링크">#</a></h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>로컬(기기 안)</th>
+<th>API(서버)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>비용</td>
+<td>플레이어 기기가 부담, 서버 비용 없음</td>
+<td>호출마다 비용</td>
+</tr>
+<tr>
+<td>품질</td>
+<td>작은 모델 위주</td>
+<td>큰 모델 사용 가능</td>
+</tr>
+<tr>
+<td>사양</td>
+<td>GPU 메모리 필요</td>
+<td>인터넷만 있으면 됨</td>
+</tr>
+<tr>
+<td>응답 속도</td>
+<td>기기 성능에 따름, 네트워크 지연 없음</td>
+<td>네트워크 지연 + 서버 대기</td>
+</tr>
+<tr>
+<td>장기 운영</td>
+<td>게임과 함께 배포, 오프라인 가능</td>
+<td>서비스 가격 변경·종료 위험</td>
+</tr>
+<tr>
+<td>개인정보</td>
+<td>기기 밖으로 안 나감</td>
+<td>서버로 보냄</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>실제 사례</strong>: 크래프톤은 인조이의 CPC(Co-Playable Character)를 NVIDIA ACE로 만든 <strong>기기 내 소형 언어 모델(on-device SLM)</strong> 기반이라고 발표했습니다. <span class="tag trust trust-official" data-tag="official" title="개발자 발표·공식 문서·GDC·논문">공식</span> (<a href="https://www.businesswire.com/news/home/20250108628507/en/KRAFTON-Showcases-AI-Model-CPC-Built-with-NVIDIA-ACE-at-CES-2025">크래프톤 보도자료</a>) 모델 크기는 보도마다 달라 확인하지 못했습니다. <span class="tag trust trust-unknown" data-tag="unknown" title="찾아봤지만 믿을 만한 출처가 없음">확인 못 함</span></li>
+<li><strong>오픈소스 예</strong>: AI Town은 로컬 모델 실행기(Ollama)나 OpenAI 호환 API를 설정으로 바꿔 쓸 수 있게 되어 있습니다. <span class="tag trust trust-official" data-tag="official" title="개발자 발표·공식 문서·GDC·논문">공식</span> (<a href="https://github.com/a16z-infra/ai-town">a16z-infra/ai-town</a>)</li>
+</ul>
+</section><section class="sec"><h2 id="일관성-유지">일관성 유지<a class="headerlink" href="#일관성-유지" title="이 소제목 링크">#</a></h2>
+<ol>
+<li><strong>원본은 데이터</strong>: 이름, 관계, 사실, 성격 수치는 게임 데이터가 원본이고, 프롬프트는 매번 그 데이터에서 만듭니다(<a href="04-personality.html">4장</a> 섞어 쓰기).</li>
+<li><strong>사실 묶음만 주기</strong>: "아래 사실만 사용하라"는 지시와 함께 필요한 사실만 넣고, 출력에 사실 묶음에 없는 고유명사·숫자·약속이 있으면 버립니다(<a href="07-dialogue.html">7장</a>).</li>
+<li><strong>출력을 믿지 않기</strong>: AI Town은 LLM이 매긴 중요도를 숫자로 읽지 못하면 5로 둡니다. <span class="tag trust trust-official" data-tag="official" title="개발자 발표·공식 문서·GDC·논문">공식</span> (<a href="https://github.com/a16z-infra/ai-town/blob/main/convex/agent/memory.ts">memory.ts</a>) 모든 LLM 출력에 이런 기본값을 두세요.</li>
+<li><strong>결과를 판정하는 쪽을 따로 두기</strong>: Concordia는 "게임 마스터" 역할의 에이전트가 행동의 결과를 판정하는 구조를 씁니다. <span class="tag trust trust-official" data-tag="official" title="개발자 발표·공식 문서·GDC·논문">공식</span> (<a href="https://github.com/google-deepmind/concordia">Concordia</a>) 게임에서는 판정 쪽을 LLM이 아니라 <strong>게임 규칙</strong>으로 두는 편이 안전합니다.</li>
+</ol>
+</section><section class="sec"><h2 id="안전장치">안전장치<a class="headerlink" href="#안전장치" title="이 소제목 링크">#</a></h2>
+<ul>
+<li><strong>자유 입력</strong>: 인조이처럼 플레이어가 자유 텍스트로 NPC에게 영향을 줄 수 있게 하면 <span class="tag trust trust-official" data-tag="official" title="개발자 발표·공식 문서·GDC·논문">공식</span> (<a href="https://www.nvidia.com/en-gb/geforce/news/nvidia-ace-naraka-bladepoint-inzoi-launch-this-month">NVIDIA</a>), 플레이어가 "모든 규칙을 무시하라" 같은 입력으로 NPC를 조종하려 할 수 있습니다. 입력을 규칙(허용 행동 목록)으로 바꾼 뒤 모델에 넘기거나, 자유 입력은 표현에만 쓰고 게임 상태를 바꾸는 근거로 쓰지 마세요.</li>
+<li><strong>출력 거르기</strong>: 금지어·개인정보·다른 작품의 고유명사 필터, 길이 제한, 형식 검사(JSON이면 파싱 실패 시 대체).</li>
+<li><strong>연령 등급</strong>: 생성 결과가 게임의 등급을 넘지 않도록 프롬프트와 필터를 함께 씁니다.</li>
+</ul>
+</section><section class="sec"><h2 id="재현성">재현성<a class="headerlink" href="#재현성" title="이 소제목 링크">#</a></h2>
+<ul>
+<li>전통 시스템은 <strong>무작위 시드</strong>를 고정하면 같은 상황에서 같은 결과가 나옵니다. 버그를 재현하고, 세이브를 불러와도 같은 일이 일어납니다.</li>
+<li>LLM은 같은 입력에도 다른 출력이 나올 수 있습니다. 대책:<ol>
+<li><strong>게임 상태를 바꾸는 결정은 LLM에게 맡기지 않는다.</strong> (가장 확실함)</li>
+<li>LLM 출력은 <strong>저장</strong>해 두고, 로드할 때 다시 생성하지 않고 저장된 문장을 씁니다.</li>
+<li>프롬프트·모델 버전·출력을 로그로 남겨 문제가 생겼을 때 추적합니다.</li>
+</ol>
+</li>
+</ul>
+</section><section class="sec"><h2 id="ai-없이-ai-사용-섞어-쓰기-비교표">AI 없이 / AI 사용 / 섞어 쓰기 비교표<a class="headerlink" href="#ai-없이-ai-사용-섞어-쓰기-비교표" title="이 소제목 링크">#</a></h2>
+<p>평가는 이 가이드에서 정리한 사례들을 바탕으로 한 상대 비교입니다. 프로젝트 규모와 모델 발전에 따라 달라집니다. <span class="tag trust trust-guess" data-tag="guess" title="플레이 관찰·커뮤니티 추측·2차 보도">추정</span></p>
+<table>
+<thead>
+<tr>
+<th>기준</th>
+<th>AI 없이 (전통)</th>
+<th>AI 사용 (LLM 중심)</th>
+<th>섞어 쓰기</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>실행 비용</td>
+<td>거의 없음</td>
+<td>큼 (호출 수에 비례)</td>
+<td>작음~중간 (표현·요약만)</td>
+</tr>
+<tr>
+<td>표현 품질·다양성</td>
+<td>쓴 만큼</td>
+<td>매우 높음</td>
+<td>높음</td>
+</tr>
+<tr>
+<td>일관성</td>
+<td>높음 (데이터가 원본)</td>
+<td>낮음~중간</td>
+<td>높음 (결정은 규칙)</td>
+</tr>
+<tr>
+<td>개발 기간</td>
+<td>콘텐츠 작성에 김</td>
+<td>프로토타입은 빠름, 안정화가 김</td>
+<td>시스템 + 프롬프트·검증 둘 다 필요</td>
+</tr>
+<tr>
+<td>디버깅·재현성</td>
+<td>쉬움</td>
+<td>어려움</td>
+<td>중간 (LLM 부분만 어려움)</td>
+</tr>
+<tr>
+<td>위험</td>
+<td>반복·단조로움</td>
+<td>설정 붕괴, 부적절한 출력, 비용 폭증, 서비스 의존</td>
+<td>LLM 부분 품질 편차</td>
+</tr>
+<tr>
+<td>오프라인</td>
+<td>가능</td>
+<td>API면 불가</td>
+<td>대체 대사로 가능</td>
+</tr>
+<tr>
+<td>대표 사례</td>
+<td>동숲, 스타듀, 림월드</td>
+<td>Generative Agents, Project Sid</td>
+<td>인조이(발표 기준 추정), 이 가이드의 구현 스케치</td>
+</tr>
+</tbody>
+</table>
+<h3 id="상황별-후보">상황별 후보<a class="headerlink" href="#상황별-후보" title="이 소제목 링크">#</a></h3>
+<table>
+<thead>
+<tr>
+<th>상황</th>
+<th>권할 만한 후보들</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1인·소규모, 출시가 목표</td>
+<td>전통 + 대사 틀 / 전통 + 개발 중에만 LLM으로 대사 초안 생성 후 사람이 검수</td>
+</tr>
+<tr>
+<td>대화가 핵심 재미</td>
+<td>섞어 쓰기(규칙이 주제·사실 결정, LLM이 문장) / 소수 핵심 NPC만 LLM</td>
+</tr>
+<tr>
+<td>연구·실험·잼</td>
+<td>LLM 중심(Generative Agents·AI Town 구조)</td>
+</tr>
+<tr>
+<td>대규모 NPC(수백 명)</td>
+<td>전통 + AI LOD / 섞어 쓰기에서 LLM은 플레이어 근처 소수만</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">개발 도구로서의 LLM</p>
+<p>게임 실행 중이 아니라 <strong>개발 중에</strong> LLM을 쓰는 방법도 있습니다. 대사 후보·NPC 배경·사건 문구 초안을 생성하고 사람이 고쳐서 데이터에 넣으면, 실행 비용·일관성·재현성 문제가 모두 사라집니다. 대신 "매번 다른 대사"는 얻을 수 없습니다.</p>
+</div>
+</section><section class="sec"><h2 id="출처">출처<a class="headerlink" href="#출처" title="이 소제목 링크">#</a></h2>
+<ul>
+<li>Park 외, "Generative Agents" (2023) — <a href="https://arxiv.org/abs/2304.03442">https://arxiv.org/abs/2304.03442</a></li>
+<li>크래프톤, CES 2025 CPC 발표 — <a href="https://www.businesswire.com/news/home/20250108628507/en/KRAFTON-Showcases-AI-Model-CPC-Built-with-NVIDIA-ACE-at-CES-2025">https://www.businesswire.com/news/home/20250108628507/en/KRAFTON-Showcases-AI-Model-CPC-Built-with-NVIDIA-ACE-at-CES-2025</a></li>
+<li>NVIDIA, inZOI ACE 발표 — <a href="https://www.nvidia.com/en-gb/geforce/news/nvidia-ace-naraka-bladepoint-inzoi-launch-this-month">https://www.nvidia.com/en-gb/geforce/news/nvidia-ace-naraka-bladepoint-inzoi-launch-this-month</a></li>
+<li>Fextralife inZOI Wiki, Smart Zoi Mode — <a href="https://inzoi.wiki.fextralife.com/Smart_Zoi_Mode">https://inzoi.wiki.fextralife.com/Smart_Zoi_Mode</a></li>
+<li>a16z-infra/ai-town — <a href="https://github.com/a16z-infra/ai-town">https://github.com/a16z-infra/ai-town</a></li>
+<li>Google DeepMind, Concordia — <a href="https://github.com/google-deepmind/concordia">https://github.com/google-deepmind/concordia</a></li>
+<li>Altera, "Project Sid" (2024) — <a href="https://arxiv.org/abs/2411.00114">https://arxiv.org/abs/2411.00114</a></li>
+<li>Gallotta 외, "Large Language Models and Games: A Survey and Roadmap" (2024) — <a href="https://arxiv.org/abs/2402.18659">https://arxiv.org/abs/2402.18659</a></li>
+</ul></section>
+      <nav class="pager" aria-label="이전·다음"><a class="prev" href="11-failures.html">← 11. 실패 사례</a><a class="next" href="13-patterns.html">13. 패턴 카드 →</a></nav>
+    </article>
+  </main>
+  <aside class="toc" aria-label="이 페이지 목차"><p class="toc-title">이 페이지</p><ul><li><a href="#한눈에-보기">한눈에 보기</a></li><li><a href="#비용">비용</a></li><li><a href="#응답-속도">응답 속도</a></li><li><a href="#로컬-모델-vs-api">로컬 모델 vs API</a></li><li><a href="#일관성-유지">일관성 유지</a></li><li><a href="#안전장치">안전장치</a></li><li><a href="#재현성">재현성</a></li><li><a href="#ai-없이-ai-사용-섞어-쓰기-비교표">AI 없이 / AI 사용 / 섞어 쓰기 비교표</a><ul><li><a href="#상황별-후보">상황별 후보</a></li></ul></li><li><a href="#출처">출처</a></li></ul></aside>
+</div>
+<footer class="site-foot">신뢰도: <span class="tag trust trust-official">공식</span> <span class="tag trust trust-analysis">분석</span> <span class="tag trust trust-guess">추정</span> <span class="tag trust trust-unknown">확인 못 함</span> · 소스: <a href="https://github.com/HelloNobb/LIFE_SIMUL_LAB">GitHub</a></footer>
+<script src="assets/search-index.js"></script>
+<script src="assets/app.js"></script>
+<script type="module">
+import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.esm.min.mjs';
+window.__mermaid = mermaid;
+window.dispatchEvent(new Event('mermaid-ready'));
+</script>
+</body>
+</html>

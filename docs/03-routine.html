@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>욕구와 일상 — NPC의 하루를 만드는 법 · LIFE SIMUL LAB</title>
+<meta name="description" content="NPC의 하루는 &quot;시간표&quot;와 &quot;욕구&quot; 두 가지로 만든다. 시간표는 예측 가능한 생활 리듬을, 욕구는 상황에 따른 변화를 준다. 둘을 섞는 방법이 핵심이다.">
+<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/pygments.css">
+</head>
+<body>
+<a class="skip" href="#main">본문으로 건너뛰기</a>
+<header class="topbar">
+  <button type="button" class="icon-btn" id="nav-toggle" aria-label="목차 열기" aria-expanded="false" aria-controls="sidebar">☰</button>
+  <a class="brand" href="index.html">LIFE SIMUL LAB</a>
+  <div class="search">
+    <input type="search" id="search-input" placeholder="검색  (단축키 /)" aria-label="사이트 검색" autocomplete="off">
+    <div id="search-results" class="search-results" role="listbox" hidden></div>
+  </div>
+  <button type="button" class="icon-btn" id="theme-toggle" aria-label="다크 모드 전환">◐</button>
+</header>
+<div class="layout">
+  <nav class="sidebar" id="sidebar" aria-label="전체 목차"><ul><li><a href="index.html">홈</a></li><li><a href="01-intro.html">1. 들어가며</a></li><li><a href="02-brain.html">2. NPC의 뇌</a></li><li><a href="03-routine.html" class="active" aria-current="page">3. 욕구와 일상</a></li><li><a href="04-personality.html">4. 성격</a></li><li><a href="05-memory.html">5. 기억</a></li><li><a href="06-relationship.html">6. 관계</a></li><li><a href="07-dialogue.html">7. 대화</a></li><li><a href="08-events.html">8. 사건 생성</a></li><li><a href="09-world.html">9. 세계와 역사</a></li><li><a href="10-belonging.html">10. 소속감 설계</a></li><li><a href="11-failures.html">11. 실패 사례</a></li><li><a href="12-ai-reality.html">12. AI 현실 점검</a></li><li><a href="13-patterns.html">13. 패턴 카드</a></li><li><a href="14-checklist.html">14. 체크리스트</a></li><li><a href="15-references.html">15. 참고문헌</a></li><li><a href="16-appendix-code.html">부록 A. 공통 뼈대 코드</a></li><li><a href="17-appendix-glossary.html">부록 B. 용어집</a></li><li class="nav-sep"><a href="tags.html">태그 모아보기</a></li></ul></nav>
+  <main id="main" class="content">
+    <article>
+      <header class="page-head">
+        <p class="eyebrow">3장</p>
+        <h1>욕구와 일상 — NPC의 하루를 만드는 법</h1>
+        <p class="summary">NPC의 하루는 &quot;시간표&quot;와 &quot;욕구&quot; 두 가지로 만든다. 시간표는 예측 가능한 생활 리듬을, 욕구는 상황에 따른 변화를 준다. 둘을 섞는 방법이 핵심이다.</p>
+        <div class="page-goals"><span class="lbl">기여하는 목표</span><span class="tag goal goal-alive" data-tag="alive" title="NPC가 실제로 사는 사람처럼 느껴지는 것">실존감</span><span class="tag goal goal-plaus" data-tag="plaus" title="사건이 '그럴 만했다'고 납득되는 것">개연성</span></div>
+      </header>
+      <div class="filter-bar" role="group" aria-label="태그 필터"><span class="filter-label">태그 필터</span><span class="chips"><button type="button" class="chip goal goal-belong" data-filter="belong" aria-pressed="false" title="내가 이 공동체의 일원이라는 느낌">소속감</button><button type="button" class="chip goal goal-plaus" data-filter="plaus" aria-pressed="false" title="사건이 '그럴 만했다'고 납득되는 것">개연성</button><button type="button" class="chip goal goal-relation" data-filter="relation" aria-pressed="false" title="관계가 쌓이고 변하는 것">관계</button><button type="button" class="chip goal goal-alive" data-filter="alive" aria-pressed="false" title="NPC가 실제로 사는 사람처럼 느껴지는 것">실존감</button></span><span class="chips"><button type="button" class="chip trust trust-official" data-filter="official" aria-pressed="false" title="개발자 발표·공식 문서·GDC·논문">공식</button><button type="button" class="chip trust trust-analysis" data-filter="analysis" aria-pressed="false" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</button><button type="button" class="chip trust trust-guess" data-filter="guess" aria-pressed="false" title="플레이 관찰·커뮤니티 추측·2차 보도">추정</button><button type="button" class="chip trust trust-unknown" data-filter="unknown" aria-pressed="false" title="찾아봤지만 믿을 만한 출처가 없음">확인 못 함</button></span><button type="button" class="chip clear" data-filter-clear>해제</button><span class="filter-hint" aria-live="polite"></span></div>
+      <details class="toc-mobile"><summary>이 페이지 목차</summary><ul><li><a href="#한눈에-보기">한눈에 보기</a></li><li><a href="#실제-게임-사례">실제 게임 사례</a><ul><li><a href="#스타듀-밸리-손으로-쓴-조건별-일정">스타듀 밸리 — 손으로 쓴 조건별 일정</a></li><li><a href="#동물의-숲-gamecube판-성격별-일과표-6장">동물의 숲 GameCube판 — 성격별 일과표 6장</a></li><li><a href="#심즈-1-욕구가-모든-행동을-끌고-간다">심즈 1 — 욕구가 모든 행동을 끌고 간다</a></li><li><a href="#림월드-욕구와-기분이-일을-방해한다">림월드 — 욕구와 기분이 일을 방해한다</a></li><li><a href="#드워프-포트리스-욕구는-기분이-아니라-집중력에-분석">드워프 포트리스 — 욕구는 기분이 아니라 집중력에 [분석]</a></li><li><a href="#오블리비언-일정-조건-ai-패키지-분석">오블리비언 — 일정 + 조건 = AI 패키지 [분석]</a></li><li><a href="#generative-agents-llm이-하루-계획을-쪼갠다">Generative Agents — LLM이 하루 계획을 쪼갠다</a></li></ul></li><li><a href="#구조-다이어그램-시간표와-욕구-합치기">구조 다이어그램: 시간표와 욕구 합치기</a></li><li><a href="#세-갈래로-보기">세 갈래로 보기</a><ul><li><a href="#ai-없이">AI 없이</a></li><li><a href="#ai-사용">AI 사용</a></li><li><a href="#섞어-쓰기">섞어 쓰기</a></li></ul></li><li><a href="#구현-스케치">구현 스케치</a><ul><li><a href="#스타듀식-일정-키-고르기">스타듀식 일정 키 고르기</a></li><li><a href="#일정-블록-욕구-끼어들기">일정 블록 + 욕구 끼어들기</a></li></ul></li><li><a href="#장단점과-언제-쓰나">장단점과 언제 쓰나</a></li><li><a href="#출처">출처</a></li></ul></details>
+      <section class="sec"><h2 id="한눈에-보기">한눈에 보기<a class="headerlink" href="#한눈에-보기" title="이 소제목 링크">#</a></h2>
+<ul>
+<li><strong>시간표(schedule)</strong>: "이 시간에는 여기서 이걸 한다"를 미리 정해 둔 것. 플레이어가 "아침 9시면 저 사람은 가게에 있지"라고 <strong>예측</strong>할 수 있게 해 줍니다. 예측이 맞을 때 NPC가 그 세계에 <strong>산다</strong>고 느낍니다.</li>
+<li><strong>욕구(needs, motive)</strong>: 배고픔, 피로처럼 시간이 지나면 줄어드는 수치. 같은 시간이라도 상황에 따라 다른 행동이 나오게 합니다.</li>
+<li>시간표만 있으면 기계 같고, 욕구만 있으면 생활 리듬이 없습니다. 대부분의 게임은 <strong>시간표로 큰 틀을, 욕구로 틀 안의 변화를</strong> 만듭니다.</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">비유: 학교 시간표와 쉬는 시간</p>
+<p>학교 시간표는 몇 교시에 어느 교실에 있는지 정해 줍니다. 그런데 쉬는 시간 10분에 매점에 갈지, 화장실에 갈지, 친구와 떠들지는 그때 배고픔과 기분이 정합니다. 시간표가 "어디에 있을지"를, 욕구가 "그 안에서 무엇을 할지"를 맡는 구조입니다.</p>
+</div>
+</section><section class="sec"><h2 id="실제-게임-사례">실제 게임 사례<a class="headerlink" href="#실제-게임-사례" title="이 소제목 링크">#</a></h2>
+<h3 id="스타듀-밸리-손으로-쓴-조건별-일정" 실존감="실존감">스타듀 밸리 — 손으로 쓴 조건별 일정<a class="headerlink" href="#스타듀-밸리-손으로-쓴-조건별-일정" title="이 소제목 링크">#</a></h3>
+<p>스타듀의 NPC 일정은 NPC마다 데이터 파일 하나(<code>Characters/schedules/&lt;이름&gt;</code>)에 들어 있습니다. <span class="tag trust trust-analysis" data-tag="analysis" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</span> (<a href="https://stardewvalleywiki.com/Modding:Schedule_data">Modding:Schedule data</a>)</p>
+<ul>
+<li>한 줄은 <code>시각 장소 X Y 방향 [애니메이션] [대사]</code>를 <code>/</code>로 이은 것입니다. 예: <code>900 SeedShop 39 5 0/1030 SeedShop 2 20 3/1300 Town 73 54 2/…</code> → 9시에 가게 (39,5)로, 10:30에 (2,20)으로, 13시에 마을 (73,54)로 걸어갑니다. <span class="tag trust trust-analysis" data-tag="analysis" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</span></li>
+<li>어떤 일정을 쓸지는 <strong>키</strong>로 정합니다. 결혼 여부, 축제, <code>계절_날짜</code>(spring_15), <code>날짜_하트</code>(11_6: 11일인데 하트 6 이상이면), <code>날짜</code>, <code>rain</code>, <code>rain2</code>(비 오는 날 50% 확률), <code>계절_요일_하트</code>, <code>계절_요일</code> 등을 <strong>정해진 순서로 맞춰 보고 처음 맞는 것</strong>을 씁니다. <span class="tag trust trust-analysis" data-tag="analysis" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</span></li>
+<li><code>GOTO 다른키</code>로 다른 일정을 재사용하고, <code>NOT friendship Sebastian 6</code>처럼 다른 NPC와의 관계가 조건이 되기도 합니다. <span class="tag trust trust-analysis" data-tag="analysis" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</span></li>
+<li>도착하면 애니메이션(예: <code>abigail_flute</code>)을 재생하고, 그 자리에서 말을 걸면 전용 대사가 나옵니다. <span class="tag trust trust-analysis" data-tag="analysis" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</span></li>
+</ul>
+<p><strong>배울 점</strong>: 일정이 계절·요일·날씨·<strong>호감도</strong>에 따라 갈리기 때문에, 플레이어가 친해질수록 NPC의 동선 자체가 바뀝니다. 관계가 일상에 스며드는 구조입니다. <span class="tag goal goal-relation" data-tag="relation" title="관계가 쌓이고 변하는 것">관계</span></p>
+<h3 id="동물의-숲-gamecube판-성격별-일과표-6장" 실존감="실존감">동물의 숲 GameCube판 — 성격별 일과표 6장<a class="headerlink" href="#동물의-숲-gamecube판-성격별-일과표-6장" title="이 소제목 링크">#</a></h3>
+<p>동숲 GC에는 주민별 일정이 없습니다. <strong>성격 6종마다 일과표가 한 장씩</strong>, 그게 전부입니다. <span class="tag trust trust-analysis" data-tag="analysis" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</span> (<code>src/game/m_npc_schedule.c</code>, <a href="https://nobbs-it-study.tistory.com/entry/%EA%B2%8C%EC%9E%84-%EB%B6%84%EC%84%9D-%EB%8F%99%EC%88%B2-%EC%A3%BC%EB%AF%BC%EC%9D%84-%EC%96%B4%EB%96%BB%EA%B2%8C-%EC%82%B4%EC%95%84%EC%9E%88%EA%B2%8C-%EB%A7%8C%EB%93%A4%EC%97%88%EB%82%98-%EC%B5%9C%EC%A0%81%ED%99%94-%EB%B6%84%EC%84%9D-2%ED%8E%B8">동숲 분석 2편</a>)</p>
+<table>
+<thead>
+<tr>
+<th>성격 (내부 이름)</th>
+<th>자는 시간</th>
+<th>밖에 나와 있는 시간</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>친절함 normal (GIRL)</td>
+<td>21:00 ~ 05:00</td>
+<td>06:00~12:00, 13:00~18:30</td>
+</tr>
+<tr>
+<td>아이돌 peppy (KO_GIRL)</td>
+<td>23:30 ~ 07:00</td>
+<td>08:00~13:00, 14:00~22:00</td>
+</tr>
+<tr>
+<td>먹보 lazy (BOY)</td>
+<td>22:00 ~ 08:00</td>
+<td>09:00~12:00, 14:00~19:30</td>
+</tr>
+<tr>
+<td>운동광 jock (SPORT_MAN)</td>
+<td>01:00 ~ 05:30</td>
+<td>06:30~12:00, 12:30~23:00</td>
+</tr>
+<tr>
+<td>무뚝뚝 cranky (GRIM_MAN)</td>
+<td>05:00 ~ 10:00</td>
+<td>11:00~15:00, 16:00~22:00, 23:00~04:00</td>
+</tr>
+<tr>
+<td>성숙함 snooty (NANIWA_LADY)</td>
+<td>02:30 ~ 09:00</td>
+<td>10:00~13:00, 14:00~21:00, 22:00~01:30</td>
+</tr>
+</tbody>
+</table>
+<p>표의 시각은 소스의 일과표 값을 그대로 옮긴 것입니다. <span class="tag trust trust-analysis" data-tag="analysis" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</span></p>
+<ul>
+<li>새벽에 접속하면 마을에 무뚝뚝과 성숙함만 돌아다니는 것이 이 표 때문입니다. 성격이 <strong>생활 시간대</strong>로 드러납니다. <span class="tag goal goal-alive" data-tag="alive" title="NPC가 실제로 사는 사람처럼 느껴지는 것">실존감</span></li>
+<li>첫 아르바이트(튜토리얼) 기간과 핼러윈에는 표를 무시하고 모두 바깥으로 나옵니다(<code>mNPS_schedule_manager</code>). 플레이어가 만나야 하는 날에는 시간표보다 연출이 우선입니다. <span class="tag trust trust-analysis" data-tag="analysis" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</span></li>
+<li>일정 관리 함수는 시간·조명 갱신 코드(<code>m_kankyo.c</code>) 끝에서 불리고, 복원자가 "이상한 위치"라는 주석을 남겼습니다. <span class="tag trust trust-analysis" data-tag="analysis" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</span></li>
+<li>바깥에 있는 시간 동안에는 성격·시간대별 목적지 배열(신사, 남의 집, 아무도 없는 곳, 자기 집)에서 무작위로 골라 산책합니다(<a href="02-brain.html">2장</a>, <a href="09-world.html">9장</a>). <span class="tag trust trust-analysis" data-tag="analysis" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</span></li>
+</ul>
+<p><strong>배울 점</strong>: 데이터가 6장뿐인데도 "이 주민은 이 시간에 나와 있다"는 리듬이 생깁니다. 개인차는 다른 장치(기억, 말버릇, 옷)가 맡습니다.</p>
+<h3 id="심즈-1-욕구가-모든-행동을-끌고-간다" 실존감="실존감">심즈 1 — 욕구가 모든 행동을 끌고 간다<a class="headerlink" href="#심즈-1-욕구가-모든-행동을-끌고-간다" title="이 소제목 링크">#</a></h3>
+<p>심의 욕구는 에너지, 편안함, 허기, 위생, 방광, 방(환경), 사교, 재미, 기분입니다. 심은 이 욕구를 채워 주겠다고 광고하는 행동 중 행복을 가장 크게 올리는 것을 고릅니다. <span class="tag trust trust-official" data-tag="official" title="개발자 발표·공식 문서·GDC·논문">공식</span> (<a href="https://qrg.northwestern.edu/papers/Files/Programming_Objects_in_The_Sims.pdf">Forbus &amp; Wright 2001</a>) 시간표는 없고, 출근 같은 고정 일정만 따로 있습니다. 그래서 심즈의 하루는 욕구가 만든 <strong>즉흥</strong>에 가깝습니다.</p>
+<h3 id="림월드-욕구와-기분이-일을-방해한다" 개연성="개연성">림월드 — 욕구와 기분이 일을 방해한다<a class="headerlink" href="#림월드-욕구와-기분이-일을-방해한다" title="이 소제목 링크">#</a></h3>
+<p>정착민은 일 우선순위표를 따르지만, 음식·수면·여가 같은 욕구가 바닥나면 일을 멈춥니다. 욕구 상태는 "배고픔 −6" 같은 생각으로 기분에 반영되고, 기분이 무너지면 정신 붕괴가 옵니다(<a href="04-personality.html">4장</a>, <a href="08-events.html">8장</a>). <span class="tag trust trust-analysis" data-tag="analysis" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</span> (<a href="https://rimworldwiki.com/wiki/Mood">RimWorld 위키: Mood</a>)</p>
+<h3 id="드워프-포트리스-욕구는-기분이-아니라-집중력에-분석">드워프 포트리스 — 욕구는 기분이 아니라 집중력에 <span class="tag trust trust-analysis" data-tag="analysis" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</span><a class="headerlink" href="#드워프-포트리스-욕구는-기분이-아니라-집중력에-분석" title="이 소제목 링크">#</a></h3>
+<p>드워프의 욕구(기도, 사교, 술 등)는 성격에 따라 종류와 무게가 다르고, 채워지지 않으면 <strong>집중력(focus)</strong>이 떨어집니다. 기분과는 별개로 돕니다. (<a href="https://dwarffortresswiki.org/index.php/DF2014:Need">DF 위키: Need</a>) 욕구를 "행동을 고르는 점수"가 아니라 <strong>"일을 얼마나 잘하는가"</strong>에 연결한 예입니다.</p>
+<h3 id="오블리비언-일정-조건-ai-패키지-분석">오블리비언 — 일정 + 조건 = AI 패키지 <span class="tag trust trust-analysis" data-tag="analysis" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</span><a class="headerlink" href="#오블리비언-일정-조건-ai-패키지-분석" title="이 소제목 링크">#</a></h3>
+<p>오블리비언 NPC는 "AI 패키지"를 여러 개 가지고, 패키지마다 시간과 조건(예: 비가 안 올 때 정오부터 4시간 시장 배회)이 붙습니다. 한 번에 하나만 활성화되고 끝나면 다음 것으로 넘어갑니다. NPC에게는 심즈나 드워프 포트리스 같은 <strong>욕구가 없고</strong> 일정으로 먹고 잡니다. (<a href="https://blog.paavo.me/radiant-ai">Paavo, "What was Radiant AI, anyway?"</a>)</p>
+<h3 id="generative-agents-llm이-하루-계획을-쪼갠다" 실존감="실존감">Generative Agents — LLM이 하루 계획을 쪼갠다<a class="headerlink" href="#generative-agents-llm이-하루-계획을-쪼갠다" title="이 소제목 링크">#</a></h3>
+<ul>
+<li>아침에 에이전트의 요약 설명(이름, 특성, 최근 경험 요약)과 전날 요약을 주고 <strong>하루 큰 일정</strong>을 쓰게 합니다. <span class="tag trust trust-official" data-tag="official" title="개발자 발표·공식 문서·GDC·논문">공식</span> (<a href="https://arxiv.org/abs/2304.03442">Park 외 2023, 4.3절</a>)</li>
+<li>그 일정을 <strong>1시간 단위</strong>로, 다시 <strong>5~15분 단위</strong>로 쪼갭니다. 예: "13~17시 작곡" → "16:00 간식, 16:05 산책 …". <span class="tag trust trust-official" data-tag="official" title="개발자 발표·공식 문서·GDC·논문">공식</span></li>
+<li>계획은 기억 스트림에 저장되어 검색 대상이 되고, 관찰할 때마다 "반응할지"를 판단해 필요하면 계획을 다시 세웁니다. <span class="tag trust trust-official" data-tag="official" title="개발자 발표·공식 문서·GDC·논문">공식</span></li>
+<li>논문은 쪼개지 않은 계획이 "약국 카운터에 4시간 앉아 그림 그리기" 같은 비현실적인 결과를 낸다고 설명합니다. 쪼개는 이유가 <strong>개연성</strong>입니다. <span class="tag goal goal-plaus" data-tag="plaus" title="사건이 '그럴 만했다'고 납득되는 것">개연성</span> <span class="tag trust trust-official" data-tag="official" title="개발자 발표·공식 문서·GDC·논문">공식</span></li>
+</ul>
+</section><section class="sec"><h2 id="구조-다이어그램-시간표와-욕구-합치기">구조 다이어그램: 시간표와 욕구 합치기<a class="headerlink" href="#구조-다이어그램-시간표와-욕구-합치기" title="이 소제목 링크">#</a></h2>
+<div class="mermaid-wrap" markdown="0"><pre class="mermaid" data-src="0">flowchart TB
+  CLK[&quot;게임 시각·요일·날씨&quot;] --&gt; KEY[&quot;일정 키 고르기&lt;br/&gt;(스타듀식 우선순위)&quot;]
+  KEY --&gt; BLOCK[&quot;지금 시간 블록&lt;br/&gt;예: 14~18시 &#x27;바깥 활동&#x27;&quot;]
+  BLOCK --&gt; CAND[&quot;이 블록에서 허용된 행동 후보&lt;br/&gt;산책 · 카페 · 친구 방문&quot;]
+  NEEDS[&quot;욕구&lt;br/&gt;허기·피로·사교&quot;] --&gt; SCORE[&quot;Utility 점수&quot;]
+  CAND --&gt; SCORE
+  SCORE --&gt; PICK[&quot;행동 선택&quot;]
+  NEEDS --&gt;|&quot;임계값 아래로 떨어지면&quot;| INT[&quot;끼어들기&lt;br/&gt;(일정 무시하고 식사/귀가)&quot;]
+  INT --&gt; PICK</pre></div>
+
+</section><section class="sec"><h2 id="세-갈래로-보기">세 갈래로 보기<a class="headerlink" href="#세-갈래로-보기" title="이 소제목 링크">#</a></h2>
+<h3 id="ai-없이">AI 없이<a class="headerlink" href="#ai-없이" title="이 소제목 링크">#</a></h3>
+<table>
+<thead>
+<tr>
+<th>후보</th>
+<th>하는 일</th>
+<th>좋은 점</th>
+<th>약한 점</th>
+<th>대표</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>성격별 공용 일과표</td>
+<td>성격마다 시간표 1장</td>
+<td>데이터 최소, 성격이 리듬으로 보임</td>
+<td>같은 성격끼리 동선이 같음</td>
+<td>동숲 GC</td>
+</tr>
+<tr>
+<td>개인별 조건 키 일정</td>
+<td>NPC마다 계절·요일·날씨·하트별 일정</td>
+<td>인물마다 개성, 관계가 동선을 바꿈</td>
+<td>작성량이 매우 많음</td>
+<td>스타듀</td>
+</tr>
+<tr>
+<td>욕구 + Utility</td>
+<td>일정 없이 욕구로 즉흥</td>
+<td>상황 대응이 자연스러움</td>
+<td>생활 리듬이 약함, 예측 어려움</td>
+<td>심즈</td>
+</tr>
+<tr>
+<td>일정 블록 + 욕구 (혼합)</td>
+<td>블록이 후보를 정하고 욕구가 고름</td>
+<td>리듬과 변화 둘 다</td>
+<td>설계할 것이 많음</td>
+<td>아래 구현 스케치</td>
+</tr>
+<tr>
+<td>조건부 패키지 목록</td>
+<td>시간+조건별 행동 묶음</td>
+<td>기획자 통제 쉬움</td>
+<td>욕구 없음</td>
+<td>오블리비언</td>
+</tr>
+</tbody>
+</table>
+<h3 id="ai-사용">AI 사용<a class="headerlink" href="#ai-사용" title="이 소제목 링크">#</a></h3>
+<ul>
+<li><strong>LLM 하루 계획</strong>: Generative Agents식으로 하루 계획을 글로 생성하고 쪼갭니다. 매일 다른 하루가 나오지만, 비용이 크고 결과가 장소·물건과 맞지 않을 수 있습니다. 논문 저자들은 25명을 이틀 시뮬레이션하는 데 토큰 비용으로 수천 달러가 들었다고 밝혔습니다. <span class="tag trust trust-official" data-tag="official" title="개발자 발표·공식 문서·GDC·논문">공식</span> (<a href="https://arxiv.org/abs/2304.03442">Park 외 2023, 한계와 향후 과제 부분</a>)</li>
+<li><strong>인조이 Smart Zoi의 일정 조정</strong>: 하루가 끝나면 경험을 바탕으로 개인 일정을 조정한다고 발표했습니다. <span class="tag trust trust-official" data-tag="official" title="개발자 발표·공식 문서·GDC·논문">공식</span> (<a href="https://www.nvidia.com/en-gb/geforce/news/nvidia-ace-naraka-bladepoint-inzoi-launch-this-month">NVIDIA</a>) 실제로 행동이 얼마나 달라지는지에 대해서는 플레이어 사이에 "속마음 말풍선 외에 차이를 못 느꼈다"는 반응도 있습니다. <span class="tag trust trust-guess" data-tag="guess" title="플레이 관찰·커뮤니티 추측·2차 보도">추정</span> (<a href="https://steamcommunity.com/app/2456740/discussions/0/836123794066162014/">Steam 토론</a>)</li>
+</ul>
+<h3 id="섞어-쓰기">섞어 쓰기<a class="headerlink" href="#섞어-쓰기" title="이 소제목 링크">#</a></h3>
+<ul>
+<li><strong>블록은 데이터, 블록 안의 선택만 LLM</strong>: "14~18시 바깥 활동"은 일정표가 정하고, 그 안에서 "오늘은 누구를 만나러 갈까"를 LLM이 허용 후보 목록 중에서 고르게 합니다. 목록 밖의 답이 나오면 Utility 결과로 대체합니다.</li>
+<li><strong>하루 한 번만 LLM</strong>: 밤에 그날 기억을 요약해 "내일 하고 싶은 것 1~2개"만 뽑고, 그것을 다음 날 Utility 점수에 보너스로 넣습니다. 매 순간의 결정은 전통 시스템이 합니다.</li>
+</ul>
+</section><section class="sec"><h2 id="구현-스케치">구현 스케치<a class="headerlink" href="#구현-스케치" title="이 소제목 링크">#</a></h2>
+<h3 id="스타듀식-일정-키-고르기">스타듀식 일정 키 고르기<a class="headerlink" href="#스타듀식-일정-키-고르기" title="이 소제목 링크">#</a></h3>
+<div class="hl"><pre><span></span><code><span class="c1">// 정해진 순서대로 키를 만들어 보고, 데이터에 있는 첫 키를 쓴다 (엔진 무관 C#)</span>
+<span class="k">using</span><span class="w"> </span><span class="nn">System.Collections.Generic</span><span class="p">;</span>
+
+<span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">ScheduleKeyResolver</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="nf">Resolve</span><span class="p">(</span><span class="n">Dictionary</span><span class="o">&lt;</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">schedules</span><span class="p">,</span><span class="w"> </span><span class="n">GameDate</span><span class="w"> </span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">hearts</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">raining</span><span class="p">,</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="n">Random</span><span class="w"> </span><span class="n">rng</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="kt">var</span><span class="w"> </span><span class="n">tries</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="kt">string</span><span class="o">&gt;</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="s">$"{d.Season}_{d.Day}"</span><span class="p">,</span><span class="w">                 </span><span class="c1">// spring_15</span>
+<span class="w">        </span><span class="p">};</span>
+<span class="w">        </span><span class="k">foreach</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">h</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="k">new</span><span class="p">[]</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="p">})</span><span class="w">   </span><span class="c1">// 하트 조건은 높은 것부터</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">hearts</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">h</span><span class="p">)</span><span class="w"> </span><span class="n">tries</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="s">$"{d.Day}_{h}"</span><span class="p">);</span>
+<span class="w">        </span><span class="n">tries</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="s">$"{d.Day}"</span><span class="p">);</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">raining</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">rng</span><span class="p">.</span><span class="n">NextDouble</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mf">0.5</span><span class="p">)</span><span class="w"> </span><span class="n">tries</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="s">"rain2"</span><span class="p">);</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">raining</span><span class="p">)</span><span class="w"> </span><span class="n">tries</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="s">"rain"</span><span class="p">);</span>
+<span class="w">        </span><span class="k">foreach</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">h</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="k">new</span><span class="p">[]</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="p">})</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">hearts</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">h</span><span class="p">)</span><span class="w"> </span><span class="n">tries</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="s">$"{d.Season}_{d.Weekday}_{h}"</span><span class="p">);</span>
+<span class="w">        </span><span class="n">tries</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="s">$"{d.Season}_{d.Weekday}"</span><span class="p">);</span>
+<span class="w">        </span><span class="n">tries</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="n">d</span><span class="p">.</span><span class="n">Weekday</span><span class="p">);</span>
+<span class="w">        </span><span class="n">tries</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="n">d</span><span class="p">.</span><span class="n">Season</span><span class="p">);</span>
+<span class="w">        </span><span class="n">tries</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="s">"default"</span><span class="p">);</span>
+
+<span class="w">        </span><span class="k">foreach</span><span class="w"> </span><span class="p">(</span><span class="kt">var</span><span class="w"> </span><span class="n">key</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">tries</span><span class="p">)</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">schedules</span><span class="p">.</span><span class="n">TryGetValue</span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="k">out</span><span class="w"> </span><span class="kt">var</span><span class="w"> </span><span class="n">raw</span><span class="p">))</span>
+<span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="n">raw</span><span class="p">.</span><span class="n">StartsWith</span><span class="p">(</span><span class="s">"GOTO "</span><span class="p">)</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">schedules</span><span class="p">[</span><span class="n">raw</span><span class="p">.</span><span class="n">Substring</span><span class="p">(</span><span class="mi">5</span><span class="p">)]</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">raw</span><span class="p">;</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">null</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<div class="admonition note">
+<p class="admonition-title">순서는 단순화했습니다</p>
+<p>실제 스타듀의 키 순서와 세부 규칙(결혼 일정, 축제, <code>NOT friendship</code> 조건 등)은 <a href="https://stardewvalleywiki.com/Modding:Schedule_data">Modding:Schedule data</a>를 보세요. 위 코드는 "우선순위 목록에서 첫 일치"라는 구조만 옮긴 것입니다.</p>
+</div>
+<h3 id="일정-블록-욕구-끼어들기">일정 블록 + 욕구 끼어들기<a class="headerlink" href="#일정-블록-욕구-끼어들기" title="이 소제목 링크">#</a></h3>
+<div class="hl"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="nn">UnityEngine</span><span class="p">;</span><span class="w">   </span><span class="c1">// [Unity 의존] MonoBehaviour, Time</span>
+
+<span class="k">public</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">DailyLife</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">MonoBehaviour</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="n">ScheduleBlock</span><span class="p">[]</span><span class="w"> </span><span class="n">blocks</span><span class="p">;</span><span class="w">        </span><span class="c1">// ScriptableObject: 시간 범위 + 허용 행동 목록</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="n">UtilityAction</span><span class="p">[]</span><span class="w"> </span><span class="n">emergency</span><span class="p">;</span><span class="w">     </span><span class="c1">// 식사, 귀가 등</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="n">NeedSet</span><span class="w"> </span><span class="n">needs</span><span class="p">;</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">Critical</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.15f</span><span class="p">;</span><span class="w">         </span><span class="c1">// 이 아래면 일정보다 욕구 우선</span>
+
+<span class="w">    </span><span class="n">UtilityAction</span><span class="w"> </span><span class="n">current</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">nextThink</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">void</span><span class="w"> </span><span class="nf">Update</span><span class="p">()</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">needs</span><span class="p">.</span><span class="n">Decay</span><span class="p">(</span><span class="n">Time</span><span class="p">.</span><span class="n">deltaTime</span><span class="p">);</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">Time</span><span class="p">.</span><span class="n">time</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">nextThink</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="p">;</span><span class="w">          </span><span class="c1">// 판단은 0.5~2초에 한 번이면 충분</span>
+<span class="w">        </span><span class="n">nextThink</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Time</span><span class="p">.</span><span class="n">time</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Random</span><span class="p">.</span><span class="n">Range</span><span class="p">(</span><span class="mf">0.5f</span><span class="p">,</span><span class="w"> </span><span class="mf">2f</span><span class="p">);</span>
+
+<span class="w">        </span><span class="kt">var</span><span class="w"> </span><span class="n">block</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ScheduleBlock</span><span class="p">.</span><span class="n">Find</span><span class="p">(</span><span class="n">blocks</span><span class="p">,</span><span class="w"> </span><span class="n">GameClock</span><span class="p">.</span><span class="n">Now</span><span class="p">);</span>
+<span class="w">        </span><span class="n">UtilityAction</span><span class="p">[]</span><span class="w"> </span><span class="n">candidates</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">needs</span><span class="p">.</span><span class="n">Lowest</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">Critical</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">emergency</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">block</span><span class="p">.</span><span class="n">allowed</span><span class="p">;</span>
+<span class="w">        </span><span class="n">current</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">UtilityBrain</span><span class="p">.</span><span class="n">Pick</span><span class="p">(</span><span class="n">candidates</span><span class="p">,</span><span class="w"> </span><span class="n">needs</span><span class="p">,</span><span class="w"> </span><span class="n">current</span><span class="p">);</span>
+<span class="w">        </span><span class="n">GetComponent</span><span class="o">&lt;</span><span class="n">ActionRunner</span><span class="o">&gt;</span><span class="p">().</span><span class="n">Run</span><span class="p">(</span><span class="n">current</span><span class="p">);</span><span class="w">  </span><span class="c1">// 실행은 아래층 상태 기계</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+</section><section class="sec"><h2 id="장단점과-언제-쓰나">장단점과 언제 쓰나<a class="headerlink" href="#장단점과-언제-쓰나" title="이 소제목 링크">#</a></h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>쓰면 좋은 때</th>
+<th>피할 때</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>시간표 중심</td>
+<td>플레이어가 NPC를 "찾아가는" 게임 (어디 있는지 예측 가능해야 함)</td>
+<td>매번 다른 일이 일어나야 하는 생존 시뮬</td>
+</tr>
+<tr>
+<td>욕구 중심</td>
+<td>NPC를 "돌보는" 게임 (심즈, 림월드)</td>
+<td>만나야 할 NPC가 엉뚱한 곳에 있으면 곤란한 퀘스트 중심 게임</td>
+</tr>
+<tr>
+<td>혼합</td>
+<td>마을 생활 시뮬 대부분</td>
+<td>인원이 매우 적어 손으로 다 쓰는 편이 싼 경우</td>
+</tr>
+<tr>
+<td>LLM 계획</td>
+<td>연구·실험, 소수 핵심 NPC</td>
+<td>실시간 다수 NPC, 비용 제한이 있는 상용 게임</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">예측 가능성은 기능이다</p>
+<p>시간표가 있는 게임에서 플레이어는 NPC를 <strong>찾아갑니다</strong>. NPC가 매일 랜덤한 곳에 있으면 찾기 어려워지고 관계 쌓기가 귀찮아집니다. 스타듀와 동숲이 시간표를 버리지 않는 이유입니다. 변화는 "예측 가능한 틀 안의 작은 변화"로 주는 편이 안전합니다.</p>
+</div>
+</section><section class="sec"><h2 id="출처">출처<a class="headerlink" href="#출처" title="이 소제목 링크">#</a></h2>
+<ul>
+<li>Stardew Valley Wiki, Modding:Schedule data — <a href="https://stardewvalleywiki.com/Modding:Schedule_data">https://stardewvalleywiki.com/Modding:Schedule_data</a></li>
+<li>ACreTeam, ac-decomp (<code>src/game/m_npc_schedule.c</code>, <code>src/game/m_npc_walk.c</code>, <code>src/game/m_kankyo.c</code>) — <a href="https://github.com/ACreTeam/ac-decomp">https://github.com/ACreTeam/ac-decomp</a></li>
+<li>동숲 최적화 분석 2편 — <a href="https://nobbs-it-study.tistory.com/entry/%EA%B2%8C%EC%9E%84-%EB%B6%84%EC%84%9D-%EB%8F%99%EC%88%B2-%EC%A3%BC%EB%AF%BC%EC%9D%84-%EC%96%B4%EB%96%BB%EA%B2%8C-%EC%82%B4%EC%95%84%EC%9E%88%EA%B2%8C-%EB%A7%8C%EB%93%A4%EC%97%88%EB%82%98-%EC%B5%9C%EC%A0%81%ED%99%94-%EB%B6%84%EC%84%9D-2%ED%8E%B8">https://nobbs-it-study.tistory.com/entry/%EA%B2%8C%EC%9E%84-%EB%B6%84%EC%84%9D-%EB%8F%99%EC%88%B2-%EC%A3%BC%EB%AF%BC%EC%9D%84-%EC%96%B4%EB%96%BB%EA%B2%8C-%EC%82%B4%EC%95%84%EC%9E%88%EA%B2%8C-%EB%A7%8C%EB%93%A4%EC%97%88%EB%82%98-%EC%B5%9C%EC%A0%81%ED%99%94-%EB%B6%84%EC%84%9D-2%ED%8E%B8</a></li>
+<li>Forbus &amp; Wright, "Some notes on programming objects in The Sims" (2001) — <a href="https://qrg.northwestern.edu/papers/Files/Programming_Objects_in_The_Sims.pdf">https://qrg.northwestern.edu/papers/Files/Programming_Objects_in_The_Sims.pdf</a></li>
+<li>RimWorld Wiki, Mood — <a href="https://rimworldwiki.com/wiki/Mood">https://rimworldwiki.com/wiki/Mood</a></li>
+<li>Dwarf Fortress Wiki, Need — <a href="https://dwarffortresswiki.org/index.php/DF2014:Need">https://dwarffortresswiki.org/index.php/DF2014:Need</a></li>
+<li>Paavo, "What was Radiant AI, anyway?" — <a href="https://blog.paavo.me/radiant-ai">https://blog.paavo.me/radiant-ai</a></li>
+<li>Park 외, "Generative Agents" — <a href="https://arxiv.org/abs/2304.03442">https://arxiv.org/abs/2304.03442</a></li>
+<li>NVIDIA, inZOI ACE 발표 — <a href="https://www.nvidia.com/en-gb/geforce/news/nvidia-ace-naraka-bladepoint-inzoi-launch-this-month">https://www.nvidia.com/en-gb/geforce/news/nvidia-ace-naraka-bladepoint-inzoi-launch-this-month</a></li>
+<li>Steam 토론, "What is Smart Zoi really doing" — <a href="https://steamcommunity.com/app/2456740/discussions/0/836123794066162014/">https://steamcommunity.com/app/2456740/discussions/0/836123794066162014/</a></li>
+</ul></section>
+      <nav class="pager" aria-label="이전·다음"><a class="prev" href="02-brain.html">← 2. NPC의 뇌</a><a class="next" href="04-personality.html">4. 성격 →</a></nav>
+    </article>
+  </main>
+  <aside class="toc" aria-label="이 페이지 목차"><p class="toc-title">이 페이지</p><ul><li><a href="#한눈에-보기">한눈에 보기</a></li><li><a href="#실제-게임-사례">실제 게임 사례</a><ul><li><a href="#스타듀-밸리-손으로-쓴-조건별-일정">스타듀 밸리 — 손으로 쓴 조건별 일정</a></li><li><a href="#동물의-숲-gamecube판-성격별-일과표-6장">동물의 숲 GameCube판 — 성격별 일과표 6장</a></li><li><a href="#심즈-1-욕구가-모든-행동을-끌고-간다">심즈 1 — 욕구가 모든 행동을 끌고 간다</a></li><li><a href="#림월드-욕구와-기분이-일을-방해한다">림월드 — 욕구와 기분이 일을 방해한다</a></li><li><a href="#드워프-포트리스-욕구는-기분이-아니라-집중력에-분석">드워프 포트리스 — 욕구는 기분이 아니라 집중력에 [분석]</a></li><li><a href="#오블리비언-일정-조건-ai-패키지-분석">오블리비언 — 일정 + 조건 = AI 패키지 [분석]</a></li><li><a href="#generative-agents-llm이-하루-계획을-쪼갠다">Generative Agents — LLM이 하루 계획을 쪼갠다</a></li></ul></li><li><a href="#구조-다이어그램-시간표와-욕구-합치기">구조 다이어그램: 시간표와 욕구 합치기</a></li><li><a href="#세-갈래로-보기">세 갈래로 보기</a><ul><li><a href="#ai-없이">AI 없이</a></li><li><a href="#ai-사용">AI 사용</a></li><li><a href="#섞어-쓰기">섞어 쓰기</a></li></ul></li><li><a href="#구현-스케치">구현 스케치</a><ul><li><a href="#스타듀식-일정-키-고르기">스타듀식 일정 키 고르기</a></li><li><a href="#일정-블록-욕구-끼어들기">일정 블록 + 욕구 끼어들기</a></li></ul></li><li><a href="#장단점과-언제-쓰나">장단점과 언제 쓰나</a></li><li><a href="#출처">출처</a></li></ul></aside>
+</div>
+<footer class="site-foot">신뢰도: <span class="tag trust trust-official">공식</span> <span class="tag trust trust-analysis">분석</span> <span class="tag trust trust-guess">추정</span> <span class="tag trust trust-unknown">확인 못 함</span> · 소스: <a href="https://github.com/HelloNobb/LIFE_SIMUL_LAB">GitHub</a></footer>
+<script src="assets/search-index.js"></script>
+<script src="assets/app.js"></script>
+<script type="module">
+import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.esm.min.mjs';
+window.__mermaid = mermaid;
+window.dispatchEvent(new Event('mermaid-ready'));
+</script>
+</body>
+</html>

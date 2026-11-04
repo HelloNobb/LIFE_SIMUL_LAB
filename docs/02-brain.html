@@ -1,0 +1,633 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NPC의 뇌 — 행동 선택 방식 비교 · LIFE SIMUL LAB</title>
+<meta name="description" content="NPC가 &quot;지금 무엇을 할지&quot; 고르는 방식들. 상태 기계부터 행동 트리, Utility AI, GOAP, HTN, 스마트 오브젝트, LLM 계획까지 같은 기준으로 비교한다.">
+<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/pygments.css">
+</head>
+<body>
+<a class="skip" href="#main">본문으로 건너뛰기</a>
+<header class="topbar">
+  <button type="button" class="icon-btn" id="nav-toggle" aria-label="목차 열기" aria-expanded="false" aria-controls="sidebar">☰</button>
+  <a class="brand" href="index.html">LIFE SIMUL LAB</a>
+  <div class="search">
+    <input type="search" id="search-input" placeholder="검색  (단축키 /)" aria-label="사이트 검색" autocomplete="off">
+    <div id="search-results" class="search-results" role="listbox" hidden></div>
+  </div>
+  <button type="button" class="icon-btn" id="theme-toggle" aria-label="다크 모드 전환">◐</button>
+</header>
+<div class="layout">
+  <nav class="sidebar" id="sidebar" aria-label="전체 목차"><ul><li><a href="index.html">홈</a></li><li><a href="01-intro.html">1. 들어가며</a></li><li><a href="02-brain.html" class="active" aria-current="page">2. NPC의 뇌</a></li><li><a href="03-routine.html">3. 욕구와 일상</a></li><li><a href="04-personality.html">4. 성격</a></li><li><a href="05-memory.html">5. 기억</a></li><li><a href="06-relationship.html">6. 관계</a></li><li><a href="07-dialogue.html">7. 대화</a></li><li><a href="08-events.html">8. 사건 생성</a></li><li><a href="09-world.html">9. 세계와 역사</a></li><li><a href="10-belonging.html">10. 소속감 설계</a></li><li><a href="11-failures.html">11. 실패 사례</a></li><li><a href="12-ai-reality.html">12. AI 현실 점검</a></li><li><a href="13-patterns.html">13. 패턴 카드</a></li><li><a href="14-checklist.html">14. 체크리스트</a></li><li><a href="15-references.html">15. 참고문헌</a></li><li><a href="16-appendix-code.html">부록 A. 공통 뼈대 코드</a></li><li><a href="17-appendix-glossary.html">부록 B. 용어집</a></li><li class="nav-sep"><a href="tags.html">태그 모아보기</a></li></ul></nav>
+  <main id="main" class="content">
+    <article>
+      <header class="page-head">
+        <p class="eyebrow">2장</p>
+        <h1>NPC의 뇌 — 행동 선택 방식 비교</h1>
+        <p class="summary">NPC가 &quot;지금 무엇을 할지&quot; 고르는 방식들. 상태 기계부터 행동 트리, Utility AI, GOAP, HTN, 스마트 오브젝트, LLM 계획까지 같은 기준으로 비교한다.</p>
+        <div class="page-goals"><span class="lbl">기여하는 목표</span><span class="tag goal goal-alive" data-tag="alive" title="NPC가 실제로 사는 사람처럼 느껴지는 것">실존감</span><span class="tag goal goal-plaus" data-tag="plaus" title="사건이 '그럴 만했다'고 납득되는 것">개연성</span></div>
+      </header>
+      <div class="filter-bar" role="group" aria-label="태그 필터"><span class="filter-label">태그 필터</span><span class="chips"><button type="button" class="chip goal goal-belong" data-filter="belong" aria-pressed="false" title="내가 이 공동체의 일원이라는 느낌">소속감</button><button type="button" class="chip goal goal-plaus" data-filter="plaus" aria-pressed="false" title="사건이 '그럴 만했다'고 납득되는 것">개연성</button><button type="button" class="chip goal goal-relation" data-filter="relation" aria-pressed="false" title="관계가 쌓이고 변하는 것">관계</button><button type="button" class="chip goal goal-alive" data-filter="alive" aria-pressed="false" title="NPC가 실제로 사는 사람처럼 느껴지는 것">실존감</button></span><span class="chips"><button type="button" class="chip trust trust-official" data-filter="official" aria-pressed="false" title="개발자 발표·공식 문서·GDC·논문">공식</button><button type="button" class="chip trust trust-analysis" data-filter="analysis" aria-pressed="false" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</button><button type="button" class="chip trust trust-guess" data-filter="guess" aria-pressed="false" title="플레이 관찰·커뮤니티 추측·2차 보도">추정</button><button type="button" class="chip trust trust-unknown" data-filter="unknown" aria-pressed="false" title="찾아봤지만 믿을 만한 출처가 없음">확인 못 함</button></span><button type="button" class="chip clear" data-filter-clear>해제</button><span class="filter-hint" aria-live="polite"></span></div>
+      <details class="toc-mobile"><summary>이 페이지 목차</summary><ul><li><a href="#한눈에-보기">한눈에 보기</a></li><li><a href="#상태-기계-fsm">상태 기계 (FSM)</a><ul><li><a href="#실제-게임-사례">실제 게임 사례</a></li><li><a href="#구현-스케치">구현 스케치</a></li></ul></li><li><a href="#행동-트리-behavior-tree">행동 트리 (Behavior Tree)</a><ul><li><a href="#실제-게임-사례_1">실제 게임 사례</a></li><li><a href="#구현-스케치_1">구현 스케치</a></li></ul></li><li><a href="#utility-ai">Utility AI</a><ul><li><a href="#실제-게임-사례_2">실제 게임 사례</a></li><li><a href="#구현-스케치_2">구현 스케치</a></li></ul></li><li><a href="#goap">GOAP</a><ul><li><a href="#구현-스케치_3">구현 스케치</a></li></ul></li><li><a href="#htn">HTN</a></li><li><a href="#스마트-오브젝트">스마트 오브젝트</a><ul><li><a href="#실제-게임-사례-심즈-1의-광고">실제 게임 사례: 심즈 1의 광고</a></li><li><a href="#구현-스케치_4">구현 스케치</a></li></ul></li><li><a href="#llm-계획">LLM 계획</a></li><li><a href="#섞어-쓰기">섞어 쓰기</a></li><li><a href="#행동-선택-방식-비교표">행동 선택 방식 비교표</a><ul><li><a href="#상황별-후보">상황별 후보</a></li></ul></li><li><a href="#출처">출처</a></li></ul></details>
+      <section class="sec"><h2 id="한눈에-보기">한눈에 보기<a class="headerlink" href="#한눈에-보기" title="이 소제목 링크">#</a></h2>
+<p>행동 선택(decision making: NPC가 지금 할 행동을 고르는 과정)은 모든 NPC 시스템의 중심입니다. 방식마다 <strong>누가 결정 규칙을 들고 있느냐</strong>가 다릅니다.</p>
+<table>
+<thead>
+<tr>
+<th>방식</th>
+<th>결정 규칙이 있는 곳</th>
+<th>한 줄 특징</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>상태 기계 (FSM)</td>
+<td>상태와 상태 사이의 화살표</td>
+<td>단순하고 예측 쉬움, 상태가 늘면 화살표가 폭발</td>
+</tr>
+<tr>
+<td>행동 트리 (BT)</td>
+<td>우선순위가 정해진 나무</td>
+<td>기획자가 읽기 쉬움, 고정된 우선순위</td>
+</tr>
+<tr>
+<td>Utility AI</td>
+<td>행동마다 붙은 점수 공식</td>
+<td>상황에 따라 부드럽게 바뀜, 숫자 조율이 일</td>
+</tr>
+<tr>
+<td>GOAP</td>
+<td>행동의 "전제 조건과 효과"</td>
+<td>목표만 주면 순서를 스스로 찾음</td>
+</tr>
+<tr>
+<td>HTN</td>
+<td>"큰 일 → 작은 일" 분해 규칙</td>
+<td>기획 의도대로 계획, GOAP보다 통제 쉬움</td>
+</tr>
+<tr>
+<td>스마트 오브젝트</td>
+<td>오브젝트 쪽</td>
+<td>물건을 추가하면 행동이 늘어남</td>
+</tr>
+<tr>
+<td>LLM 계획</td>
+<td>언어 모델의 추론</td>
+<td>표현력 최고, 비용·일관성·재현성이 약점</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">비유: 직원에게 일 시키는 방법</p>
+<ul>
+<li><strong>상태 기계</strong>: "지금은 청소 중. 손님이 오면 응대로 바꿔." 상황마다 바꿀 곳을 다 적어 줍니다.</li>
+<li><strong>행동 트리</strong>: 우선순위가 적힌 업무 수첩. 위에서부터 읽다가 할 수 있는 첫 일을 합니다.</li>
+<li><strong>Utility AI</strong>: 할 일마다 "지금 얼마나 급한가"를 점수로 매기고 가장 높은 일을 합니다.</li>
+<li><strong>GOAP</strong>: "매장을 깨끗하게"라는 목표만 주면, 직원이 걸레를 가져오고 → 물을 받고 → 닦는 순서를 스스로 짭니다.</li>
+<li><strong>HTN</strong>: "개점 준비"를 "청소 → 진열 → 계산대 점검"으로 쪼개는 매뉴얼을 줍니다.</li>
+<li><strong>스마트 오브젝트</strong>: 매장 물건에 "나를 쓰면 이게 좋아져요"라는 쪽지가 붙어 있습니다.</li>
+<li><strong>LLM 계획</strong>: 상황을 말로 설명해 주면 직원이 알아서 판단합니다. 가끔 엉뚱한 판단을 합니다.</li>
+</ul>
+</div>
+</section><section class="sec"><h2 id="상태-기계-fsm">상태 기계 (FSM)<a class="headerlink" href="#상태-기계-fsm" title="이 소제목 링크">#</a></h2>
+<p><strong>상태 기계(FSM, Finite State Machine: 정해진 상태 중 하나에 있다가 조건이 맞으면 다른 상태로 넘어가는 구조)</strong>는 가장 기본입니다.</p>
+<h3 id="실제-게임-사례">실제 게임 사례<a class="headerlink" href="#실제-게임-사례" title="이 소제목 링크">#</a></h3>
+<ul>
+<li>
+<p><strong>동물의 숲 GameCube판은 상태 기계를 세 층으로 쌓았습니다.</strong> <span class="tag goal goal-alive" data-tag="alive" title="NPC가 실제로 사는 사람처럼 느껴지는 것">실존감</span> <span class="tag trust trust-analysis" data-tag="analysis" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</span></p>
+<ol>
+<li><strong>일정(schedule)</strong>: 지금 바깥에 있을지, 집 안에 있을지, 잘지. 성격별 시간표가 정합니다(<code>src/game/m_npc_schedule.c</code>).</li>
+<li><strong>생각(think)</strong>: 기다리기, 돌아다니기, 집에 가기, 집에 들어가기 등(<code>src/actor/npc/ac_npc2_think_*.c_inc</code>).</li>
+<li><strong>행동(act)</strong>: 걷기, 인사, 곤충 쫓기, 우산 펴기, 옷 갈아입기 등(<code>src/actor/npc/ac_npc_act_*.c_inc</code>).</li>
+</ol>
+<p>위층은 "무엇을 할 시간인가"만, 아래층은 "어떻게 움직이나"만 다룹니다. 층을 나누면 상태 하나하나는 단순해집니다. (<a href="https://github.com/ACreTeam/ac-decomp">ac-decomp</a>, <a href="https://nobbs-it-study.tistory.com/entry/%EA%B2%8C%EC%9E%84-%EB%B6%84%EC%84%9D-%EB%8F%99%EC%88%B2-%EC%A3%BC%EB%AF%BC%EC%9D%84-%EC%96%B4%EB%96%BB%EA%B2%8C-%EC%82%B4%EC%95%84%EC%9E%88%EA%B2%8C-%EB%A7%8C%EB%93%A4%EC%97%88%EB%82%98-%EC%B5%9C%EC%A0%81%ED%99%94-%EB%B6%84%EC%84%9D-2%ED%8E%B8">동숲 분석 2편</a>)
+- <strong>F.E.A.R.의 상태 기계는 상태가 3개뿐입니다</strong>: 이동(Goto), 애니메이션(Animate), 스마트 오브젝트 사용(UseSmartObject). 무엇을 할지는 계획기(GOAP)가 정하고 상태 기계는 실행만 합니다. <span class="tag goal goal-plaus" data-tag="plaus" title="사건이 '그럴 만했다'고 납득되는 것">개연성</span> <span class="tag trust trust-official" data-tag="official" title="개발자 발표·공식 문서·GDC·논문">공식</span> (<a href="https://pages.cs.wisc.edu/~dyer/cs540/handouts/gdc2006_orkin_jeff_fear.pdf">Orkin, GDC 2006</a>)</p>
+</li>
+</ul>
+<div class="mermaid-wrap" markdown="0"><pre class="mermaid" data-src="0">flowchart TB
+  subgraph L1[&quot;1층: 일정 (성격별 시간표)&quot;]
+    S1[잠] --&gt; S2[집 안] --&gt; S3[바깥] --&gt; S2
+  end
+  subgraph L2[&quot;2층: 생각&quot;]
+    T1[기다리기] --&gt; T2[돌아다니기] --&gt; T3[집에 가기]
+  end
+  subgraph L3[&quot;3층: 행동&quot;]
+    A1[걷기]
+    A2[인사]
+    A3[곤충 쫓기]
+  end
+  L1 --&gt;|&quot;지금 할 일의 종류&quot;| L2 --&gt;|&quot;구체적 동작&quot;| L3</pre></div>
+
+<h3 id="구현-스케치">구현 스케치<a class="headerlink" href="#구현-스케치" title="이 소제목 링크">#</a></h3>
+<div class="hl"><pre><span></span><code><span class="c1">// 동숲식 1층: 성격별 시간표에서 지금 상태를 찾는다 (엔진 무관한 순수 C#)</span>
+<span class="k">public</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="n">DayState</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">Sleep</span><span class="p">,</span><span class="w"> </span><span class="n">InHouse</span><span class="p">,</span><span class="w"> </span><span class="n">Field</span><span class="w"> </span><span class="p">}</span>
+
+<span class="k">public</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">ScheduleEntry</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="n">DayState</span><span class="w"> </span><span class="n">State</span><span class="p">;</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">EndSecond</span><span class="p">;</span><span class="w">   </span><span class="c1">// 이 시각(하루 기준 초)까지 이 상태</span>
+<span class="p">}</span>
+
+<span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">Schedule</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="c1">// 끝나는 시각이 지금보다 늦은 첫 줄을 고른다 (ac-decomp mNPS_schedule_manager_sub와 같은 방식)</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">DayState</span><span class="w"> </span><span class="nf">Current</span><span class="p">(</span><span class="n">ScheduleEntry</span><span class="p">[]</span><span class="w"> </span><span class="n">table</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">nowSecond</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">foreach</span><span class="w"> </span><span class="p">(</span><span class="kt">var</span><span class="w"> </span><span class="n">e</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">table</span><span class="p">)</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">e</span><span class="p">.</span><span class="n">EndSecond</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">nowSecond</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="n">State</span><span class="p">;</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">table</span><span class="p">[</span><span class="n">table</span><span class="p">.</span><span class="n">Length</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">].</span><span class="n">State</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// lazy(먹보) 성격의 시간표: 8시까지 잠 → 9시 집 → 12시 바깥 → 14시 집 → 19:30 바깥 → 22시 집 → 잠</span>
+<span class="c1">// 값은 src/game/m_npc_schedule.c 의 boy_schedule_dt</span>
+<span class="k">static</span><span class="w"> </span><span class="k">readonly</span><span class="w"> </span><span class="n">ScheduleEntry</span><span class="p">[]</span><span class="w"> </span><span class="n">Lazy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">new</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">State</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DayState</span><span class="p">.</span><span class="n">Sleep</span><span class="p">,</span><span class="w">   </span><span class="n">EndSecond</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="mi">8</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">3600</span><span class="w"> </span><span class="p">},</span>
+<span class="w">    </span><span class="k">new</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">State</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DayState</span><span class="p">.</span><span class="n">InHouse</span><span class="p">,</span><span class="w"> </span><span class="n">EndSecond</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="mi">9</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">3600</span><span class="w"> </span><span class="p">},</span>
+<span class="w">    </span><span class="k">new</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">State</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DayState</span><span class="p">.</span><span class="n">Field</span><span class="p">,</span><span class="w">   </span><span class="n">EndSecond</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">12</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">3600</span><span class="w"> </span><span class="p">},</span>
+<span class="w">    </span><span class="k">new</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">State</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DayState</span><span class="p">.</span><span class="n">InHouse</span><span class="p">,</span><span class="w"> </span><span class="n">EndSecond</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">14</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">3600</span><span class="w"> </span><span class="p">},</span>
+<span class="w">    </span><span class="k">new</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">State</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DayState</span><span class="p">.</span><span class="n">Field</span><span class="p">,</span><span class="w">   </span><span class="n">EndSecond</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">19</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">3600</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">30</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">60</span><span class="w"> </span><span class="p">},</span>
+<span class="w">    </span><span class="k">new</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">State</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DayState</span><span class="p">.</span><span class="n">InHouse</span><span class="p">,</span><span class="w"> </span><span class="n">EndSecond</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">22</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">3600</span><span class="w"> </span><span class="p">},</span>
+<span class="w">    </span><span class="k">new</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">State</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DayState</span><span class="p">.</span><span class="n">Sleep</span><span class="p">,</span><span class="w">   </span><span class="n">EndSecond</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">24</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">3600</span><span class="w"> </span><span class="p">},</span>
+<span class="p">};</span>
+</code></pre></div>
+
+<p><strong>쓸 때</strong>: 상태가 적고 분명할 때, 그리고 다른 방식의 <strong>가장 아래층(실행층)</strong>으로. <strong>피할 때</strong>: 상태가 10개를 넘어 화살표가 얽히기 시작할 때. 그때는 층을 나누거나 다른 방식으로 위층을 바꿉니다.</p>
+</section><section class="sec"><h2 id="행동-트리-behavior-tree">행동 트리 (Behavior Tree)<a class="headerlink" href="#행동-트리-behavior-tree" title="이 소제목 링크">#</a></h2>
+<p><strong>행동 트리(BT: 조건과 행동을 나무 모양으로 엮고, 위에서부터 차례로 시도하는 구조)</strong>는 2000년대 중반 이후 업계 표준처럼 쓰였습니다. 기본 부품은 두 개입니다. <span class="tag trust trust-official" data-tag="official" title="개발자 발표·공식 문서·GDC·논문">공식</span> (<a href="https://www.gameaipro.com/GameAIPro/GameAIPro_Chapter06_The_Behavior_Tree_Starter_Kit.pdf">Champandard &amp; Dunstan, Game AI Pro 1권 6장</a>)</p>
+<ul>
+<li><strong>선택(Selector)</strong>: 자식을 차례로 시도해서 <strong>하나라도 성공하면</strong> 성공. "이게 안 되면 저거".</li>
+<li><strong>순서(Sequence)</strong>: 자식을 차례로 실행해서 <strong>하나라도 실패하면</strong> 실패. "이거 하고 저거 하고".</li>
+</ul>
+<h3 id="실제-게임-사례_1">실제 게임 사례<a class="headerlink" href="#실제-게임-사례_1" title="이 소제목 링크">#</a></h3>
+<ul>
+<li>파이널 판타지 XV는 행동 트리와 상태 기계를 섞어 캐릭터 판단 시스템을 만들었습니다. <span class="tag trust trust-official" data-tag="official" title="개발자 발표·공식 문서·GDC·논문">공식</span> (<a href="https://www.gameaipro.com/GameAIPro3/GameAIPro3_Chapter11_A_Character_Decision-Making_System_for_FINAL_FANTASY_XV_by_Combining_Behavior_Trees_and_State_Machines.pdf">Game AI Pro 3권 11장</a>)</li>
+<li>같은 게임의 도시 주민 상호작용(벤치에 앉은 노인과 관광객의 짧은 대화 같은 것)은 "스마트 오브젝트"를 "스마트 장소"로 넓힌 규칙 기반 시스템으로 만들었습니다. <span class="tag goal goal-alive" data-tag="alive" title="NPC가 실제로 사는 사람처럼 느껴지는 것">실존감</span> <span class="tag trust trust-official" data-tag="official" title="개발자 발표·공식 문서·GDC·논문">공식</span> (<a href="https://www.gameaipro.com/GameAIPro3/GameAIPro3_Chapter35_Ambient_Interactions_Improving_Believability_by_Leveraging_Rule-Based_AI.pdf">Game AI Pro 3권 35장</a>)</li>
+<li>행동 트리 설계에서 자주 빠지는 함정을 정리한 장도 있습니다. <span class="tag trust trust-official" data-tag="official" title="개발자 발표·공식 문서·GDC·논문">공식</span> (<a href="https://www.gameaipro.com/GameAIPro3/GameAIPro3_Chapter09_Overcoming_Pitfalls_in_Behavior_Tree_Design.pdf">Game AI Pro 3권 9장</a>)</li>
+</ul>
+<div class="mermaid-wrap" markdown="0"><pre class="mermaid" data-src="1">flowchart TB
+  R{{&quot;선택: 마을 주민&quot;}} --&gt; A[&quot;순서: 비 오면 귀가&quot;]
+  R --&gt; B[&quot;순서: 배고프면 식사&quot;]
+  R --&gt; C[&quot;돌아다니기&quot;]
+  A --&gt; A1[/&quot;비 오는가?&quot;/] --&gt; A2[&quot;집으로 걷기&quot;]
+  B --&gt; B1[/&quot;배고픈가?&quot;/] --&gt; B2[&quot;식당 찾기&quot;] --&gt; B3[&quot;먹기&quot;]</pre></div>
+
+<h3 id="구현-스케치_1">구현 스케치<a class="headerlink" href="#구현-스케치_1" title="이 소제목 링크">#</a></h3>
+<div class="hl"><pre><span></span><code><span class="c1">// 최소 행동 트리 (순수 C#). 실제 프로젝트에서는 매 프레임 Tick을 부른다.</span>
+<span class="k">public</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="n">Status</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">Success</span><span class="p">,</span><span class="w"> </span><span class="n">Failure</span><span class="p">,</span><span class="w"> </span><span class="n">Running</span><span class="w"> </span><span class="p">}</span>
+
+<span class="k">public</span><span class="w"> </span><span class="k">abstract</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">Node</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="k">abstract</span><span class="w"> </span><span class="n">Status</span><span class="w"> </span><span class="n">Tick</span><span class="p">(</span><span class="n">Npc</span><span class="w"> </span><span class="n">npc</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+
+<span class="k">public</span><span class="w"> </span><span class="k">sealed</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">Selector</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">Node</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">readonly</span><span class="w"> </span><span class="n">Node</span><span class="p">[]</span><span class="w"> </span><span class="n">children</span><span class="p">;</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="nf">Selector</span><span class="p">(</span><span class="k">params</span><span class="w"> </span><span class="n">Node</span><span class="p">[]</span><span class="w"> </span><span class="n">c</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">children</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">c</span><span class="p">;</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="n">Status</span><span class="w"> </span><span class="nf">Tick</span><span class="p">(</span><span class="n">Npc</span><span class="w"> </span><span class="n">npc</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">foreach</span><span class="w"> </span><span class="p">(</span><span class="kt">var</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">children</span><span class="p">)</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="kt">var</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">c</span><span class="p">.</span><span class="n">Tick</span><span class="p">(</span><span class="n">npc</span><span class="p">);</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">s</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">Status</span><span class="p">.</span><span class="n">Failure</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">s</span><span class="p">;</span><span class="w">   </span><span class="c1">// 성공했거나 진행 중이면 여기서 멈춤</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">Status</span><span class="p">.</span><span class="n">Failure</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">public</span><span class="w"> </span><span class="k">sealed</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">Sequence</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">Node</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">readonly</span><span class="w"> </span><span class="n">Node</span><span class="p">[]</span><span class="w"> </span><span class="n">children</span><span class="p">;</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="nf">Sequence</span><span class="p">(</span><span class="k">params</span><span class="w"> </span><span class="n">Node</span><span class="p">[]</span><span class="w"> </span><span class="n">c</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">children</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">c</span><span class="p">;</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="n">Status</span><span class="w"> </span><span class="nf">Tick</span><span class="p">(</span><span class="n">Npc</span><span class="w"> </span><span class="n">npc</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">foreach</span><span class="w"> </span><span class="p">(</span><span class="kt">var</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">children</span><span class="p">)</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="kt">var</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">c</span><span class="p">.</span><span class="n">Tick</span><span class="p">(</span><span class="n">npc</span><span class="p">);</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">s</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">Status</span><span class="p">.</span><span class="n">Success</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">s</span><span class="p">;</span><span class="w">   </span><span class="c1">// 실패했거나 진행 중이면 여기서 멈춤</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">Status</span><span class="p">.</span><span class="n">Success</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">public</span><span class="w"> </span><span class="k">sealed</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">Condition</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">Node</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">readonly</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="n">Func</span><span class="o">&lt;</span><span class="n">Npc</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">test</span><span class="p">;</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="nf">Condition</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Func</span><span class="o">&lt;</span><span class="n">Npc</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">t</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">test</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">t</span><span class="p">;</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="n">Status</span><span class="w"> </span><span class="nf">Tick</span><span class="p">(</span><span class="n">Npc</span><span class="w"> </span><span class="n">npc</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">test</span><span class="p">(</span><span class="n">npc</span><span class="p">)</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">Status</span><span class="p">.</span><span class="n">Success</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">Status</span><span class="p">.</span><span class="n">Failure</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="c1">// 사용: new Selector(new Sequence(new Condition(n =&gt; n.World.IsRaining), new GoHome()), new Wander());</span>
+</code></pre></div>
+
+<p><strong>쓸 때</strong>: 우선순위가 비교적 고정돼 있고, 기획자가 그림으로 보며 고치고 싶을 때. <strong>피할 때</strong>: "배가 조금 고프지만 친구가 불러서 같이 간다" 같은 <strong>여러 욕구의 정도를 비교</strong>해야 할 때. 행동 트리는 순서로 우선순위를 정하므로 정도 비교에 약합니다. 이럴 때는 Utility를 트리 안에 넣는 방법이 있습니다. <span class="tag trust trust-official" data-tag="official" title="개발자 발표·공식 문서·GDC·논문">공식</span> (<a href="https://www.gameaipro.com/GameAIPro/GameAIPro_Chapter10_Building_Utility_Decisions_into_Your_Existing_Behavior_Tree.pdf">Game AI Pro 1권 10장</a>)</p>
+</section><section class="sec"><h2 id="utility-ai">Utility AI<a class="headerlink" href="#utility-ai" title="이 소제목 링크">#</a></h2>
+<p><strong>Utility AI(효용 기반 AI: 가능한 행동을 모두 점수로 매기고 높은 것을 고르는 방식)</strong>는 생활 시뮬레이션과 가장 잘 맞습니다. 핵심은 "조건이 참/거짓"이 아니라 <strong>"얼마나"</strong>를 다룬다는 점입니다.</p>
+<ul>
+<li>Dave Mark와 Kevin Dill은 GDC 2010 AI Summit에서 if/then 대신 <strong>반응 곡선(response curve: 입력값을 0~1 점수로 바꾸는 그래프)</strong>으로 판단을 모델링하자고 발표했습니다. <span class="tag trust trust-official" data-tag="official" title="개발자 발표·공식 문서·GDC·논문">공식</span> (<a href="https://gdcvault.com/play/1012410/Improving-AI-Decision-Modeling-Through">GDC Vault</a>)</li>
+<li>David "Rez" Graham은 모든 행동을 한꺼번에 점수 매기고 상위 행동 중 하나를 고르는 구조와, 결정이 계속 바뀌는 것을 막는 <strong>관성(inertia)</strong>을 소개합니다. <span class="tag trust trust-official" data-tag="official" title="개발자 발표·공식 문서·GDC·논문">공식</span> (<a href="https://www.gameaipro.com/GameAIPro/GameAIPro_Chapter09_An_Introduction_to_Utility_Theory.pdf">Game AI Pro 1권 9장</a>)</li>
+<li>점수 요소(consideration)를 고르는 법 <span class="tag trust trust-official" data-tag="official" title="개발자 발표·공식 문서·GDC·논문">공식</span> (<a href="https://www.gameaipro.com/GameAIPro3/GameAIPro3_Chapter13_Choosing_Effective_Utility-Based_Considerations.pdf">Game AI Pro 3권 13장</a>), 가중치와 확률을 같이 쓰는 이중 효용 <span class="tag trust trust-official" data-tag="official" title="개발자 발표·공식 문서·GDC·논문">공식</span> (<a href="https://www.gameaipro.com/GameAIPro2/GameAIPro2_Chapter03_Dual-Utility_Reasoning.pdf">Game AI Pro 2권 3장</a>), 드래곤 에이지: 인퀴지션의 점수 구조 <span class="tag trust trust-official" data-tag="official" title="개발자 발표·공식 문서·GDC·논문">공식</span> (<a href="https://www.gameaipro.com/GameAIPro3/GameAIPro3_Chapter31_Behavior_Decision_System_Dragon_Age_Inquisition%E2%80%99s_Utility_Scoring_Architecture.pdf">Game AI Pro 3권 31장</a>)도 참고할 만합니다.</li>
+</ul>
+<h3 id="실제-게임-사례_2">실제 게임 사례<a class="headerlink" href="#실제-게임-사례_2" title="이 소제목 링크">#</a></h3>
+<ul>
+<li><strong>심즈 1</strong>: 심은 모든 오브젝트의 모든 행동 중 <strong>지금 행복을 가장 크게 올리는 행동</strong>을 고릅니다. 이 점수가 오브젝트의 "광고"에서 나옵니다(아래 스마트 오브젝트 절). <span class="tag goal goal-alive" data-tag="alive" title="NPC가 실제로 사는 사람처럼 느껴지는 것">실존감</span> <span class="tag trust trust-official" data-tag="official" title="개발자 발표·공식 문서·GDC·논문">공식</span> (<a href="https://qrg.northwestern.edu/papers/Files/Programming_Objects_in_The_Sims.pdf">Forbus &amp; Wright 2001</a>)</li>
+<li><strong>동숲 GC의 산책 목적지</strong>: 성격과 시간대별로 목적지 후보 배열을 두고 무작위로 하나를 뽑습니다. 가중치를 숫자로 적지 않고 <strong>같은 값을 배열에 여러 번 넣는</strong> 방식입니다. 무뚝뚝(cranky)은 <code>{신사×3, 혼자 있는 곳×7}</code>이라 70% 확률로 아무도 없는 곳으로 갑니다. 엄밀히는 점수 비교가 아니라 가중치 무작위 선택이지만, Utility의 가장 단순한 형태로 볼 수 있습니다. <span class="tag goal goal-alive" data-tag="alive" title="NPC가 실제로 사는 사람처럼 느껴지는 것">실존감</span> <span class="tag trust trust-analysis" data-tag="analysis" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</span> (<code>src/game/m_npc_walk.c</code> 60행)</li>
+</ul>
+<div class="mermaid-wrap" markdown="0"><pre class="mermaid" data-src="2">flowchart LR
+  subgraph 입력
+    H[&quot;배고픔 0.8&quot;]
+    E[&quot;피로 0.3&quot;]
+    S[&quot;외로움 0.6&quot;]
+  end
+  H --&gt; C1[&quot;곡선: 제곱&quot;] --&gt; X1[&quot;식사 0.64&quot;]
+  E --&gt; C2[&quot;곡선: 직선&quot;] --&gt; X2[&quot;잠 0.30&quot;]
+  S --&gt; C3[&quot;곡선: 로지스틱&quot;] --&gt; X3[&quot;친구 방문 0.55&quot;]
+  X1 --&gt; P{&quot;최고점 선택&lt;br/&gt;+ 관성 보너스&quot;}
+  X2 --&gt; P
+  X3 --&gt; P
+  P --&gt; OUT[&quot;식사&quot;]</pre></div>
+
+<h3 id="구현-스케치_2">구현 스케치<a class="headerlink" href="#구현-스케치_2" title="이 소제목 링크">#</a></h3>
+<div class="hl"><pre><span></span><code><span class="c1">// 반응 곡선 + 점수 합성 + 관성. AnimationCurve를 쓰면 기획자가 인스펙터에서 곡선을 그릴 수 있다.</span>
+<span class="k">using</span><span class="w"> </span><span class="nn">UnityEngine</span><span class="p">;</span><span class="w">   </span><span class="c1">// [Unity 의존] AnimationCurve, ScriptableObject</span>
+
+<span class="na">[CreateAssetMenu(menuName = "AI/UtilityAction")]</span>
+<span class="k">public</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">UtilityAction</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">ScriptableObject</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="na">[System.Serializable]</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">Consideration</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">public</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">need</span><span class="p">;</span><span class="w">            </span><span class="c1">// 예: "hunger"</span>
+<span class="w">        </span><span class="k">public</span><span class="w"> </span><span class="n">AnimationCurve</span><span class="w"> </span><span class="n">curve</span><span class="p">;</span><span class="w">   </span><span class="c1">// 입력 0~1 → 점수 0~1</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">actionName</span><span class="p">;</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="n">Consideration</span><span class="p">[]</span><span class="w"> </span><span class="n">considerations</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// 여러 요소를 곱한다: 하나라도 0이면 이 행동은 안 한다</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="nf">Score</span><span class="p">(</span><span class="n">NeedSet</span><span class="w"> </span><span class="n">needs</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="kt">float</span><span class="w"> </span><span class="n">score</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1f</span><span class="p">;</span>
+<span class="w">        </span><span class="k">foreach</span><span class="w"> </span><span class="p">(</span><span class="kt">var</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">considerations</span><span class="p">)</span>
+<span class="w">            </span><span class="n">score</span><span class="w"> </span><span class="o">*=</span><span class="w"> </span><span class="n">c</span><span class="p">.</span><span class="n">curve</span><span class="p">.</span><span class="n">Evaluate</span><span class="p">(</span><span class="n">needs</span><span class="p">.</span><span class="n">Get</span><span class="p">(</span><span class="n">c</span><span class="p">.</span><span class="n">need</span><span class="p">));</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">score</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">UtilityBrain</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">InertiaBonus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.1f</span><span class="p">;</span><span class="w">   </span><span class="c1">// 하던 일을 조금 더 하게 해서 결정이 깜빡이지 않게</span>
+
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">UtilityAction</span><span class="w"> </span><span class="nf">Pick</span><span class="p">(</span><span class="n">UtilityAction</span><span class="p">[]</span><span class="w"> </span><span class="n">actions</span><span class="p">,</span><span class="w"> </span><span class="n">NeedSet</span><span class="w"> </span><span class="n">needs</span><span class="p">,</span><span class="w"> </span><span class="n">UtilityAction</span><span class="w"> </span><span class="n">current</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">UtilityAction</span><span class="w"> </span><span class="n">best</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">null</span><span class="p">;</span>
+<span class="w">        </span><span class="kt">float</span><span class="w"> </span><span class="n">bestScore</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">-</span><span class="mf">1f</span><span class="p">;</span>
+<span class="w">        </span><span class="k">foreach</span><span class="w"> </span><span class="p">(</span><span class="kt">var</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">actions</span><span class="p">)</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="kt">float</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">Score</span><span class="p">(</span><span class="n">needs</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">current</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">InertiaBonus</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mf">0f</span><span class="p">);</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">s</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">bestScore</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">bestScore</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">;</span><span class="w"> </span><span class="n">best</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">best</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p><strong>쓸 때</strong>: 욕구가 여러 개이고 상황에 따라 부드럽게 우선순위가 바뀌어야 할 때(생활 시뮬레이션). <strong>피할 때</strong>: 반드시 이 순서로 해야 하는 연출(컷신, 튜토리얼). 점수 조율이 끝없이 이어질 수 있으니, 디버그 화면에 <strong>각 행동의 점수를 항상 띄워 두는 것</strong>이 사실상 필수입니다.</p>
+</section><section class="sec"><h2 id="goap">GOAP<a class="headerlink" href="#goap" title="이 소제목 링크">#</a></h2>
+<p><strong>GOAP(Goal-Oriented Action Planning: 목표를 주면 행동들의 전제 조건과 효과를 보고 순서를 스스로 찾는 계획 방식)</strong>은 F.E.A.R.(2005)로 알려졌습니다. <span class="tag trust trust-official" data-tag="official" title="개발자 발표·공식 문서·GDC·논문">공식</span> (<a href="https://pages.cs.wisc.edu/~dyer/cs540/handouts/gdc2006_orkin_jeff_fear.pdf">Orkin, GDC 2006</a>)</p>
+<ul>
+<li>1970년 스탠퍼드의 STRIPS 계획기를 게임에 맞게 고친 것으로, 행동마다 <strong>전제 조건(precondition)</strong>과 <strong>효과(effect)</strong>를 적어 둡니다. <span class="tag trust trust-official" data-tag="official" title="개발자 발표·공식 문서·GDC·논문">공식</span></li>
+<li>길찾기에 쓰던 A*를 행동 순서 찾기에도 씁니다. "세계 상태"를 노드로, 행동을 간선으로 보고 목표 상태까지의 가장 싼 경로를 찾습니다. <span class="tag trust trust-official" data-tag="official" title="개발자 발표·공식 문서·GDC·논문">공식</span></li>
+<li>무엇을 할지는 계획기가, 어떻게 움직일지는 3개짜리 상태 기계가 맡습니다. <span class="tag trust trust-official" data-tag="official" title="개발자 발표·공식 문서·GDC·논문">공식</span></li>
+</ul>
+<p>생활 시뮬레이션에서는 "밥 먹기"라는 목표에 대해 "냉장고에 재료 있음 → 요리 → 먹기"와 "돈 있음 → 식당 가기 → 먹기" 중 상황에 맞는 길을 고르게 할 때 씁니다. <span class="tag goal goal-plaus" data-tag="plaus" title="사건이 '그럴 만했다'고 납득되는 것">개연성</span> 오블리비언이 홍보한 "목표만 주고 방법은 NPC가 고른다"는 아이디어가 이런 방향이었습니다(<a href="11-failures.html">11장</a>).</p>
+<h3 id="구현-스케치_3">구현 스케치<a class="headerlink" href="#구현-스케치_3" title="이 소제목 링크">#</a></h3>
+<div class="hl"><pre><span></span><code><span class="c1">// GOAP의 뼈대: 세계 상태는 문자열 키 → bool, 계획은 너비 우선 탐색(작은 행동 수에서 충분)</span>
+<span class="k">using</span><span class="w"> </span><span class="nn">System.Collections.Generic</span><span class="p">;</span>
+
+<span class="k">public</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">GoapAction</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">Name</span><span class="p">;</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">Cost</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1f</span><span class="p">;</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="n">Dictionary</span><span class="o">&lt;</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Pre</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="p">();</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="n">Dictionary</span><span class="o">&lt;</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Effect</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="p">();</span>
+
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="nf">CanRun</span><span class="p">(</span><span class="n">Dictionary</span><span class="o">&lt;</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">s</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">foreach</span><span class="w"> </span><span class="p">(</span><span class="kt">var</span><span class="w"> </span><span class="n">kv</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">Pre</span><span class="p">)</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">s</span><span class="p">.</span><span class="n">TryGetValue</span><span class="p">(</span><span class="n">kv</span><span class="p">.</span><span class="n">Key</span><span class="p">,</span><span class="w"> </span><span class="k">out</span><span class="w"> </span><span class="kt">var</span><span class="w"> </span><span class="n">v</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">kv</span><span class="p">.</span><span class="n">Value</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">false</span><span class="p">;</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">true</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">GoapPlanner</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">GoapAction</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Plan</span><span class="p">(</span><span class="n">Dictionary</span><span class="o">&lt;</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">start</span><span class="p">,</span><span class="w"> </span><span class="n">Dictionary</span><span class="o">&lt;</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">goal</span><span class="p">,</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">GoapAction</span><span class="o">&gt;</span><span class="w"> </span><span class="n">actions</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="kt">var</span><span class="w"> </span><span class="n">open</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Queue</span><span class="o">&lt;</span><span class="p">(</span><span class="n">Dictionary</span><span class="o">&lt;</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">state</span><span class="p">,</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">GoapAction</span><span class="o">&gt;</span><span class="w"> </span><span class="n">path</span><span class="p">)</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">        </span><span class="n">open</span><span class="p">.</span><span class="n">Enqueue</span><span class="p">((</span><span class="n">start</span><span class="p">,</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">GoapAction</span><span class="o">&gt;</span><span class="p">()));</span>
+<span class="w">        </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">open</span><span class="p">.</span><span class="n">Count</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="kt">var</span><span class="w"> </span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="w"> </span><span class="n">path</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">open</span><span class="p">.</span><span class="n">Dequeue</span><span class="p">();</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">Satisfies</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="w"> </span><span class="n">goal</span><span class="p">))</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">path</span><span class="p">;</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">path</span><span class="p">.</span><span class="n">Count</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">6</span><span class="p">)</span><span class="w"> </span><span class="k">continue</span><span class="p">;</span><span class="w">                 </span><span class="c1">// 깊이 제한: 계획이 끝없이 길어지지 않게</span>
+<span class="w">            </span><span class="k">foreach</span><span class="w"> </span><span class="p">(</span><span class="kt">var</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">actions</span><span class="p">)</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">a</span><span class="p">.</span><span class="n">CanRun</span><span class="p">(</span><span class="n">state</span><span class="p">))</span><span class="w"> </span><span class="k">continue</span><span class="p">;</span>
+<span class="w">                </span><span class="kt">var</span><span class="w"> </span><span class="n">next</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Dictionary</span><span class="o">&lt;</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="o">&gt;</span><span class="p">(</span><span class="n">state</span><span class="p">);</span>
+<span class="w">                </span><span class="k">foreach</span><span class="w"> </span><span class="p">(</span><span class="kt">var</span><span class="w"> </span><span class="n">kv</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">Effect</span><span class="p">)</span><span class="w"> </span><span class="n">next</span><span class="p">[</span><span class="n">kv</span><span class="p">.</span><span class="n">Key</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">kv</span><span class="p">.</span><span class="n">Value</span><span class="p">;</span>
+<span class="w">                </span><span class="n">open</span><span class="p">.</span><span class="n">Enqueue</span><span class="p">((</span><span class="n">next</span><span class="p">,</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">GoapAction</span><span class="o">&gt;</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="p">}));</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">null</span><span class="p">;</span><span class="w">   </span><span class="c1">// 방법이 없음 → 다른 목표로</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="nf">Satisfies</span><span class="p">(</span><span class="n">Dictionary</span><span class="o">&lt;</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="n">Dictionary</span><span class="o">&lt;</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">goal</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">foreach</span><span class="w"> </span><span class="p">(</span><span class="kt">var</span><span class="w"> </span><span class="n">kv</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">goal</span><span class="p">)</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">s</span><span class="p">.</span><span class="n">TryGetValue</span><span class="p">(</span><span class="n">kv</span><span class="p">.</span><span class="n">Key</span><span class="p">,</span><span class="w"> </span><span class="k">out</span><span class="w"> </span><span class="kt">var</span><span class="w"> </span><span class="n">v</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">kv</span><span class="p">.</span><span class="n">Value</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">false</span><span class="p">;</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">true</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+<span class="c1">// 실제로는 비용을 고려한 A*로 바꾸고, 행동 수가 많으면 계획을 몇 초에 한 번만 다시 세운다.</span>
+</code></pre></div>
+
+<p><strong>쓸 때</strong>: 같은 목표를 이루는 길이 여러 개이고, 환경에 따라 길이 막히거나 열릴 때. <strong>피할 때</strong>: 행동이 적어서 행동 트리로 충분할 때, 또는 기획자가 "꼭 이 순서로"를 원할 때. 계획 결과를 예측하기 어려워서 퀘스트와 부딪칠 수 있습니다(오블리비언의 교훈).</p>
+</section><section class="sec"><h2 id="htn">HTN<a class="headerlink" href="#htn" title="이 소제목 링크">#</a></h2>
+<p><strong>HTN(Hierarchical Task Network: 큰 일을 작은 일로 쪼개는 규칙을 미리 적어 두고 그 규칙대로 계획하는 방식)</strong>은 GOAP처럼 계획을 세우지만, 탐색 범위를 기획자가 정한 분해 규칙 안으로 좁힙니다. <span class="tag trust trust-official" data-tag="official" title="개발자 발표·공식 문서·GDC·논문">공식</span> (<a href="https://www.gameaipro.com/GameAIPro/GameAIPro_Chapter12_Exploring_HTN_Planners_through_Example.pdf">Humphreys, Game AI Pro 1권 12장</a>)</p>
+<ul>
+<li><strong>복합 작업(compound task)</strong>: "아침 일과" 같은 큰 일. 조건별로 여러 <strong>분해 방법(method)</strong>을 가짐.</li>
+<li><strong>기본 작업(primitive task)</strong>: 더 쪼갤 수 없는 실제 행동.</li>
+<li>계획기는 위에서부터 조건이 맞는 첫 방법으로 쪼개 내려갑니다. 그래서 결과가 GOAP보다 예측하기 쉽습니다. <span class="tag trust trust-official" data-tag="official" title="개발자 발표·공식 문서·GDC·논문">공식</span></li>
+</ul>
+<p>생활 시뮬레이션에서 HTN은 <strong>하루 계획</strong>과 잘 맞습니다. "평일 하루 → 출근 준비 → 일 → 퇴근 후 여가"를 분해 규칙으로 적어 두면, 날씨나 기분에 따라 다른 분해 방법이 골라집니다. Generative Agents의 "하루 큰 일정 → 1시간 단위 → 5~15분 단위"로 쪼개는 계획(<a href="03-routine.html">3장</a>)은 같은 생각을 LLM으로 한 것입니다. <span class="tag trust trust-official" data-tag="official" title="개발자 발표·공식 문서·GDC·논문">공식</span></p>
+<div class="hl"><pre><span></span><code><span class="c1">// HTN의 뼈대 (의사코드에 가까운 C#)</span>
+<span class="c1">// 복합 작업: 조건이 맞는 첫 방법으로 분해, 기본 작업: 계획에 그대로 추가</span>
+<span class="k">abstract</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">Task</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">}</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Primitive</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">Task</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">Action</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Compound</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">Task</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Func</span><span class="o">&lt;</span><span class="n">World</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="k">when</span><span class="p">,</span><span class="w"> </span><span class="n">Task</span><span class="p">[]</span><span class="w"> </span><span class="n">subtasks</span><span class="p">)[]</span><span class="w"> </span><span class="n">Methods</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="nf">Decompose</span><span class="p">(</span><span class="n">Task</span><span class="w"> </span><span class="n">t</span><span class="p">,</span><span class="w"> </span><span class="n">World</span><span class="w"> </span><span class="n">w</span><span class="p">,</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Primitive</span><span class="o">&gt;</span><span class="w"> </span><span class="n">plan</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">t</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="n">Primitive</span><span class="w"> </span><span class="n">p</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">plan</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="n">p</span><span class="p">);</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">true</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="kt">var</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">Compound</span><span class="p">)</span><span class="n">t</span><span class="p">;</span>
+<span class="w">    </span><span class="k">foreach</span><span class="w"> </span><span class="p">(</span><span class="kt">var</span><span class="w"> </span><span class="p">(</span><span class="k">when</span><span class="p">,</span><span class="w"> </span><span class="n">subtasks</span><span class="p">)</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">c</span><span class="p">.</span><span class="n">Methods</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="k">when</span><span class="p">(</span><span class="n">w</span><span class="p">))</span><span class="w"> </span><span class="k">continue</span><span class="p">;</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">mark</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">plan</span><span class="p">.</span><span class="n">Count</span><span class="p">;</span>
+<span class="w">        </span><span class="kt">bool</span><span class="w"> </span><span class="n">ok</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">true</span><span class="p">;</span>
+<span class="w">        </span><span class="k">foreach</span><span class="w"> </span><span class="p">(</span><span class="kt">var</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">subtasks</span><span class="p">)</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">Decompose</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="n">w</span><span class="p">,</span><span class="w"> </span><span class="n">plan</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">ok</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">false</span><span class="p">;</span><span class="w"> </span><span class="k">break</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ok</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">true</span><span class="p">;</span>
+<span class="w">        </span><span class="n">plan</span><span class="p">.</span><span class="n">RemoveRange</span><span class="p">(</span><span class="n">mark</span><span class="p">,</span><span class="w"> </span><span class="n">plan</span><span class="p">.</span><span class="n">Count</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">mark</span><span class="p">);</span><span class="w">   </span><span class="c1">// 실패하면 되돌리고 다음 방법</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">false</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+</section><section class="sec"><h2 id="스마트-오브젝트">스마트 오브젝트<a class="headerlink" href="#스마트-오브젝트" title="이 소제목 링크">#</a></h2>
+<p><strong>스마트 오브젝트(smart object: 행동 방법과 그 효과를 NPC가 아니라 오브젝트가 들고 있는 설계)</strong>는 심즈의 핵심입니다.</p>
+<h3 id="실제-게임-사례-심즈-1의-광고">실제 게임 사례: 심즈 1의 광고<a class="headerlink" href="#실제-게임-사례-심즈-1의-광고" title="이 소제목 링크">#</a></h3>
+<p>Ken Forbus와 Will Wright가 2001년에 쓴 심즈 오브젝트 제작 문서에 구조가 그대로 나옵니다. <span class="tag goal goal-alive" data-tag="alive" title="NPC가 실제로 사는 사람처럼 느껴지는 것">실존감</span> <span class="tag trust trust-official" data-tag="official" title="개발자 발표·공식 문서·GDC·논문">공식</span> (<a href="https://qrg.northwestern.edu/papers/Files/Programming_Objects_in_The_Sims.pdf">Forbus &amp; Wright 2001</a>)</p>
+<ul>
+<li>오브젝트마다 행동 목록이 있고, 행동마다 세 가지를 가집니다. <strong>실행 절차</strong>, <strong>가능한지 검사하는 절차(Check Tree)</strong>, 그리고 <strong>광고(advertisement)</strong>: "나는 어떤 욕구를 얼마나 채워 준다".</li>
+<li>심(플레이어가 직접 조종하지 않을 때)은 <strong>모든 오브젝트의 모든 행동 중에서 현재 행복을 가장 크게 올리는 것</strong>을 고릅니다.</li>
+<li>광고 값은 욕구별로 최소~최대 범위를 가집니다. 예: 변기는 방광(Bladder)에 0~70을 광고합니다.</li>
+<li>성격에 따라 광고 값이 바뀝니다. 예: 어항의 "물고기 밥 주기"는 장난기(Playful) 점수에 따라 재미(Fun)를 1~11 사이로 광고합니다.</li>
+<li><strong>거리 감쇠(attenuation)</strong>: 멀리 있는 오브젝트의 광고는 약해집니다. 감쇠 없음으로 두면 거리와 상관없이 같은 세기로 광고합니다.</li>
+<li>선택한 행동의 절차는 오브젝트에 있지만 <strong>심의 실행 흐름 안에서</strong> 돌아가서, 심의 값과 오브젝트의 값을 모두 쓸 수 있습니다. 심 자신도 "조금 더 복잡한 오브젝트"일 뿐입니다.</li>
+</ul>
+<p>Will Wright는 초기 버전의 자율 행동이 너무 잘해서 "플레이어가 뭘 해도 자동으로 두는 것보다 못했다"고 말했습니다. 플레이어가 개입할 이유를 남기려고 일부러 덜 똑똑하게 했다는 뜻입니다. <span class="tag trust trust-official" data-tag="official" title="개발자 발표·공식 문서·GDC·논문">공식</span> (<a href="https://www.pcgamer.com/games/the-sims/will-wright-says-the-original-sims-ai-was-actually-too-good-almost-anything-the-player-did-was-worse-than-the-sims-running-on-autopilot">PC Gamer</a>)</p>
+<p>심즈 3에서는 Richard Evans가 "각 심의 개성이 자율 행동에 드러나게" 하는 방법을 GDC에서 발표했습니다. <span class="tag trust trust-official" data-tag="official" title="개발자 발표·공식 문서·GDC·논문">공식</span> (<a href="https://gdcvault.com/play/1012294/Modeling-Individual-Personalities-in-The">GDC Vault</a>) 발표 원문은 확인하지 못했고, 특성이 특성 전용 욕구를 추가하는 방식이었다는 해설은 2차 자료입니다. <span class="tag trust trust-guess" data-tag="guess" title="플레이 관찰·커뮤니티 추측·2차 보도">추정</span></p>
+<div class="mermaid-wrap" markdown="0"><pre class="mermaid" data-src="3">flowchart LR
+  F[&quot;냉장고&lt;br/&gt;광고: 허기 +40&quot;] -.-&gt;|거리 감쇠| SIM
+  B[&quot;침대&lt;br/&gt;광고: 에너지 +60&quot;] -.-&gt; SIM
+  T[&quot;TV&lt;br/&gt;광고: 재미 +20&lt;br/&gt;(장난기 따라 변함)&quot;] -.-&gt; SIM
+  SIM((&quot;심&lt;br/&gt;허기 낮음&quot;)) --&gt;|&quot;점수 = 광고 × 욕구 급함 × 감쇠&quot;| PICK[&quot;냉장고 선택&quot;]
+  PICK --&gt; RUN[&quot;냉장고의 절차를&lt;br/&gt;심의 흐름에서 실행&quot;]</pre></div>
+
+<h3 id="구현-스케치_4">구현 스케치<a class="headerlink" href="#구현-스케치_4" title="이 소제목 링크">#</a></h3>
+<div class="hl"><pre><span></span><code><span class="c1">// 스마트 오브젝트: 오브젝트가 광고를 들고 있고, NPC는 광고를 비교만 한다</span>
+<span class="k">using</span><span class="w"> </span><span class="nn">UnityEngine</span><span class="p">;</span><span class="w">   </span><span class="c1">// [Unity 의존] MonoBehaviour, Vector3</span>
+
+<span class="k">public</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">SmartObject</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">MonoBehaviour</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="na">[System.Serializable]</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">Advert</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">need</span><span class="p">;</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">min</span><span class="p">,</span><span class="w"> </span><span class="n">max</span><span class="p">;</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">personalityScale</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">interaction</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"냉장고 열기"</span><span class="p">;</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="n">Advert</span><span class="p">[]</span><span class="w"> </span><span class="n">adverts</span><span class="p">;</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">attenuation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.05f</span><span class="p">;</span><span class="w">   </span><span class="c1">// 0이면 거리 무관</span>
+
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="nf">CanUse</span><span class="p">(</span><span class="n">Npc</span><span class="w"> </span><span class="n">npc</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">true</span><span class="p">;</span><span class="w">   </span><span class="c1">// 심즈의 Check Tree</span>
+
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="nf">ScoreFor</span><span class="p">(</span><span class="n">Npc</span><span class="w"> </span><span class="n">npc</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">CanUse</span><span class="p">(</span><span class="n">npc</span><span class="p">))</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="mf">0f</span><span class="p">;</span>
+<span class="w">        </span><span class="kt">float</span><span class="w"> </span><span class="n">score</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0f</span><span class="p">;</span>
+<span class="w">        </span><span class="k">foreach</span><span class="w"> </span><span class="p">(</span><span class="kt">var</span><span class="w"> </span><span class="n">ad</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">adverts</span><span class="p">)</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="c1">// 성격 점수(0~10)로 광고 값을 min~max 사이에서 고른다</span>
+<span class="w">            </span><span class="kt">float</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">string</span><span class="p">.</span><span class="n">IsNullOrEmpty</span><span class="p">(</span><span class="n">ad</span><span class="p">.</span><span class="n">personalityScale</span><span class="p">)</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="mf">1f</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">npc</span><span class="p">.</span><span class="n">Personality</span><span class="p">.</span><span class="n">Get</span><span class="p">(</span><span class="n">ad</span><span class="p">.</span><span class="n">personalityScale</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">10f</span><span class="p">;</span>
+<span class="w">            </span><span class="kt">float</span><span class="w"> </span><span class="n">offer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Mathf</span><span class="p">.</span><span class="n">Lerp</span><span class="p">(</span><span class="n">ad</span><span class="p">.</span><span class="n">min</span><span class="p">,</span><span class="w"> </span><span class="n">ad</span><span class="p">.</span><span class="n">max</span><span class="p">,</span><span class="w"> </span><span class="n">t</span><span class="p">);</span>
+<span class="w">            </span><span class="n">score</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">offer</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">npc</span><span class="p">.</span><span class="n">Needs</span><span class="p">.</span><span class="n">Urgency</span><span class="p">(</span><span class="n">ad</span><span class="p">.</span><span class="n">need</span><span class="p">);</span><span class="w">   </span><span class="c1">// 급한 욕구일수록 크게</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="kt">float</span><span class="w"> </span><span class="n">dist</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Vector3</span><span class="p">.</span><span class="n">Distance</span><span class="p">(</span><span class="n">transform</span><span class="p">.</span><span class="n">position</span><span class="p">,</span><span class="w"> </span><span class="n">npc</span><span class="p">.</span><span class="n">transform</span><span class="p">.</span><span class="n">position</span><span class="p">);</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">score</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="p">(</span><span class="mf">1f</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">attenuation</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">dist</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="n">Collections</span><span class="p">.</span><span class="n">IEnumerator</span><span class="w"> </span><span class="n">Use</span><span class="p">(</span><span class="n">Npc</span><span class="w"> </span><span class="n">npc</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">yield</span><span class="w"> </span><span class="k">break</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w">   </span><span class="c1">// 실제 동작은 오브젝트가 정의</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p><strong>쓸 때</strong>: 물건이 많고 계속 늘어나는 게임(생활 시뮬, 건설 시뮬). 새 가구를 추가하면 그 가구를 쓰는 행동이 자동으로 생깁니다. <strong>주의</strong>: 모든 NPC가 모든 오브젝트를 매번 훑으면 비싸집니다. 근처 것만, 몇 초에 한 번만 평가하세요. 심즈 3는 욕구별로 그 욕구를 채우는 오브젝트 목록을 따로 들고 있었다는 해설이 있습니다. <span class="tag trust trust-guess" data-tag="guess" title="플레이 관찰·커뮤니티 추측·2차 보도">추정</span></p>
+</section><section class="sec"><h2 id="llm-계획">LLM 계획<a class="headerlink" href="#llm-계획" title="이 소제목 링크">#</a></h2>
+<p><strong>LLM 계획</strong>은 언어 모델에게 NPC의 상황을 글로 설명하고 다음 행동이나 하루 계획을 글로 받는 방식입니다.</p>
+<ul>
+<li><strong>Generative Agents</strong>(Park 외, 2023): 에이전트의 하루 계획을 LLM이 "큰 일정 → 1시간 단위 → 5~15분 단위"로 쪼개서 만들고, 관찰할 때마다 "반응할지"를 판단해 계획을 고칩니다. <span class="tag trust trust-official" data-tag="official" title="개발자 발표·공식 문서·GDC·논문">공식</span> (<a href="https://arxiv.org/abs/2304.03442">arXiv 2304.03442</a>) 자세한 구조는 <a href="03-routine.html">3장</a>, <a href="05-memory.html">5장</a>.</li>
+<li><strong>인조이 Smart Zoi</strong>: 크래프톤은 특성과 상황에 따라 행동을 조정하고, 하루가 끝나면 경험을 바탕으로 일정을 조정한다고 발표했습니다. <span class="tag trust trust-official" data-tag="official" title="개발자 발표·공식 문서·GDC·논문">공식</span> (<a href="https://playinzoi.com/en/news/8419">크래프톤 공지</a>) 다만 언어 모델이 행동을 <strong>직접 고르는지</strong>, 기존 행동 시스템의 가중치만 바꾸는지는 공개되지 않았습니다. <span class="tag trust trust-unknown" data-tag="unknown" title="찾아봤지만 믿을 만한 출처가 없음">확인 못 함</span></li>
+<li><strong>Concordia</strong>(Google DeepMind): 테이블 롤플레잉 게임처럼 "게임 마스터" 역할의 에이전트가 행동의 결과를 판정합니다. 즉 <strong>LLM이 제안한 행동을 누가 검증하고 세계에 반영하느냐</strong>를 구조로 정해 둡니다. <span class="tag trust trust-official" data-tag="official" title="개발자 발표·공식 문서·GDC·논문">공식</span> (<a href="https://github.com/google-deepmind/concordia">GitHub</a>)</li>
+</ul>
+</section><section class="sec"><h2 id="섞어-쓰기">섞어 쓰기<a class="headerlink" href="#섞어-쓰기" title="이 소제목 링크">#</a></h2>
+<p>현실적인 구조는 <strong>"고르는 일"과 "말하는 일"을 나누는 것</strong>입니다.</p>
+<div class="mermaid-wrap" markdown="0"><pre class="mermaid" data-src="4">flowchart LR
+  W[&quot;세계 상태&quot;] --&gt; U[&quot;Utility / HTN&lt;br/&gt;(전통 시스템이 행동 결정)&quot;]
+  U --&gt; ACT[&quot;행동 실행&lt;br/&gt;상태 기계&quot;]
+  U --&gt;|&quot;고른 행동 + 이유 점수&quot;| L[&quot;LLM&lt;br/&gt;(설명·대사·속마음만 생성)&quot;]
+  L --&gt; UI[&quot;말풍선 / 일기&quot;]
+  L -.-&gt;|&quot;제안&quot;| V{&quot;규칙 검사&lt;br/&gt;(허용 목록 안인가?)&quot;}
+  V --&gt;|통과| U
+  V --&gt;|거절| X[&quot;버림&quot;]</pre></div>
+
+<ol>
+<li><strong>결정은 전통 시스템, 표현은 LLM</strong>: Utility가 "식사"를 골랐고 점수가 "배고픔 0.8, 돈 부족"이라면, LLM에게 "이 상황에서 이 인물의 속마음 한 줄"만 쓰게 합니다. 행동은 틀릴 수 없고, 표현만 다양해집니다.</li>
+<li><strong>LLM이 제안, 규칙이 검증</strong>: LLM이 "친구 집에 놀러 가기"를 제안하면, 그 행동이 허용 목록에 있고 전제 조건이 맞을 때만 계획에 넣습니다(GOAP의 전제 조건 검사를 그대로 씀).</li>
+<li><strong>LLM은 느린 층에만</strong>: 하루 계획처럼 하루 한 번 바뀌는 층에는 LLM을, 매 프레임 바뀌는 층에는 전통 시스템을 씁니다. 응답 지연과 비용을 피할 수 있습니다(<a href="12-ai-reality.html">12장</a>).</li>
+</ol>
+<div class="hl"><pre><span></span><code><span class="c1">// 섞어 쓰기: Utility가 고르고, LLM은 이유를 말로만 바꾼다</span>
+<span class="k">public</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="n">Threading</span><span class="p">.</span><span class="n">Tasks</span><span class="p">.</span><span class="n">Task</span><span class="o">&lt;</span><span class="kt">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">DescribeChoice</span><span class="p">(</span><span class="n">Npc</span><span class="w"> </span><span class="n">npc</span><span class="p">,</span><span class="w"> </span><span class="n">UtilityAction</span><span class="w"> </span><span class="n">chosen</span><span class="p">,</span><span class="w"> </span><span class="n">NeedSet</span><span class="w"> </span><span class="n">needs</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="c1">// 1) 결정은 이미 끝남 — LLM은 결정을 바꾸지 못한다</span>
+<span class="w">    </span><span class="kt">string</span><span class="w"> </span><span class="n">facts</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">$"{npc.Name}(성격: {npc.Personality.Summary}) / 고른 행동: {chosen.actionName} / "</span><span class="w"> </span><span class="o">+</span>
+<span class="w">                   </span><span class="s">$"배고픔 {needs.Get("</span><span class="n">hunger</span><span class="s">"):0.0}, 피로 {needs.Get("</span><span class="n">energy</span><span class="s">"):0.0}"</span><span class="p">;</span>
+<span class="w">    </span><span class="c1">// 2) 짧은 출력만 요청 + 실패하면 미리 써 둔 문장으로</span>
+<span class="w">    </span><span class="kt">string</span><span class="w"> </span><span class="n">line</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="n">llm</span><span class="p">.</span><span class="n">Complete</span><span class="p">(</span><span class="s">$"다음 사실만 써서 인물의 속마음을 20자 이내 한 문장으로: {facts}"</span><span class="p">,</span><span class="w"> </span><span class="n">maxTokens</span><span class="p">:</span><span class="w"> </span><span class="mi">40</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nf">Validate</span><span class="p">(</span><span class="n">line</span><span class="p">)</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">line</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">FallbackLines</span><span class="p">.</span><span class="n">For</span><span class="p">(</span><span class="n">chosen</span><span class="p">.</span><span class="n">actionName</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+
+</section><section class="sec"><h2 id="행동-선택-방식-비교표">행동 선택 방식 비교표<a class="headerlink" href="#행동-선택-방식-비교표" title="이 소제목 링크">#</a></h2>
+<p>아래 평가는 이 장에서 인용한 자료들의 설명과 일반적인 구현 경험을 종합한 이 가이드의 상대 비교입니다(5점이 가장 좋음). 프로젝트마다 달라질 수 있어 <span class="tag trust trust-guess" data-tag="guess" title="플레이 관찰·커뮤니티 추측·2차 보도">추정</span>으로 둡니다.</p>
+<table>
+<thead>
+<tr>
+<th>기준</th>
+<th>FSM</th>
+<th>행동 트리</th>
+<th>Utility</th>
+<th>GOAP</th>
+<th>HTN</th>
+<th>스마트 오브젝트</th>
+<th>LLM 계획</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>표현력 (다양한 행동)</td>
+<td>2</td>
+<td>3</td>
+<td>4</td>
+<td>4</td>
+<td>4</td>
+<td>4</td>
+<td>5</td>
+</tr>
+<tr>
+<td>디버깅 쉬움</td>
+<td>5</td>
+<td>4</td>
+<td>3</td>
+<td>2</td>
+<td>3</td>
+<td>3</td>
+<td>1</td>
+</tr>
+<tr>
+<td>성능 (싸다)</td>
+<td>5</td>
+<td>4</td>
+<td>3</td>
+<td>2</td>
+<td>3</td>
+<td>3 (평가 범위 제한 시)</td>
+<td>1</td>
+</tr>
+<tr>
+<td>기획자가 다루기 쉬움</td>
+<td>4</td>
+<td>5</td>
+<td>3 (곡선 편집기 있으면 4)</td>
+<td>2</td>
+<td>3</td>
+<td>4</td>
+<td>4 (글로 지시) / 통제는 1</td>
+</tr>
+<tr>
+<td>예측 가능성</td>
+<td>5</td>
+<td>5</td>
+<td>3</td>
+<td>2</td>
+<td>4</td>
+<td>3</td>
+<td>1</td>
+</tr>
+<tr>
+<td>재현성 (같은 입력 → 같은 결과)</td>
+<td>5</td>
+<td>5</td>
+<td>5 (무작위 시드 고정 시)</td>
+<td>5</td>
+<td>5</td>
+<td>5</td>
+<td>1~2</td>
+</tr>
+<tr>
+<td>생활 시뮬레이션과의 궁합</td>
+<td>실행층</td>
+<td>연출·특수 상황</td>
+<td>일상 행동 선택</td>
+<td>목표 달성 경로</td>
+<td>하루 계획</td>
+<td>물건 상호작용</td>
+<td>표현·회고</td>
+</tr>
+</tbody>
+</table>
+<p>근거 <span class="tag trust trust-guess" data-tag="guess" title="플레이 관찰·커뮤니티 추측·2차 보도">추정</span>: 각 기법의 성질은 위 절들에 링크한 공식 자료(Orkin, Champandard &amp; Dunstan, Graham, Humphreys, Forbus &amp; Wright, Park 외)에서 왔고, 점수화는 이 가이드의 판단입니다.</p>
+<h3 id="상황별-후보">상황별 후보<a class="headerlink" href="#상황별-후보" title="이 소제목 링크">#</a></h3>
+<table>
+<thead>
+<tr>
+<th>상황</th>
+<th>후보 1</th>
+<th>후보 2</th>
+<th>후보 3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2D 마을, 주민 10~30명, 1인 개발</td>
+<td>동숲식 일정 FSM + 가중치 무작위</td>
+<td>행동 트리 + 일정표</td>
+<td>Utility (욕구 3~5개)</td>
+</tr>
+<tr>
+<td>욕구 기반 생활 시뮬 (심즈류)</td>
+<td>Utility + 스마트 오브젝트</td>
+<td>Utility를 넣은 행동 트리</td>
+<td>HTN 하루 계획 + Utility 세부</td>
+</tr>
+<tr>
+<td>같은 목표에 여러 해결 경로</td>
+<td>GOAP</td>
+<td>HTN</td>
+<td>Utility + 스마트 오브젝트</td>
+</tr>
+<tr>
+<td>NPC 대화가 핵심, 행동은 단순</td>
+<td>행동 트리 + LLM 표현</td>
+<td>Utility + LLM 속마음</td>
+<td>LLM 계획 + 규칙 검증</td>
+</tr>
+</tbody>
+</table>
+</section><section class="sec"><h2 id="출처">출처<a class="headerlink" href="#출처" title="이 소제목 링크">#</a></h2>
+<ul>
+<li>Jeff Orkin, "Three States and a Plan: The A.I. of F.E.A.R." (GDC 2006) — <a href="https://pages.cs.wisc.edu/~dyer/cs540/handouts/gdc2006_orkin_jeff_fear.pdf">https://pages.cs.wisc.edu/~dyer/cs540/handouts/gdc2006_orkin_jeff_fear.pdf</a></li>
+<li>Alex J. Champandard &amp; Philip Dunstan, "The Behavior Tree Starter Kit" (Game AI Pro 1권 6장) — <a href="https://www.gameaipro.com/GameAIPro/GameAIPro_Chapter06_The_Behavior_Tree_Starter_Kit.pdf">https://www.gameaipro.com/GameAIPro/GameAIPro_Chapter06_The_Behavior_Tree_Starter_Kit.pdf</a></li>
+<li>David "Rez" Graham, "An Introduction to Utility Theory" (Game AI Pro 1권 9장) — <a href="https://www.gameaipro.com/GameAIPro/GameAIPro_Chapter09_An_Introduction_to_Utility_Theory.pdf">https://www.gameaipro.com/GameAIPro/GameAIPro_Chapter09_An_Introduction_to_Utility_Theory.pdf</a></li>
+<li>Troy Humphreys, "Exploring HTN Planners through Example" (Game AI Pro 1권 12장) — <a href="https://www.gameaipro.com/GameAIPro/GameAIPro_Chapter12_Exploring_HTN_Planners_through_Example.pdf">https://www.gameaipro.com/GameAIPro/GameAIPro_Chapter12_Exploring_HTN_Planners_through_Example.pdf</a></li>
+<li>Dave Mark &amp; Kevin Dill, "Improving AI Decision Modeling Through Utility Theory" (GDC 2010) — <a href="https://gdcvault.com/play/1012410/Improving-AI-Decision-Modeling-Through">https://gdcvault.com/play/1012410/Improving-AI-Decision-Modeling-Through</a></li>
+<li>Kenneth D. Forbus &amp; Will Wright, "Some notes on programming objects in The Sims" (2001) — <a href="https://qrg.northwestern.edu/papers/Files/Programming_Objects_in_The_Sims.pdf">https://qrg.northwestern.edu/papers/Files/Programming_Objects_in_The_Sims.pdf</a></li>
+<li>Richard Evans, "Modeling Individual Personalities in The Sims 3" (GDC) — <a href="https://gdcvault.com/play/1012294/Modeling-Individual-Personalities-in-The">https://gdcvault.com/play/1012294/Modeling-Individual-Personalities-in-The</a></li>
+<li>Hendrik Skubch, "Ambient Interactions" (Game AI Pro 3권 35장) — <a href="https://www.gameaipro.com/GameAIPro3/GameAIPro3_Chapter35_Ambient_Interactions_Improving_Believability_by_Leveraging_Rule-Based_AI.pdf">https://www.gameaipro.com/GameAIPro3/GameAIPro3_Chapter35_Ambient_Interactions_Improving_Believability_by_Leveraging_Rule-Based_AI.pdf</a></li>
+<li>ACreTeam, ac-decomp — <a href="https://github.com/ACreTeam/ac-decomp">https://github.com/ACreTeam/ac-decomp</a></li>
+<li>Park 외, "Generative Agents" (UIST 2023) — <a href="https://arxiv.org/abs/2304.03442">https://arxiv.org/abs/2304.03442</a></li>
+<li>Google DeepMind, Concordia — <a href="https://github.com/google-deepmind/concordia">https://github.com/google-deepmind/concordia</a></li>
+<li>크래프톤, inZOI Smart Zoi 공지 — <a href="https://playinzoi.com/en/news/8419">https://playinzoi.com/en/news/8419</a></li>
+</ul></section>
+      <nav class="pager" aria-label="이전·다음"><a class="prev" href="01-intro.html">← 1. 들어가며</a><a class="next" href="03-routine.html">3. 욕구와 일상 →</a></nav>
+    </article>
+  </main>
+  <aside class="toc" aria-label="이 페이지 목차"><p class="toc-title">이 페이지</p><ul><li><a href="#한눈에-보기">한눈에 보기</a></li><li><a href="#상태-기계-fsm">상태 기계 (FSM)</a><ul><li><a href="#실제-게임-사례">실제 게임 사례</a></li><li><a href="#구현-스케치">구현 스케치</a></li></ul></li><li><a href="#행동-트리-behavior-tree">행동 트리 (Behavior Tree)</a><ul><li><a href="#실제-게임-사례_1">실제 게임 사례</a></li><li><a href="#구현-스케치_1">구현 스케치</a></li></ul></li><li><a href="#utility-ai">Utility AI</a><ul><li><a href="#실제-게임-사례_2">실제 게임 사례</a></li><li><a href="#구현-스케치_2">구현 스케치</a></li></ul></li><li><a href="#goap">GOAP</a><ul><li><a href="#구현-스케치_3">구현 스케치</a></li></ul></li><li><a href="#htn">HTN</a></li><li><a href="#스마트-오브젝트">스마트 오브젝트</a><ul><li><a href="#실제-게임-사례-심즈-1의-광고">실제 게임 사례: 심즈 1의 광고</a></li><li><a href="#구현-스케치_4">구현 스케치</a></li></ul></li><li><a href="#llm-계획">LLM 계획</a></li><li><a href="#섞어-쓰기">섞어 쓰기</a></li><li><a href="#행동-선택-방식-비교표">행동 선택 방식 비교표</a><ul><li><a href="#상황별-후보">상황별 후보</a></li></ul></li><li><a href="#출처">출처</a></li></ul></aside>
+</div>
+<footer class="site-foot">신뢰도: <span class="tag trust trust-official">공식</span> <span class="tag trust trust-analysis">분석</span> <span class="tag trust trust-guess">추정</span> <span class="tag trust trust-unknown">확인 못 함</span> · 소스: <a href="https://github.com/HelloNobb/LIFE_SIMUL_LAB">GitHub</a></footer>
+<script src="assets/search-index.js"></script>
+<script src="assets/app.js"></script>
+<script type="module">
+import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.esm.min.mjs';
+window.__mermaid = mermaid;
+window.dispatchEvent(new Event('mermaid-ready'));
+</script>
+</body>
+</html>

@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>세계와 역사 — 내가 없을 때도 돌아가는 세계 · LIFE SIMUL LAB</title>
+<meta name="description" content="세계에 과거가 있고 내가 없을 때도 시간이 흐른다는 느낌은 &quot;모든 것을 계속 시뮬레이션&quot;해서가 아니라 &quot;필요한 순간에 그럴듯하게 계산하고, 그 결과를 보여주는 것&quot;에서 나온다.">
+<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/pygments.css">
+</head>
+<body>
+<a class="skip" href="#main">본문으로 건너뛰기</a>
+<header class="topbar">
+  <button type="button" class="icon-btn" id="nav-toggle" aria-label="목차 열기" aria-expanded="false" aria-controls="sidebar">☰</button>
+  <a class="brand" href="index.html">LIFE SIMUL LAB</a>
+  <div class="search">
+    <input type="search" id="search-input" placeholder="검색  (단축키 /)" aria-label="사이트 검색" autocomplete="off">
+    <div id="search-results" class="search-results" role="listbox" hidden></div>
+  </div>
+  <button type="button" class="icon-btn" id="theme-toggle" aria-label="다크 모드 전환">◐</button>
+</header>
+<div class="layout">
+  <nav class="sidebar" id="sidebar" aria-label="전체 목차"><ul><li><a href="index.html">홈</a></li><li><a href="01-intro.html">1. 들어가며</a></li><li><a href="02-brain.html">2. NPC의 뇌</a></li><li><a href="03-routine.html">3. 욕구와 일상</a></li><li><a href="04-personality.html">4. 성격</a></li><li><a href="05-memory.html">5. 기억</a></li><li><a href="06-relationship.html">6. 관계</a></li><li><a href="07-dialogue.html">7. 대화</a></li><li><a href="08-events.html">8. 사건 생성</a></li><li><a href="09-world.html" class="active" aria-current="page">9. 세계와 역사</a></li><li><a href="10-belonging.html">10. 소속감 설계</a></li><li><a href="11-failures.html">11. 실패 사례</a></li><li><a href="12-ai-reality.html">12. AI 현실 점검</a></li><li><a href="13-patterns.html">13. 패턴 카드</a></li><li><a href="14-checklist.html">14. 체크리스트</a></li><li><a href="15-references.html">15. 참고문헌</a></li><li><a href="16-appendix-code.html">부록 A. 공통 뼈대 코드</a></li><li><a href="17-appendix-glossary.html">부록 B. 용어집</a></li><li class="nav-sep"><a href="tags.html">태그 모아보기</a></li></ul></nav>
+  <main id="main" class="content">
+    <article>
+      <header class="page-head">
+        <p class="eyebrow">9장</p>
+        <h1>세계와 역사 — 내가 없을 때도 돌아가는 세계</h1>
+        <p class="summary">세계에 과거가 있고 내가 없을 때도 시간이 흐른다는 느낌은 &quot;모든 것을 계속 시뮬레이션&quot;해서가 아니라 &quot;필요한 순간에 그럴듯하게 계산하고, 그 결과를 보여주는 것&quot;에서 나온다.</p>
+        <div class="page-goals"><span class="lbl">기여하는 목표</span><span class="tag goal goal-alive" data-tag="alive" title="NPC가 실제로 사는 사람처럼 느껴지는 것">실존감</span><span class="tag goal goal-plaus" data-tag="plaus" title="사건이 '그럴 만했다'고 납득되는 것">개연성</span><span class="tag goal goal-belong" data-tag="belong" title="내가 이 공동체의 일원이라는 느낌">소속감</span></div>
+      </header>
+      <div class="filter-bar" role="group" aria-label="태그 필터"><span class="filter-label">태그 필터</span><span class="chips"><button type="button" class="chip goal goal-belong" data-filter="belong" aria-pressed="false" title="내가 이 공동체의 일원이라는 느낌">소속감</button><button type="button" class="chip goal goal-plaus" data-filter="plaus" aria-pressed="false" title="사건이 '그럴 만했다'고 납득되는 것">개연성</button><button type="button" class="chip goal goal-relation" data-filter="relation" aria-pressed="false" title="관계가 쌓이고 변하는 것">관계</button><button type="button" class="chip goal goal-alive" data-filter="alive" aria-pressed="false" title="NPC가 실제로 사는 사람처럼 느껴지는 것">실존감</button></span><span class="chips"><button type="button" class="chip trust trust-official" data-filter="official" aria-pressed="false" title="개발자 발표·공식 문서·GDC·논문">공식</button><button type="button" class="chip trust trust-analysis" data-filter="analysis" aria-pressed="false" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</button><button type="button" class="chip trust trust-guess" data-filter="guess" aria-pressed="false" title="플레이 관찰·커뮤니티 추측·2차 보도">추정</button><button type="button" class="chip trust trust-unknown" data-filter="unknown" aria-pressed="false" title="찾아봤지만 믿을 만한 출처가 없음">확인 못 함</button></span><button type="button" class="chip clear" data-filter-clear>해제</button><span class="filter-hint" aria-live="polite"></span></div>
+      <details class="toc-mobile"><summary>이 페이지 목차</summary><ul><li><a href="#한눈에-보기">한눈에 보기</a></li><li><a href="#과거-만들기">과거 만들기</a><ul><li><a href="#드워프-포트리스-실제로-수백-년을-돌린다-개연성-실존감">드워프 포트리스 — 실제로 수백 년을 돌린다 {개연성} {실존감}</a></li><li><a href="#caves-of-qud-사건을-먼저-뽑고-이유를-나중에-붙인다">Caves of Qud — 사건을 먼저 뽑고 이유를 나중에 붙인다</a></li><li><a href="#동물의-숲-gc-마을-지형을-조각-번호로">동물의 숲 GC — 마을 지형을 "조각 번호"로</a></li></ul></li><li><a href="#화면-밖-시간">화면 밖 시간</a><ul><li><a href="#동물의-숲-gc-화면-밖-주민은-좌표-하나-ai-lod">동물의 숲 GC — 화면 밖 주민은 좌표 하나 (AI LOD)</a></li><li><a href="#킹덤-컴-딜리버런스-2-2400명의-일과">킹덤 컴: 딜리버런스 2 — 2,400명의 일과</a></li><li><a href="#게임을-끈-동안-마지막-시각만-저장하고-다시-켤-때-계산-실존감-소속감">게임을 끈 동안 — "마지막 시각"만 저장하고 다시 켤 때 계산 {실존감} {소속감}</a></li></ul></li><li><a href="#전달하기-내가-없을-때-일어난-일">전달하기: "내가 없을 때 일어난 일"</a></li><li><a href="#구조-다이어그램">구조 다이어그램</a></li><li><a href="#세-갈래로-보기">세 갈래로 보기</a><ul><li><a href="#ai-없이">AI 없이</a></li><li><a href="#ai-사용">AI 사용</a></li><li><a href="#섞어-쓰기">섞어 쓰기</a></li></ul></li><li><a href="#구현-스케치">구현 스케치</a><ul><li><a href="#ai-lod-가까우면-액터-멀면-좌표">AI LOD: 가까우면 액터, 멀면 좌표</a></li><li><a href="#꺼진-동안의-시간-마지막-시각-경과-계산">꺼진 동안의 시간: 마지막 시각 + 경과 계산</a></li></ul></li><li><a href="#출처">출처</a></li></ul></details>
+      <section class="sec"><h2 id="한눈에-보기">한눈에 보기<a class="headerlink" href="#한눈에-보기" title="이 소제목 링크">#</a></h2>
+<p>이 장은 세 가지를 다룹니다.</p>
+<ol>
+<li><strong>과거 만들기</strong>: 플레이 전에 세계의 역사를 만든다(드워프 포트리스, Caves of Qud).</li>
+<li><strong>화면 밖 시간</strong>: 플레이어가 보지 않는 곳, 게임을 끈 동안의 시간을 처리한다(동숲, 킹덤 컴).</li>
+<li><strong>전달하기</strong>: 그 사이에 일어난 일을 플레이어에게 알려 준다(전설 모드, 편지, 소문, 집 상태).</li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">비유: 연극 무대 뒤</p>
+<p>관객은 무대 위만 봅니다. 배우가 무대 뒤에서 실제로 밥을 먹을 필요는 없지만, 다시 무대에 나올 때 "밥 먹고 왔어"라는 말과 입가의 소스 자국이 있으면 관객은 무대 뒤에서도 삶이 있었다고 믿습니다. 화면 밖 시뮬레이션의 핵심은 <strong>다시 나올 때의 흔적</strong>입니다.</p>
+</div>
+</section><section class="sec"><h2 id="과거-만들기">과거 만들기<a class="headerlink" href="#과거-만들기" title="이 소제목 링크">#</a></h2>
+<h3 id="드워프-포트리스-실제로-수백-년을-돌린다-개연성-실존감">드워프 포트리스 — 실제로 수백 년을 돌린다 <span class="tag goal goal-plaus" data-tag="plaus" title="사건이 '그럴 만했다'고 납득되는 것">개연성</span> <span class="tag goal goal-alive" data-tag="alive" title="NPC가 실제로 사는 사람처럼 느껴지는 것">실존감</span><a class="headerlink" href="#드워프-포트리스-실제로-수백-년을-돌린다-개연성-실존감" title="이 소제목 링크">#</a></h3>
+<ul>
+<li>세계 생성 때 정한 길이만큼 <strong>역사를 실제로 시뮬레이션</strong>합니다. 문명이 생기고, 인물이 태어나 죽고, 전쟁이 일어납니다. 역사가 길수록 생성 시간이 길어지고, 해마다 사건도 늘어납니다. <span class="tag trust trust-analysis" data-tag="analysis" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</span> (<a href="https://dwarffortresswiki.org/index.php/DF2014:World_generation">DF 위키: World generation</a>)</li>
+<li>세계 생성 뒤에도 역사는 계속 흐르지만 훨씬 느립니다. <span class="tag trust trust-analysis" data-tag="analysis" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</span></li>
+<li>그 결과를 <strong>전설 모드(Legends)</strong>에서 인물·사건·유물별로 열람할 수 있습니다. <span class="tag trust trust-analysis" data-tag="analysis" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</span> (<a href="https://dwarffortresswiki.org/index.php/DF2014:Legends">DF 위키: Legends</a>)</li>
+<li>Tarn Adams는 묘사·규칙·플레이어의 선택이 합쳐져 창발적 서사가 생긴다고 설명합니다. <span class="tag trust trust-official" data-tag="official" title="개발자 발표·공식 문서·GDC·논문">공식</span> ("Characterization and Emergent Narrative in Dwarf Fortress", <a href="https://www.routledge.com/Procedural-Storytelling-in-Game-Design-1st-Edition/Short-Adams/p/book/9781138595309"><em>Procedural Storytelling in Game Design</em>, 2019</a>)</li>
+</ul>
+<p><strong>장점</strong>: 모든 사건에 진짜 원인이 있습니다. <strong>약점</strong>: 시뮬레이션 비용이 크고, 결과가 너무 많아 전달이 어렵습니다.</p>
+<h3 id="caves-of-qud-사건을-먼저-뽑고-이유를-나중에-붙인다" 개연성="개연성">Caves of Qud — 사건을 먼저 뽑고 이유를 나중에 붙인다<a class="headerlink" href="#caves-of-qud-사건을-먼저-뽑고-이유를-나중에-붙인다" title="이 소제목 링크">#</a></h3>
+<ul>
+<li>완전한 역사 시뮬레이션 대신, <strong>사건을 먼저 무작위로 만들고 나중에 그럴듯한 이유를 붙이는</strong>(사후 합리화) 방식을 씁니다. <span class="tag trust trust-official" data-tag="official" title="개발자 발표·공식 문서·GDC·논문">공식</span> (<a href="https://doi.org/10.1145/3102071.3110574">Grinblat &amp; Bucklew, FDG 2017</a>, <a href="https://gdcvault.com/play/1024990/Procedurally-Generating-History-in-Caves">Grinblat GDC</a>)</li>
+<li>술탄마다 인생 사건 여러 개를 뽑고, 그 사건들이 세계의 유적·지명으로 남습니다. 뽑힌 사건 중에 그 인물이 술탄이 되는 사건이 없으면 그런 사건을 추가합니다. <span class="tag trust trust-analysis" data-tag="analysis" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</span> (<a href="https://wiki.cavesofqud.com/wiki/Sultan_history">Caves of Qud 위키: Sultan history</a>)</li>
+</ul>
+<p><strong>장점</strong>: 싸고, 결과가 항상 "이야기 모양"입니다. <strong>약점</strong>: 실제 원인이 없으므로 사건끼리 상호작용하지 않습니다.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>드워프 포트리스</th>
+<th>Caves of Qud</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>방식</td>
+<td>실제 시뮬레이션</td>
+<td>사건 생성 후 이유 붙이기</td>
+</tr>
+<tr>
+<td>원인</td>
+<td>진짜</td>
+<td>그럴듯한 서술</td>
+</tr>
+<tr>
+<td>비용</td>
+<td>큼</td>
+<td>작음</td>
+</tr>
+<tr>
+<td>결과 모양</td>
+<td>방대하고 불규칙</td>
+<td>짧고 이야기 같음</td>
+</tr>
+<tr>
+<td>어울리는 게임</td>
+<td>역사 자체가 놀잇거리</td>
+<td>역사가 배경·수집 요소</td>
+</tr>
+</tbody>
+</table>
+<h3 id="동물의-숲-gc-마을-지형을-조각-번호로" 실존감="실존감">동물의 숲 GC — 마을 지형을 "조각 번호"로<a class="headerlink" href="#동물의-숲-gc-마을-지형을-조각-번호로" title="이 소제목 링크">#</a></h3>
+<p><span class="tag trust trust-analysis" data-tag="analysis" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</span> (<a href="https://github.com/ACreTeam/ac-decomp">ac-decomp</a> <code>src/game/m_random_field_ovl.c</code>, <code>src/game/m_field_make.c</code>, <code>include/m_name_table.h</code>; <a href="https://nobbs-it-study.tistory.com/entry/%EA%B2%8C%EC%9E%84%EB%B6%84%EC%84%9D-%EB%86%80%EB%8F%99%EC%88%B2%EC%9D%98-%EB%A7%88%EC%9D%84%EC%9D%80-36-Byte%EB%8B%A4-%EC%B5%9C%EC%A0%81%ED%99%94-%EB%B6%84%EC%84%9D-1%ED%8E%B8">동숲 분석 1편</a>)</p>
+<ul>
+<li>마을은 에이커(acre: 16×16칸짜리 큰 조각) 단위입니다. 세이브에는 땅 모양이 아니라 "이 자리에 몇 번 조각"이라는 번호만 저장합니다. 1편은 놀러오세요의 마을 지형이 이 방식으로 36바이트라고 분석했습니다(놀러오세요 부분은 세이브 에디터 ACSE 등을 근거로 한 분석).</li>
+<li>마을 생성은 <strong>설계도 → 조각 끼우기</strong> 두 단계이고, 반드시 있어야 할 조건 9개(왼쪽·오른쪽 비탈, 위·아래 다리, 신사, 파출소, 박물관, 연못, 에이블 시스터즈)를 비트로 체크해 <strong>하나라도 빠지면 마을 전체를 다시 만듭니다</strong>(<code>mRF_BIT_*</code>, <code>mRF_MakePerfectBit</code>). 15% 확률로 3단 마을이 됩니다(<code>mRF_GetRandom(100) &lt; 15</code>).</li>
+<li>나무는 "성장도" 변수가 없고 <strong>아이템 번호 자체가 상태</strong>입니다. 묘목(<code>TREE_SAPLING</code>) → <code>TREE_S0</code> → <code>TREE_S1</code> → <code>TREE_S2</code> → 다 자란 나무(<code>TREE</code>), 사과나무도 열매 없음 0·1·2 → 열매 있음 번호로 순환합니다. 하루가 지나면 번호를 바꾸는 것이 곧 성장입니다.</li>
+<li>1년을 18개 절기로 나누고 절기마다 12개 색 팔레트 중 하나를 골라 땅 색만 바꿉니다(<code>field_pal_idx_table</code>).</li>
+<li>메모리에는 플레이어 주변 <strong>4개 조각</strong>만 올립니다(<code>mFM_VISIBLE_BLOCK_NUM 4</code>).</li>
+</ul>
+<p><strong>배울 점</strong>: "조각 번호 + 상태 번호"로 세계를 저장하면, 세계가 크고 변해도 저장과 시간 경과 계산이 아주 쌉니다.</p>
+</section><section class="sec"><h2 id="화면-밖-시간">화면 밖 시간<a class="headerlink" href="#화면-밖-시간" title="이 소제목 링크">#</a></h2>
+<h3 id="동물의-숲-gc-화면-밖-주민은-좌표-하나-ai-lod" 실존감="실존감">동물의 숲 GC — 화면 밖 주민은 좌표 하나 (AI LOD)<a class="headerlink" href="#동물의-숲-gc-화면-밖-주민은-좌표-하나-ai-lod" title="이 소제목 링크">#</a></h3>
+<p><span class="tag trust trust-analysis" data-tag="analysis" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</span> (<a href="https://github.com/ACreTeam/ac-decomp">ac-decomp</a> <code>src/actor/ac_set_npc_manager.c</code>, <code>src/game/m_npc_walk.c</code>, <code>include/m_npc_walk.h</code>; <a href="https://nobbs-it-study.tistory.com/entry/%EA%B2%8C%EC%9E%84-%EB%B6%84%EC%84%9D-%EB%8F%99%EC%88%B2-%EC%A3%BC%EB%AF%BC%EC%9D%84-%EC%96%B4%EB%96%BB%EA%B2%8C-%EC%82%B4%EC%95%84%EC%9E%88%EA%B2%8C-%EB%A7%8C%EB%93%A4%EC%97%88%EB%82%98-%EC%B5%9C%EC%A0%81%ED%99%94-%EB%B6%84%EC%84%9D-2%ED%8E%B8">동숲 분석 2편</a>)</p>
+<ul>
+<li>플레이어 주변 에이커에 있는 주민만 진짜 캐릭터(액터)로 만들고, 나머지는 <strong>좌표 하나</strong>로만 삽니다. 범위를 벗어나면 액터를 지우고 마지막 위치를 저장합니다.</li>
+<li>그 좌표가 <strong>걸어 다닙니다</strong>. 7초마다 한 칸씩 목표 에이커 쪽으로 움직입니다(<code>frame_counter % (7 * FRAMES_PER_SECOND)</code>).</li>
+<li>동시에 걷는 주민 수는 <strong>현재 주민 수 ÷ 3</strong>입니다(15명이면 5명, <code>mNpcW_GET_WALK_NUM</code>).</li>
+<li>목적지는 신사, 다른 주민 집, 아무도 없는 에이커, 자기 집 중에서 성격·시간대별 배열로 고릅니다.</li>
+<li>한 에이커에 3명 이상 있으면 들어가지 않고 기다립니다. 목표에 도착하면 108,000프레임(60fps 기준 30분) 머물다 집으로 돌아갑니다.</li>
+<li>걸어오던 주민이 플레이어 옆 에이커에 오면, 상대 위치에 따라 방향을 정해 <strong>화면 가장자리에서 걸어 들어오는</strong> 액터로 만들어집니다.</li>
+</ul>
+<p>그래픽스에서 멀리 있는 모델을 단순하게 그리듯, 멀리 있는 NPC의 생각도 단순하게 돌리는 것을 <strong>AI LOD</strong>(Level of Detail: 거리에 따라 계산의 정밀도를 낮추는 것)라고 부릅니다. 동숲은 2001년에 이것을 "좌표 + 목적지 + 7초에 한 칸"으로 했습니다. <strong>시뮬레이션은 대충, 보이는 순간만 그럴듯하게.</strong></p>
+<h3 id="킹덤-컴-딜리버런스-2-2400명의-일과" 실존감="실존감">킹덤 컴: 딜리버런스 2 — 2,400명의 일과<a class="headerlink" href="#킹덤-컴-딜리버런스-2-2400명의-일과" title="이 소제목 링크">#</a></h3>
+<p>Warhorse의 Petr Smrcek은 GDC 2026에서 NPC들이 플레이어가 떠난 뒤에도 일과를 계속하고 플레이어의 행동에 반응하며, 2편은 맵의 NPC 수가 1편의 네 배인 약 2,400명이고 그 절반가량이 한 도시에 몰려 있다고 소개했습니다. <span class="tag trust trust-official" data-tag="official" title="개발자 발표·공식 문서·GDC·논문">공식</span> (<a href="https://gdcvault.com/play/1035718/Supporting-Thousands-of-NPCs-in">GDC Vault</a>) 발표 본문은 확인하지 못했습니다. <span class="tag trust trust-unknown" data-tag="unknown" title="찾아봤지만 믿을 만한 출처가 없음">확인 못 함</span></p>
+<h3 id="게임을-끈-동안-마지막-시각만-저장하고-다시-켤-때-계산-실존감-소속감">게임을 끈 동안 — "마지막 시각"만 저장하고 다시 켤 때 계산 <span class="tag goal goal-alive" data-tag="alive" title="NPC가 실제로 사는 사람처럼 느껴지는 것">실존감</span> <span class="tag goal goal-belong" data-tag="belong" title="내가 이 공동체의 일원이라는 느낌">소속감</span><a class="headerlink" href="#게임을-끈-동안-마지막-시각만-저장하고-다시-켤-때-계산-실존감-소속감" title="이 소제목 링크">#</a></h3>
+<p>동숲 GC는 시간 경과를 실시간으로 시뮬레이션하지 않고, <strong>마지막 시각을 저장해 두었다가 다음 접속 때 차이를 계산</strong>합니다. <span class="tag trust trust-analysis" data-tag="analysis" title="데이터마이닝·디컴파일·게임 데이터·검증된 위키 수치">분석</span> (<a href="https://github.com/ACreTeam/ac-decomp">ac-decomp</a>)</p>
+<table>
+<thead>
+<tr>
+<th>무엇</th>
+<th>저장하는 것</th>
+<th>다시 켤 때</th>
+<th>소스</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>바퀴벌레</td>
+<td>플레이어가 집을 마지막으로 쓴 날짜</td>
+<td>6일을 넘게 비웠으면 바퀴벌레가 늘어남(이미 있으면 지난 날만큼, 없으면 지난 날 − 6만큼), 최대 10마리</td>
+<td><code>m_cockroach.c</code></td>
+</tr>
+<tr>
+<td>인사</td>
+<td>주민별 마지막 대화 시각</td>
+<td>1일 / 14일 / 60일 이상 인사 분기</td>
+<td><code>ac_quest_talk_greeting.c</code></td>
+</tr>
+<tr>
+<td>새 주민</td>
+<td>마지막 입주 시각</td>
+<td>24시간 이상 지났고, 그 플레이어가 지금 주민 모두와 대화한 적 있으면 확률적으로 입주</td>
+<td><code>m_npc.c</code> <code>mNpc_CheckGrow</code></td>
+</tr>
+<tr>
+<td>주민 이사</td>
+<td>마지막 변화 날짜</td>
+<td>15명이 꽉 찼고 10일 이상이면 한 명이 떠나고 작별 편지</td>
+<td><code>m_npc.c</code> <code>mNpc_ForceRemove</code></td>
+</tr>
+<tr>
+<td>떠난 주민</td>
+<td>떠난 주민 기록</td>
+<td>60일 안에 잠깐 돌아와 플레이어마다 한 번 인사 (헤더 주석)</td>
+<td><code>include/m_npc.h</code> <code>Anmret_c</code></td>
+</tr>
+</tbody>
+</table>
+<p>바퀴벌레는 "네가 없는 동안 집이 방치됐다"는 것을 <strong>집 상태로</strong> 보여 주고, 작별 편지는 "네가 없는 동안 누가 떠났다"를 <strong>편지로</strong> 알려 줍니다. 둘 다 계산은 한 번뿐입니다.</p>
+</section><section class="sec"><h2 id="전달하기-내가-없을-때-일어난-일">전달하기: "내가 없을 때 일어난 일"<a class="headerlink" href="#전달하기-내가-없을-때-일어난-일" title="이 소제목 링크">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>방법</th>
+<th>예</th>
+<th>장점</th>
+<th>주의</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>환경의 흔적</td>
+<td>바퀴벌레, 잡초, 자란 나무</td>
+<td>말없이 시간이 흐른 걸 보여 줌</td>
+<td>벌처럼 느껴지면 복귀가 싫어짐</td>
+</tr>
+<tr>
+<td>편지·쪽지</td>
+<td>작별 편지, 답장</td>
+<td>개인적, 감정이 실림</td>
+<td>너무 많으면 읽지 않음</td>
+</tr>
+<tr>
+<td>소문·대사</td>
+<td>"○○가 이사 갔대", 다른 주민 이야기</td>
+<td>관계망이 살아 있다는 느낌</td>
+<td>원인 기록이 필요</td>
+</tr>
+<tr>
+<td>기록 화면</td>
+<td>전설 모드, 마을 연대기</td>
+<td>깊이 파는 플레이어에게 보상</td>
+<td>방대하면 안 읽음</td>
+</tr>
+<tr>
+<td>변화 자체</td>
+<td>옷·말버릇이 바뀐 주민</td>
+<td>발견하는 재미</td>
+<td>플레이어가 이전 상태를 기억해야 함</td>
+</tr>
+</tbody>
+</table>
+<p><strong>핵심 원칙</strong>: 아무도 못 보는 곳에서 일어난 변화는 없는 것과 같습니다. 동숲처럼 결과가 <strong>플레이어가 아는 NPC</strong>에게 쌓이게 하세요(<a href="01-intro.html">1장</a>의 선별).</p>
+</section><section class="sec"><h2 id="구조-다이어그램">구조 다이어그램<a class="headerlink" href="#구조-다이어그램" title="이 소제목 링크">#</a></h2>
+<div class="mermaid-wrap" markdown="0"><pre class="mermaid" data-src="0">flowchart TB
+  subgraph 가까움[&quot;플레이어 근처 (전체 시뮬레이션)&quot;]
+    A1[&quot;액터&lt;br/&gt;길찾기·애니메이션·충돌·대화&quot;]
+  end
+  subgraph 멂[&quot;화면 밖 (간략 시뮬레이션)&quot;]
+    B1[&quot;좌표 + 목적지&lt;br/&gt;몇 초에 한 칸&quot;]
+  end
+  subgraph 꺼짐[&quot;게임 꺼짐 (계산 안 함)&quot;]
+    C1[&quot;마지막 시각만 저장&quot;]
+  end
+  B1 --&gt;|&quot;근처 에이커 진입&lt;br/&gt;가장자리에서 걸어 들어옴&quot;| A1
+  A1 --&gt;|&quot;범위 이탈&lt;br/&gt;위치 저장&quot;| B1
+  C1 --&gt;|&quot;다시 켤 때 경과 시간으로 한 번에 계산&lt;br/&gt;바퀴벌레·이사·인사&quot;| B1</pre></div>
+
+</section><section class="sec"><h2 id="세-갈래로-보기">세 갈래로 보기<a class="headerlink" href="#세-갈래로-보기" title="이 소제목 링크">#</a></h2>
+<h3 id="ai-없이">AI 없이<a class="headerlink" href="#ai-없이" title="이 소제목 링크">#</a></h3>
+<ul>
+<li><strong>역사</strong>: 실제 시뮬레이션(DF) / 사건 먼저 + 이유 나중(Qud) / 손으로 쓴 설정 + 절차 변형.</li>
+<li><strong>화면 밖</strong>: AI LOD(동숲 좌표 산책) / 일정표로 위치 계산만(현재 시각이면 이 NPC는 어디에 있어야 하나).</li>
+<li><strong>꺼진 동안</strong>: 마지막 시각 + 경과 계산(동숲).</li>
+</ul>
+<h3 id="ai-사용">AI 사용<a class="headerlink" href="#ai-사용" title="이 소제목 링크">#</a></h3>
+<ul>
+<li><strong>역사 서술</strong>: 구조화된 역사 기록을 LLM이 연대기·전설 문장으로 씁니다. 문장끼리 모순(같은 인물이 두 번 죽음)이 생기기 쉬우니 사실은 기록에서만 가져오게 해야 합니다.</li>
+<li><strong>복귀 요약</strong>: "네가 없는 동안"을 LLM이 마을 소식으로 요약합니다.</li>
+</ul>
+<h3 id="섞어-쓰기">섞어 쓰기<a class="headerlink" href="#섞어-쓰기" title="이 소제목 링크">#</a></h3>
+<ul>
+<li><strong>기록은 구조화, 서술은 LLM</strong>: <code>{연도, 사건 종류, 인물, 장소, 원인}</code>으로 기록하고, 연대기 화면이나 노인 NPC의 옛날이야기만 LLM이 씁니다. Qud식 "이유 붙이기"를 LLM에게 맡기면 표현이 풍부해지지만, 붙인 이유를 다시 기록으로 저장해 일관성을 지키세요.</li>
+</ul>
+</section><section class="sec"><h2 id="구현-스케치">구현 스케치<a class="headerlink" href="#구현-스케치" title="이 소제목 링크">#</a></h2>
+<h3 id="ai-lod-가까우면-액터-멀면-좌표">AI LOD: 가까우면 액터, 멀면 좌표<a class="headerlink" href="#ai-lod-가까우면-액터-멀면-좌표" title="이 소제목 링크">#</a></h3>
+<div class="hl"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="nn">UnityEngine</span><span class="p">;</span><span class="w">                 </span><span class="c1">// [Unity 의존] MonoBehaviour, Vector2Int, Instantiate</span>
+<span class="k">using</span><span class="w"> </span><span class="nn">System.Collections.Generic</span><span class="p">;</span>
+
+<span class="k">public</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">OffscreenNpc</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="n">Id</span><span class="p">;</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="n">Vector2Int</span><span class="w"> </span><span class="n">Cell</span><span class="p">;</span><span class="w">        </span><span class="c1">// 화면 밖에서는 이것만 있다</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="n">Vector2Int</span><span class="w"> </span><span class="n">Goal</span><span class="p">;</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">StayTimer</span><span class="p">;</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="n">NpcActor</span><span class="w"> </span><span class="n">Actor</span><span class="p">;</span><span class="w">         </span><span class="c1">// 근처에 있을 때만 존재</span>
+<span class="p">}</span>
+
+<span class="k">public</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">NpcLodManager</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">MonoBehaviour</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">StepInterval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">7f</span><span class="p">;</span><span class="w">          </span><span class="c1">// 동숲: 7초에 한 칸</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">ActiveRadius</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w">             </span><span class="c1">// 플레이어 주변 몇 칸을 '근처'로 볼까</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="n">NpcActor</span><span class="w"> </span><span class="n">prefab</span><span class="p">;</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">OffscreenNpc</span><span class="o">&gt;</span><span class="w"> </span><span class="n">npcs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="p">();</span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">timer</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">void</span><span class="w"> </span><span class="nf">Update</span><span class="p">()</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">Vector2Int</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">World</span><span class="p">.</span><span class="n">CellOf</span><span class="p">(</span><span class="n">Player</span><span class="p">.</span><span class="n">Position</span><span class="p">);</span>
+<span class="w">        </span><span class="n">timer</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">Time</span><span class="p">.</span><span class="n">deltaTime</span><span class="p">;</span>
+<span class="w">        </span><span class="kt">bool</span><span class="w"> </span><span class="n">step</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">timer</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">StepInterval</span><span class="p">;</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">step</span><span class="p">)</span><span class="w"> </span><span class="n">timer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+
+<span class="w">        </span><span class="k">foreach</span><span class="w"> </span><span class="p">(</span><span class="kt">var</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">npcs</span><span class="p">)</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="kt">bool</span><span class="w"> </span><span class="n">near</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Mathf</span><span class="p">.</span><span class="n">Abs</span><span class="p">(</span><span class="n">n</span><span class="p">.</span><span class="n">Cell</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">ActiveRadius</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">Mathf</span><span class="p">.</span><span class="n">Abs</span><span class="p">(</span><span class="n">n</span><span class="p">.</span><span class="n">Cell</span><span class="p">.</span><span class="n">y</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">ActiveRadius</span><span class="p">;</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">near</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">n</span><span class="p">.</span><span class="n">Actor</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">null</span><span class="p">)</span>
+<span class="w">                </span><span class="n">n</span><span class="p">.</span><span class="n">Actor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Spawn</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">entryFrom</span><span class="p">:</span><span class="w"> </span><span class="n">n</span><span class="p">.</span><span class="n">Cell</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">p</span><span class="p">);</span><span class="w">       </span><span class="c1">// 가장자리에서 걸어 들어오게</span>
+<span class="w">            </span><span class="k">else</span><span class="w"> </span><span class="nf">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">near</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">n</span><span class="p">.</span><span class="n">Actor</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="k">null</span><span class="p">)</span>
+<span class="w">            </span><span class="p">{</span><span class="w"> </span><span class="n">n</span><span class="p">.</span><span class="n">Cell</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">World</span><span class="p">.</span><span class="n">CellOf</span><span class="p">(</span><span class="n">n</span><span class="p">.</span><span class="n">Actor</span><span class="p">.</span><span class="n">transform</span><span class="p">.</span><span class="n">position</span><span class="p">);</span><span class="w"> </span><span class="n">Destroy</span><span class="p">(</span><span class="n">n</span><span class="p">.</span><span class="n">Actor</span><span class="p">.</span><span class="n">gameObject</span><span class="p">);</span><span class="w"> </span><span class="n">n</span><span class="p">.</span><span class="n">Actor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">null</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">n</span><span class="p">.</span><span class="n">Actor</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">null</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">step</span><span class="p">)</span><span class="w"> </span><span class="n">StepTowardGoal</span><span class="p">(</span><span class="n">n</span><span class="p">);</span><span class="w">       </span><span class="c1">// 화면 밖: 아주 단순한 이동</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">void</span><span class="w"> </span><span class="nf">StepTowardGoal</span><span class="p">(</span><span class="n">OffscreenNpc</span><span class="w"> </span><span class="n">n</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">n</span><span class="p">.</span><span class="n">Cell</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">n</span><span class="p">.</span><span class="n">Goal</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">n</span><span class="p">.</span><span class="n">StayTimer</span><span class="w"> </span><span class="o">-=</span><span class="w"> </span><span class="n">StepInterval</span><span class="p">;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">n</span><span class="p">.</span><span class="n">StayTimer</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="n">n</span><span class="p">.</span><span class="n">Goal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Home</span><span class="p">(</span><span class="n">n</span><span class="p">);</span><span class="w"> </span><span class="k">return</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">        </span><span class="kt">var</span><span class="w"> </span><span class="n">next</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">n</span><span class="p">.</span><span class="n">Cell</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Vector2Int</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Math</span><span class="p">.</span><span class="n">Sign</span><span class="p">(</span><span class="n">n</span><span class="p">.</span><span class="n">Goal</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">n</span><span class="p">.</span><span class="n">Cell</span><span class="p">.</span><span class="n">x</span><span class="p">),</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="n">Math</span><span class="p">.</span><span class="n">Sign</span><span class="p">(</span><span class="n">n</span><span class="p">.</span><span class="n">Goal</span><span class="p">.</span><span class="n">y</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">n</span><span class="p">.</span><span class="n">Cell</span><span class="p">.</span><span class="n">y</span><span class="p">));</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">World</span><span class="p">.</span><span class="n">CountNpcsIn</span><span class="p">(</span><span class="n">next</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="p">;</span><span class="w">                 </span><span class="c1">// 동숲: 3명 이상이면 기다림</span>
+<span class="w">        </span><span class="n">n</span><span class="p">.</span><span class="n">Cell</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">next</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">NpcActor</span><span class="w"> </span><span class="nf">Spawn</span><span class="p">(</span><span class="n">OffscreenNpc</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">Vector2Int</span><span class="w"> </span><span class="n">entryFrom</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="cm">/* 방향에 맞는 화면 가장자리 위치에 생성 */</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">Instantiate</span><span class="p">(</span><span class="n">prefab</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="n">Vector2Int</span><span class="w"> </span><span class="nf">Home</span><span class="p">(</span><span class="n">OffscreenNpc</span><span class="w"> </span><span class="n">n</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">World</span><span class="p">.</span><span class="n">HomeOf</span><span class="p">(</span><span class="n">n</span><span class="p">.</span><span class="n">Id</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="꺼진-동안의-시간-마지막-시각-경과-계산">꺼진 동안의 시간: 마지막 시각 + 경과 계산<a class="headerlink" href="#꺼진-동안의-시간-마지막-시각-경과-계산" title="이 소제목 링크">#</a></h3>
+<div class="hl"><pre><span></span><code><span class="c1">// 접속할 때 한 번만 부른다 (엔진 무관 C#)</span>
+<span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">Catchup</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">OnLoad</span><span class="p">(</span><span class="n">SaveData</span><span class="w"> </span><span class="n">save</span><span class="p">,</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="n">DateTime</span><span class="w"> </span><span class="n">now</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">awayDays</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)(</span><span class="n">now</span><span class="p">.</span><span class="n">Date</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">save</span><span class="p">.</span><span class="n">LastHomeVisit</span><span class="p">.</span><span class="n">Date</span><span class="p">).</span><span class="n">TotalDays</span><span class="p">;</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">Grace</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">6</span><span class="p">;</span><span class="w">                                       </span><span class="c1">// 동숲: 6일까지는 봐준다</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">awayDays</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">Grace</span><span class="p">)</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="kt">int</span><span class="w"> </span><span class="k">add</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">save</span><span class="p">.</span><span class="n">Roaches</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">awayDays</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">awayDays</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">Grace</span><span class="p">;</span>
+<span class="w">            </span><span class="n">save</span><span class="p">.</span><span class="n">Roaches</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="n">Math</span><span class="p">.</span><span class="n">Min</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="n">save</span><span class="p">.</span><span class="n">Roaches</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="k">add</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="c1">// 나무 성장도 '번호 올리기'로 한 번에</span>
+<span class="w">        </span><span class="k">foreach</span><span class="w"> </span><span class="p">(</span><span class="kt">var</span><span class="w"> </span><span class="n">tile</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">save</span><span class="p">.</span><span class="n">Tiles</span><span class="p">)</span>
+<span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">awayDays</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">Item</span><span class="p">.</span><span class="n">CanGrow</span><span class="p">(</span><span class="n">tile</span><span class="p">.</span><span class="n">ItemId</span><span class="p">);</span><span class="w"> </span><span class="n">d</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="n">tile</span><span class="p">.</span><span class="n">ItemId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Item</span><span class="p">.</span><span class="n">NextGrowth</span><span class="p">(</span><span class="n">tile</span><span class="p">.</span><span class="n">ItemId</span><span class="p">);</span>
+
+<span class="w">        </span><span class="n">save</span><span class="p">.</span><span class="n">News</span><span class="p">.</span><span class="n">AddRange</span><span class="p">(</span><span class="n">Town</span><span class="p">.</span><span class="n">SimulateDaysCoarsely</span><span class="p">(</span><span class="n">save</span><span class="p">,</span><span class="w"> </span><span class="n">awayDays</span><span class="p">));</span><span class="w">   </span><span class="c1">// 이사·유행 같은 큰 변화만 거칠게</span>
+<span class="w">        </span><span class="n">save</span><span class="p">.</span><span class="n">LastLoad</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">now</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<div class="admonition warning">
+<p class="admonition-title">현실 시간과 연결할 때</p>
+<p>동숲처럼 실제 시계를 쓰면 "오래 비우면 벌 받는" 구조가 됩니다. 바퀴벌레는 귀여운 벌이지만, 소중한 것을 잃게 하면 복귀를 망설이게 됩니다. 모여봐요가 주민 이사에 플레이어의 허락을 받게 바꾼 것(<a href="06-relationship.html">6장</a>)도 같은 방향으로 볼 수 있습니다. <span class="tag trust trust-guess" data-tag="guess" title="플레이 관찰·커뮤니티 추측·2차 보도">추정</span></p>
+</div>
+</section><section class="sec"><h2 id="출처">출처<a class="headerlink" href="#출처" title="이 소제목 링크">#</a></h2>
+<ul>
+<li>Dwarf Fortress Wiki: World generation / Legends — <a href="https://dwarffortresswiki.org/index.php/DF2014:World_generation">https://dwarffortresswiki.org/index.php/DF2014:World_generation</a>, <a href="https://dwarffortresswiki.org/index.php/DF2014:Legends">https://dwarffortresswiki.org/index.php/DF2014:Legends</a></li>
+<li>Tanya X. Short &amp; Tarn Adams (편), <em>Procedural Storytelling in Game Design</em> (2019) — <a href="https://www.routledge.com/Procedural-Storytelling-in-Game-Design-1st-Edition/Short-Adams/p/book/9781138595309">https://www.routledge.com/Procedural-Storytelling-in-Game-Design-1st-Edition/Short-Adams/p/book/9781138595309</a></li>
+<li>Jason Grinblat &amp; C. Brian Bucklew, "Subverting Historical Cause &amp; Effect" (FDG 2017) — <a href="https://doi.org/10.1145/3102071.3110574">https://doi.org/10.1145/3102071.3110574</a></li>
+<li>Jason Grinblat, "Procedurally Generating History in Caves of Qud" (GDC) — <a href="https://gdcvault.com/play/1024990/Procedurally-Generating-History-in-Caves">https://gdcvault.com/play/1024990/Procedurally-Generating-History-in-Caves</a></li>
+<li>Caves of Qud Wiki, Sultan history — <a href="https://wiki.cavesofqud.com/wiki/Sultan_history">https://wiki.cavesofqud.com/wiki/Sultan_history</a></li>
+<li>ACreTeam, ac-decomp — <a href="https://github.com/ACreTeam/ac-decomp">https://github.com/ACreTeam/ac-decomp</a></li>
+<li>동숲 최적화 분석 1편·2편 — <a href="https://nobbs-it-study.tistory.com/entry/%EA%B2%8C%EC%9E%84%EB%B6%84%EC%84%9D-%EB%86%80%EB%8F%99%EC%88%B2%EC%9D%98-%EB%A7%88%EC%9D%84%EC%9D%80-36-Byte%EB%8B%A4-%EC%B5%9C%EC%A0%81%ED%99%94-%EB%B6%84%EC%84%9D-1%ED%8E%B8">https://nobbs-it-study.tistory.com/entry/%EA%B2%8C%EC%9E%84%EB%B6%84%EC%84%9D-%EB%86%80%EB%8F%99%EC%88%B2%EC%9D%98-%EB%A7%88%EC%9D%84%EC%9D%80-36-Byte%EB%8B%A4-%EC%B5%9C%EC%A0%81%ED%99%94-%EB%B6%84%EC%84%9D-1%ED%8E%B8</a>, <a href="https://nobbs-it-study.tistory.com/entry/%EA%B2%8C%EC%9E%84-%EB%B6%84%EC%84%9D-%EB%8F%99%EC%88%B2-%EC%A3%BC%EB%AF%BC%EC%9D%84-%EC%96%B4%EB%96%BB%EA%B2%8C-%EC%82%B4%EC%95%84%EC%9E%88%EA%B2%8C-%EB%A7%8C%EB%93%A4%EC%97%88%EB%82%98-%EC%B5%9C%EC%A0%81%ED%99%94-%EB%B6%84%EC%84%9D-2%ED%8E%B8">https://nobbs-it-study.tistory.com/entry/%EA%B2%8C%EC%9E%84-%EB%B6%84%EC%84%9D-%EB%8F%99%EC%88%B2-%EC%A3%BC%EB%AF%BC%EC%9D%84-%EC%96%B4%EB%96%BB%EA%B2%8C-%EC%82%B4%EC%95%84%EC%9E%88%EA%B2%8C-%EB%A7%8C%EB%93%A4%EC%97%88%EB%82%98-%EC%B5%9C%EC%A0%81%ED%99%94-%EB%B6%84%EC%84%9D-2%ED%8E%B8</a></li>
+<li>Petr Smrcek, "Supporting Thousands of NPCs in Kingdom Come: Deliverance" (GDC 2026) — <a href="https://gdcvault.com/play/1035718/Supporting-Thousands-of-NPCs-in">https://gdcvault.com/play/1035718/Supporting-Thousands-of-NPCs-in</a></li>
+</ul></section>
+      <nav class="pager" aria-label="이전·다음"><a class="prev" href="08-events.html">← 8. 사건 생성</a><a class="next" href="10-belonging.html">10. 소속감 설계 →</a></nav>
+    </article>
+  </main>
+  <aside class="toc" aria-label="이 페이지 목차"><p class="toc-title">이 페이지</p><ul><li><a href="#한눈에-보기">한눈에 보기</a></li><li><a href="#과거-만들기">과거 만들기</a><ul><li><a href="#드워프-포트리스-실제로-수백-년을-돌린다-개연성-실존감">드워프 포트리스 — 실제로 수백 년을 돌린다 {개연성} {실존감}</a></li><li><a href="#caves-of-qud-사건을-먼저-뽑고-이유를-나중에-붙인다">Caves of Qud — 사건을 먼저 뽑고 이유를 나중에 붙인다</a></li><li><a href="#동물의-숲-gc-마을-지형을-조각-번호로">동물의 숲 GC — 마을 지형을 "조각 번호"로</a></li></ul></li><li><a href="#화면-밖-시간">화면 밖 시간</a><ul><li><a href="#동물의-숲-gc-화면-밖-주민은-좌표-하나-ai-lod">동물의 숲 GC — 화면 밖 주민은 좌표 하나 (AI LOD)</a></li><li><a href="#킹덤-컴-딜리버런스-2-2400명의-일과">킹덤 컴: 딜리버런스 2 — 2,400명의 일과</a></li><li><a href="#게임을-끈-동안-마지막-시각만-저장하고-다시-켤-때-계산-실존감-소속감">게임을 끈 동안 — "마지막 시각"만 저장하고 다시 켤 때 계산 {실존감} {소속감}</a></li></ul></li><li><a href="#전달하기-내가-없을-때-일어난-일">전달하기: "내가 없을 때 일어난 일"</a></li><li><a href="#구조-다이어그램">구조 다이어그램</a></li><li><a href="#세-갈래로-보기">세 갈래로 보기</a><ul><li><a href="#ai-없이">AI 없이</a></li><li><a href="#ai-사용">AI 사용</a></li><li><a href="#섞어-쓰기">섞어 쓰기</a></li></ul></li><li><a href="#구현-스케치">구현 스케치</a><ul><li><a href="#ai-lod-가까우면-액터-멀면-좌표">AI LOD: 가까우면 액터, 멀면 좌표</a></li><li><a href="#꺼진-동안의-시간-마지막-시각-경과-계산">꺼진 동안의 시간: 마지막 시각 + 경과 계산</a></li></ul></li><li><a href="#출처">출처</a></li></ul></aside>
+</div>
+<footer class="site-foot">신뢰도: <span class="tag trust trust-official">공식</span> <span class="tag trust trust-analysis">분석</span> <span class="tag trust trust-guess">추정</span> <span class="tag trust trust-unknown">확인 못 함</span> · 소스: <a href="https://github.com/HelloNobb/LIFE_SIMUL_LAB">GitHub</a></footer>
+<script src="assets/search-index.js"></script>
+<script src="assets/app.js"></script>
+<script type="module">
+import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.esm.min.mjs';
+window.__mermaid = mermaid;
+window.dispatchEvent(new Event('mermaid-ready'));
+</script>
+</body>
+</html>
